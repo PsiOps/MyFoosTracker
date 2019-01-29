@@ -1,13 +1,44 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Tab One
+      Match
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-card class="welcome-card">
+    <div *ngIf="authService.player$ | async as player">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title> Hello {{ player.nickname }}!
+            <ion-button float-right (click)="logout()">Logout</ion-button>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+        </ion-card-content>
+      </ion-card>
+      <ion-button expand="block">
+        Start a match
+      </ion-button>
+      <ion-item>
+        <ion-input 
+          name="gamepin-input"
+          type="text" 
+          placeholder="Enter game pin" 
+          color="secondary" 
+          inputmode="numeric" 
+          minlength=4
+          maxlength=4  
+          min=0 
+          max=9999
+          pattern="\d{4}"
+          ></ion-input>
+      </ion-item>
+      <ion-button expand="block">
+        Join a match
+      </ion-button>  
+    </div>    
+    <!-- <ion-card class="welcome-card">
       <ion-img src="/assets/shapes.svg"></ion-img>
       <ion-card-header>
         <ion-card-subtitle>Get Started</ion-card-subtitle>
@@ -37,5 +68,5 @@
         <ion-icon slot="start" color="medium" name="color-fill"></ion-icon>
         <ion-label>Theme Your App</ion-label>
       </ion-item>
-    </ion-list>
+    </ion-list> -->
 </ion-content>

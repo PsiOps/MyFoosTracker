@@ -1,0 +1,29 @@
+#Setting up all the things
+[Create Git Repo]
+[Create project in Firebase]
+ionic start MyCoolAppIdea tabs --type=angular
+ionic serve
+ionic cordova platform add browser // This one really necessary if just PWA?
+ng add @angular/pwa
+ionic build --prod --service-worker
+firebase init
+firebase deploy
+[Check PWA-ness with Lighthouse]
+
+#Adding Firebase Authentication
+[Add desired authentication method in Firebase Console]
+npm install firebase @angular/fire --save
+[Setup AngularFire as per docs]
+[Import  AngularFireModule and AngularFireAuthModule]
+[Do the example Google Login]
+
+#Adding Firestore Data
+[Create Firestore Database in Firebase Console]
+[Import AngularFirestoreModule]
+
+* [DONE] Get profile data about Player (nickname)
+* Get Match History for Player
+* Get Win-Loss Statistic for Player
+* Be able to start a match
+* Be able to join a match
+* Be able to score a match

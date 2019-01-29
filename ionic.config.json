@@ -1,6 +1,8 @@
 {
   "name": "MyFoosTracker",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular",
   "id": "4f93f9b6"
 }
