@@ -1,9 +1,22 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Tab Two
+      Match history
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content>
+  <ion-list lines="none">
+    <ion-card *ngFor="let playerMatch of playerMatches$ | async">
+      <ion-card-header>
+        <ion-card-title> {{playerMatch.goalsTeamA}} - {{playerMatch.goalsTeamB}} </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item *ngFor="let teamMember of playerMatch.teamAPlayers">{{teamMember.nickname}}</ion-item>
+        <ion-item *ngFor="let teamMember of playerMatch.teamBPlayers">{{teamMember.nickname}}</ion-item>
+      </ion-card-content>
+    </ion-card>
+
+  </ion-list>
+</ion-content>

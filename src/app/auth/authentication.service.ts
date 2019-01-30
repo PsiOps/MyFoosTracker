@@ -16,7 +16,6 @@ export class AuthenticationService {
   constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore) {
 
     this.user$.subscribe(u => {
-      console.log('Auth service ctor user sub');
       if (!u) {
         this.user = null;
         this.playerDoc = null;
@@ -27,7 +26,6 @@ export class AuthenticationService {
       this.playerDoc = this.afs.doc<Player>(`players/${u.uid}`);
       this.player$ = this.playerDoc.valueChanges();
       this.playerDoc.update({lastLogin: '2019-1-1'}).catch((error) => {
-        console.log('creating new player');
         const player = new Player();
         player.nickname = 'Player1';
         this.playerDoc.set(Object.assign({}, player));
