@@ -20,10 +20,10 @@ export class Tab2Page {
         .where('participants', 'array-contains', this.authService.user.uid)
     );
     this.playerMatches$ = this.playerMatches.valueChanges().pipe(map(matches => matches.map(m => {
-      m.teamAPlayers = [];
-      m.teamBPlayers = [];
-      m.teamA.map(dr => dr.get().then(ds => m.teamAPlayers.push(ds.data() as Player)));
-      m.teamB.map(dr => dr.get().then(ds => m.teamBPlayers.push(ds.data() as Player)));
+      // m.teamAPlayers = [];
+      // m.teamBPlayers = [];
+      // m.teamA.map(tm => tm.playerRef.get().then(ds => m.teamAPlayers.push(ds.data() as Player)));
+      // m.teamB.map(tm => tm.playerRef.get().then(ds => m.teamBPlayers.push(ds.data() as Player)));
       return m;
     })));
   }

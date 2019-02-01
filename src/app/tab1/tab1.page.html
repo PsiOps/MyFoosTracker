@@ -17,26 +17,50 @@
         <ion-card-content>
         </ion-card-content>
       </ion-card>
-      <ion-button expand="block">
-        Start a match
-      </ion-button>
-      <ion-item>
-        <ion-input 
-          name="gamepin-input"
-          type="text" 
-          placeholder="Enter game pin" 
-          color="secondary" 
-          inputmode="numeric" 
-          minlength=4
-          maxlength=4  
-          min=0 
-          max=9999
-          pattern="\d{4}"
-          ></ion-input>
-      </ion-item>
-      <ion-button expand="block">
-        Join a match
-      </ion-button>  
+      <div *ngIf="currentMatch$ | async as currentMatch">
+        <ion-card *ngIf="currentMatch.status === 0">
+          <ion-card-header>
+            <ion-card-title> Game PIN: {{currentMatch.pin}}
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Waiting for other players to join...
+          </ion-card-content>
+        </ion-card>
+        <ion-card *ngIf="currentMatch.status === 1">
+            <ion-card-header>
+              <ion-card-title> Match in progress!
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-button expand="block" (click)="finishMatch()">
+                Finish match
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      <div *ngIf="!currentMatch$ | async as currentMatch">
+        <ion-button expand="block" (click)="createMatch()">
+          Start a match
+        </ion-button>
+        <ion-item>
+          <ion-input 
+            name="gamepin-input"
+            type="text" 
+            placeholder="Enter game pin" 
+            color="secondary" 
+            inputmode="numeric" 
+            minlength=4
+            maxlength=4  
+            min=0 
+            max=9999
+            pattern="\d{4}"
+            ></ion-input>
+        </ion-item>
+        <ion-button expand="block">
+          Join a match
+        </ion-button>
+      </div>  
     </div>    
     <!-- <ion-card class="welcome-card">
       <ion-img src="/assets/shapes.svg"></ion-img>
