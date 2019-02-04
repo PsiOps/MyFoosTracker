@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Player } from '../domain/player';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Match, MatchStatus } from '../domain/match';
+import { ToastController } from '@ionic/angular';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tab1',
@@ -13,27 +14,100 @@ import { Match, MatchStatus } from '../domain/match';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-  public currentMatch$: Observable<Match>;
-  constructor(public authService: AuthenticationService, private afs: AngularFirestore, private router: Router) {
+  public currentMatch$: Observable<Match> = of(null);
+  private currentMatchDocument: AngularFirestoreDocument<Match>;
+  public isMatchOrganiser$: Observable<boolean>;
+  public isInEditMode = false;
+  public gamePin?: number = null;
+  constructor(public authService: AuthenticationService,
+    private afs: AngularFirestore,
+    private router: Router,
+    private toastController: ToastController) {
     this.findCurrentMatch();
   }
   private findCurrentMatch(): void {
-    const openUserMatches = this.afs.collection<Match>('matches',
-      ref => ref.where('status', '==', MatchStatus.open)
+    const currentUserMatches = this.afs.collection<Match>('matches',
+      ref => ref.where('status', '<', MatchStatus.over)
         .where('participants', 'array-contains', this.authService.user.uid)
         .limit(1)
     );
-    openUserMatches.get().subscribe(qs => {
-      this.currentMatch$ = this.afs.doc<Match>(qs.docs[0].ref.path).valueChanges();
+    currentUserMatches.get().subscribe(qs => {
+      if (qs.docs.length === 0) { return; }
+      this.currentMatchDocument = this.afs.doc<Match>(qs.docs[0].ref.path);
+      this.currentMatch$ = this.currentMatchDocument.valueChanges();
+      this.isMatchOrganiser$ = this.currentMatch$.pipe(map(m => {
+        console.log(m.organizer, this.authService.user.uid);
+        return m.organizer === this.authService.user.uid;
+      }));
     });
   }
   public async createMatch() {
     const match = new Match();
+    match.organizer = this.authService.user.uid;
     match.participants.push(this.authService.user.uid);
     match.teamAPlayer1 = { playerRef: this.authService.playerDoc.ref, goals: 0 };
     const doc = await this.afs.collection('matches').add(Object.assign({}, match));
-    const matchDocument = this.afs.doc<Match>(doc.path);
-    this.currentMatch$ = matchDocument.valueChanges();
+    this.currentMatchDocument = this.afs.doc<Match>(doc.path);
+    this.currentMatch$ = this.currentMatchDocument.valueChanges();
+  }
+  public async startMatch() {
+    await this.currentMatchDocument.update({ dateTimeStart: new Date(), status: 1 });
+  }
+  public async finishMatch() {
+    // Show the scoring inputs
+    await this.currentMatchDocument.update({ status: 2 });
+  }
+  public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
+    // Update the document with the teamgoals and playergoals
+    await this.currentMatchDocument.update({
+      dateTimeEnd: new Date(),
+      status: 3,
+      goalsTeamA: $event.goalsTeamA,
+      goalsTeamB: $event.goalsTeamB
+    });
+    this.currentMatchDocument = null;
+    this.currentMatch$ = of(null);
+    this.gamePin = null;
+  }
+  public async onScoringCancelled() {
+    // Hide the scoring inputs
+    await this.currentMatchDocument.update({ status: 1 });
+  }
+  public startEditMode(): void {
+    this.isInEditMode = true;
+  }
+  public async findMatchToJoin() {
+    if (!this.gamePin) { return; }
+    // Get the match with the pin
+    // Set as current match
+    console.log(this.gamePin);
+    const matchesWithPin = this.afs.collection<Match>('matches',
+      ref => ref
+        .where('pin', '==', Number(this.gamePin))
+        .where('status', '==', MatchStatus.open)
+        .limit(1)
+    );
+    matchesWithPin.get().subscribe(async qs => {
+      console.log(qs);
+      if (qs.docs.length === 0) {
+        const toast = await this.toastController.create({
+          message: 'No open matches found with that PIN.',
+          duration: 2000,
+          color: 'warning',
+          animated: true,
+          translucent: true
+        });
+        toast.present();
+        return;
+      }
+      this.currentMatchDocument = this.afs.doc<Match>(qs.docs[0].ref.path);
+      this.currentMatch$ = this.currentMatchDocument.valueChanges();
+    });
+
+  }
+  public submitNickname(nickname: string): void {
+    this.isInEditMode = false;
+    this.authService.setNickname(nickname);
   }
   public logout() {
     this.authService.logout();

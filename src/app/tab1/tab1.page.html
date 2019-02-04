@@ -7,90 +7,77 @@
 </ion-header>
 
 <ion-content>
-    <div *ngIf="authService.player$ | async as player">
-      <ion-card>
+  <div *ngIf="authService.player$ | async as player">
+    <ion-card>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item *ngIf="!isInEditMode" style="width: 100%;">
+            <span slot="start">Player nickname: {{ player.nickname }}</span>
+            <ion-button (click)="startEditMode()" color="secondary">
+              <ion-icon name=create></ion-icon>
+            </ion-button>
+            <ion-button slot="end" (click)="logout()">
+              <ion-icon name=log-out></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-item *ngIf="isInEditMode">
+            <ion-label>Player nickname: </ion-label>
+            <ion-input class="nick-input" [(ngModel)]="player.nickname" name="playerNickName" placeholder="enter nickname"
+              type="text"></ion-input>
+            <ion-button (click)="submitNickname(player.nickname)" color="secondary">
+              <ion-icon name=checkmark></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <div *ngIf="currentMatch$ | async as currentMatch">
+      <ion-card *ngIf="currentMatch.status === 0">
         <ion-card-header>
-          <ion-card-title> Hello {{ player.nickname }}!
-            <ion-button float-right (click)="logout()">Logout</ion-button>
+          <ion-card-title text-center> Game PIN: {{currentMatch.pin}}
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
+          <app-match [match]="currentMatch" [currentUser]="authService.user"></app-match>
+          <div *ngIf="currentMatch.organizer === authService.user.uid">
+            <div text-center>Waiting for other players to join...</div>
+            <ion-button expand="block" (click)="startMatch()">
+              Start match
+            </ion-button>
+          </div>
+          <div *ngIf="currentMatch.organizer !== authService.user.uid">
+            <div text-center>Waiting for organizer to start the match...</div>
+            <ion-button expand="block" (click)="leaveMatch()">
+              Leave match
+            </ion-button>
+          </div>
         </ion-card-content>
       </ion-card>
-      <div *ngIf="currentMatch$ | async as currentMatch">
-        <ion-card *ngIf="currentMatch.status === 0">
-          <ion-card-header>
-            <ion-card-title> Game PIN: {{currentMatch.pin}}
-            </ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            Waiting for other players to join...
-          </ion-card-content>
-        </ion-card>
-        <ion-card *ngIf="currentMatch.status === 1">
-            <ion-card-header>
-              <ion-card-title> Match in progress!
-              </ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-button expand="block" (click)="finishMatch()">
-                Finish match
-              </ion-button>
-            </ion-card-content>
-          </ion-card>
-        </div>
-      <div *ngIf="!currentMatch$ | async as currentMatch">
-        <ion-button expand="block" (click)="createMatch()">
-          Start a match
-        </ion-button>
-        <ion-item>
-          <ion-input 
-            name="gamepin-input"
-            type="text" 
-            placeholder="Enter game pin" 
-            color="secondary" 
-            inputmode="numeric" 
-            minlength=4
-            maxlength=4  
-            min=0 
-            max=9999
-            pattern="\d{4}"
-            ></ion-input>
-        </ion-item>
-        <ion-button expand="block">
+      <ion-card *ngIf="currentMatch.status === 1 || currentMatch.status === 2">
+        <ion-card-header>
+          <ion-card-title text-center> Match in progress!
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <app-match [match]="currentMatch" [currentUser]="authService.user" (scoreConfirmed)="onScored($event)" (scoringCancelled)="onScoringCancelled()"></app-match>
+          <ion-button *ngIf="currentMatch.status === 1" expand="block" (click)="finishMatch()">
+            Finish match
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div *ngIf="!(currentMatch$ | async)">
+      <ion-button margin expand="block" (click)="createMatch()">
+        Create a Match!
+      </ion-button>
+      <div text-center>or</div>
+      <div class="pin-input-container">
+        <ion-input margin-start [(ngModel)]="gamePin" class="pin-input" name="gamepin-input" type="text" placeholder="Enter game pin"
+          color="secondary" inputmode="numeric" minlength=4 maxlength=4 min=0 max=9999 pattern="\d{4}"></ion-input>
+        <ion-button margin expand="block" (click)="findMatchToJoin()" [disabled]="!gamePin">
           Join a match
         </ion-button>
-      </div>  
-    </div>    
-    <!-- <ion-card class="welcome-card">
-      <ion-img src="/assets/shapes.svg"></ion-img>
-      <ion-card-header>
-        <ion-card-subtitle>Get Started</ion-card-subtitle>
-        <ion-card-title>Welcome to Ionic</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
-      </ion-card-content>
-    </ion-card>
-    <ion-list lines="none">
-      <ion-list-header>
-        <ion-label>Resources</ion-label>
-      </ion-list-header>
-      <ion-item href="https://ionicframework.com/docs/">
-        <ion-icon slot="start" color="medium" name="book"></ion-icon>
-        <ion-label>Ionic Documentation</ion-label>
-      </ion-item>
-      <ion-item href="https://ionicframework.com/docs/building/scaffolding">
-        <ion-icon slot="start" color="medium" name="build"></ion-icon>
-        <ion-label>Scaffold Out Your App</ion-label>
-      </ion-item>
-      <ion-item href="https://ionicframework.com/docs/layout/structure">
-        <ion-icon slot="start" color="medium" name="grid"></ion-icon>
-        <ion-label>Change Your App Layout</ion-label>
-      </ion-item>
-      <ion-item href="https://ionicframework.com/docs/theming/basics">
-        <ion-icon slot="start" color="medium" name="color-fill"></ion-icon>
-        <ion-label>Theme Your App</ion-label>
-      </ion-item>
-    </ion-list> -->
+      </div>
+    </div>
+  </div>
 </ion-content>

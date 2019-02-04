@@ -5,13 +5,17 @@ export enum Teams {
     A, B
 }
 export enum MatchStatus {
-    open, started, over
+    open, started, scoring, over
+}
+export enum MatchPosition {
+    teamAPlayer1, teamAPlayer2, teamBPlayer1, teamBPlayer2
 }
 export class Match {
     pin: number = Math.floor(Math.random() * 10000);
     status: MatchStatus = MatchStatus.open;
     goalsTeamA = 0;
     goalsTeamB = 0;
+    organizer: string;
     participants: string[] = [];
     dateTimeStart: Date;
     dateTimeEnd: Date;

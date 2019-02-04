@@ -1,4 +1,4 @@
 export class Player {
     nickname: string;
-    lastLogin: string;
+    lastLogin: Date;
 }

@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="teamContainer">
+    <div class="teamAPlayer1 player">
+      <div *ngIf="teamAPlayer1">
+        {{teamAPlayer1?.nickname}}
+      </div>
+      <div *ngIf="!teamAPlayer1 && canJoin()">
+        <ion-fab-button size="small" color="white" (click)="addTeamAPlayer1()">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </ion-fab-button>
+      </div>
+    </div>
+    <div class="teamAPlayer2 player">
+      <div *ngIf="teamAPlayer2">
+        {{teamAPlayer2?.nickname}}
+      </div>
+      <div *ngIf="!teamAPlayer2 && canJoin()">
+        <ion-fab-button size="small" color="white" (click)="addTeamAPlayer2()">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </ion-fab-button>
+      </div>
+    </div>
+  </div>
+  <div class="score scoreTeamA">{{match.goalsTeamA}}</div>
+  <div class="separator">
+    <div class="separator-content">vs</div>
+  </div>
+  <div class="score scoreTeamB">{{match.goalsTeamB}}</div>
+  <div class="teamContainer">
+    <div class="teamBPlayer1 player">
+      <div *ngIf="teamBPlayer1">
+        {{teamBPlayer1?.nickname}}
+      </div>
+      <div *ngIf="!teamBPlayer1 && canJoin()">
+        <ion-fab-button size="small" color="white" (click)="addTeamBPlayer1()">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </ion-fab-button>
+      </div>
+    </div>
+  <div class="teamBPlayer2 player">
+    <div *ngIf="teamBPlayer2">
+      {{teamBPlayer2?.nickname}}
+    </div>
+    <div *ngIf="!teamBPlayer2 && canJoin()">
+      <ion-fab-button size="small" color="white" (click)="addTeamBPlayer2()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+      </ion-fab-button>
+    </div>
+  </div>
+</div>
+<div class="edit" *ngIf="match.status == 2">
+  <div class="inputs">
+    <ion-item class="score-input">
+      <ion-input [(ngModel)]="match.goalsTeamA" name="teamAScore" placeholder="enter score" type="number" color="secondary"
+        inputmode="numeric"></ion-input>
+    </ion-item>
+    <ion-item class="score-input">
+      <ion-input [(ngModel)]="match.goalsTeamB" name="teamBScore" placeholder="enter score" type="number" color="secondary"
+        inputmode="numeric"></ion-input>
+    </ion-item>
+  </div>
+  <div class="buttons">
+    <ion-button (click)="confirmScore()">Confirm</ion-button>
+    <ion-button (click)="cancelScoring()">Cancel</ion-button>
+  </div>
+</div>

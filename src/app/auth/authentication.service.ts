@@ -25,13 +25,20 @@ export class AuthenticationService {
       this.user = u;
       this.playerDoc = this.afs.doc<Player>(`players/${u.uid}`);
       this.player$ = this.playerDoc.valueChanges();
-      this.playerDoc.update({lastLogin: '2019-1-1'}).catch((error) => {
+      this.playerDoc.update({ lastLogin: new Date() }).catch((error) => {
+        // Error means player does not exist yet, so we create a new one:
         const player = new Player();
         player.nickname = 'Player1';
         this.playerDoc.set(Object.assign({}, player));
       });
     });
   }
+
+  setNickname(nickname: string): void {
+    if (!this.playerDoc) { return; }
+    this.playerDoc.update({ nickname: nickname });
+  }
+
   login() {
     this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
   }

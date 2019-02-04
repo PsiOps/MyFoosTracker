@@ -1,4 +1,18 @@
-.welcome-card ion-img {
-  max-height: 35vh;
-  overflow: hidden;
+.nick-input{
+  --background: aliceblue;
+  --color: darkblue;
+  border-radius: 5px;
+}
+.pin-input-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pin-input{
+  --background: aliceblue;
+  --color: darkblue;
+  border-radius: 5px;
+  
+  text-align: center;
+  flex: 0 1 auto;
 }
