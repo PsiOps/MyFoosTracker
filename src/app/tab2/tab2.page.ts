@@ -13,18 +13,26 @@ import { Player } from '../domain/player';
 })
 export class Tab2Page {
   public playerMatches: AngularFirestoreCollection<Match>;
-  public playerMatches$: Observable<Match[]>;
+  public playerMatchesPerDay$: Observable<{day: Date, matches: Match[]}[]>;
   constructor(private afs: AngularFirestore, private authService: AuthenticationService) {
     this.playerMatches = afs.collection<Match>('matches',
       ref => ref.where('status', '==', MatchStatus.over)
         .where('participants', 'array-contains', this.authService.user.uid)
+        .orderBy('dateTimeStart', 'desc').limit(10)
     );
-    this.playerMatches$ = this.playerMatches.valueChanges().pipe(map(matches => matches.map(m => {
-      // m.teamAPlayers = [];
-      // m.teamBPlayers = [];
-      // m.teamA.map(tm => tm.playerRef.get().then(ds => m.teamAPlayers.push(ds.data() as Player)));
-      // m.teamB.map(tm => tm.playerRef.get().then(ds => m.teamBPlayers.push(ds.data() as Player)));
-      return m;
-    })));
+    this.playerMatchesPerDay$ = this.playerMatches.valueChanges().pipe(map(matches => {
+      return matches.reduce((result: any[], match: any) => {
+        console.log(result, match);
+        const key = match.dateTimeStart.toDate().toISOString().substring(0, 10);
+        console.log(key);
+        let resultItem = result.find(i => i.day === key);
+        if (!resultItem) {
+          resultItem = {day: key, matches: [] };
+          result.push(resultItem);
+        }
+        resultItem.matches.push(match);
+        return result;
+      }, []);
+    }));
   }
 }

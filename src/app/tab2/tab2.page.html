@@ -5,18 +5,17 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
   <ion-list lines="none">
-    <ion-card *ngFor="let playerMatch of playerMatches$ | async">
+    <ion-card *ngFor="let playerMatchDay of playerMatchesPerDay$ | async">
       <ion-card-header>
-        <ion-card-title> {{playerMatch.goalsTeamA}} - {{playerMatch.goalsTeamB}} </ion-card-title>
+        <ion-card-title>Day: {{playerMatchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-item *ngFor="let teamMember of playerMatch.teamAPlayers">{{teamMember.nickname}}</ion-item>
-        <ion-item *ngFor="let teamMember of playerMatch.teamBPlayers">{{teamMember.nickname}}</ion-item>
+        <div class="match" *ngFor="let playerMatch of playerMatchDay.matches">
+          <app-match [match]="playerMatch"></app-match>
+        </div>
       </ion-card-content>
     </ion-card>
-
   </ion-list>
 </ion-content>
