@@ -4,9 +4,10 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import { Observable } from 'rxjs';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
-import { Match, MatchStatus } from '../domain/match';
+import { Match, MatchStatus, Team } from '../domain/match';
 import { ToastController } from '@ionic/angular';
 import { map } from 'rxjs/operators';
+import { firestore } from 'firebase';
 
 @Component({
   selector: 'app-tab1',
@@ -35,17 +36,13 @@ export class Tab1Page {
       if (qs.docs.length === 0) { return; }
       this.currentMatchDocument = this.afs.doc<Match>(qs.docs[0].ref.path);
       this.currentMatch$ = this.currentMatchDocument.valueChanges();
-      this.isMatchOrganiser$ = this.currentMatch$.pipe(map(m => {
-        console.log(m.organizer, this.authService.user.uid);
-        return m.organizer === this.authService.user.uid;
-      }));
     });
   }
   public async createMatch() {
     const match = new Match();
     match.organizer = this.authService.user.uid;
     match.participants.push(this.authService.user.uid);
-    match.teamAPlayer1 = { playerRef: this.authService.playerDoc.ref, goals: 0 };
+    match.teamA.push({ playerRef: this.authService.playerDoc.ref, goals: 0 });
     const doc = await this.afs.collection('matches').add(Object.assign({}, match));
     this.currentMatchDocument = this.afs.doc<Match>(doc.path);
     this.currentMatch$ = this.currentMatchDocument.valueChanges();
@@ -65,13 +62,43 @@ export class Tab1Page {
       goalsTeamA: $event.goalsTeamA,
       goalsTeamB: $event.goalsTeamB
     });
-    this.currentMatchDocument = null;
-    this.currentMatch$ = of(null);
-    this.gamePin = null;
+    this.clearMatch();
   }
   public async onScoringCancelled() {
     // Hide the scoring inputs
     await this.currentMatchDocument.update({ status: 1 });
+  }
+  public async onMatchJoined($event: Team) {
+    const teamPlayer = { playerRef: this.authService.playerDoc.ref, goals: 0 };
+    let payload: firestore.UpdateData;
+    if ($event === Team.teamA) {
+      payload = {
+        participants: firestore.FieldValue.arrayUnion(this.authService.user.uid),
+        teamA: firestore.FieldValue.arrayUnion(teamPlayer)
+      };
+    } else {
+      payload = {
+        participants: firestore.FieldValue.arrayUnion(this.authService.user.uid),
+        teamB: firestore.FieldValue.arrayUnion(teamPlayer)
+      };
+    }
+    await this.currentMatchDocument.ref.update(payload);
+  }
+  public async leaveTeam() {
+    const teamPlayer = { playerRef: this.authService.playerDoc.ref, goals: 0 };
+    const payload = {
+      participants: firestore.FieldValue.arrayRemove(this.authService.user.uid),
+      teamA: firestore.FieldValue.arrayRemove(teamPlayer),
+      teamB: firestore.FieldValue.arrayRemove(teamPlayer)
+    };
+    await this.currentMatchDocument.ref.update(payload);
+  }
+  public async leaveMatch() {
+    await this.leaveTeam();
+    this.clearMatch();
+  }
+  public async dismissMatch() {
+    this.clearMatch();
   }
   public startEditMode(): void {
     this.isInEditMode = true;
@@ -112,5 +139,10 @@ export class Tab1Page {
   public logout() {
     this.authService.logout();
     this.router.navigateByUrl('/login');
+  }
+  private clearMatch() {
+    this.currentMatchDocument = null;
+    this.currentMatch$ = of(null);
+    this.gamePin = null;
   }
 }

@@ -7,8 +7,8 @@ export enum Teams {
 export enum MatchStatus {
     open, started, scoring, over
 }
-export enum MatchPosition {
-    teamAPlayer1, teamAPlayer2, teamBPlayer1, teamBPlayer2
+export enum Team {
+    teamA, teamB
 }
 export class Match {
     pin: number = Math.floor(Math.random() * 10000);
@@ -19,8 +19,6 @@ export class Match {
     participants: string[] = [];
     dateTimeStart: Date;
     dateTimeEnd: Date;
-    teamAPlayer1: {playerRef: DocumentReference, goals: number};
-    teamAPlayer2: {playerRef: DocumentReference, goals: number};
-    teamBPlayer1: {playerRef: DocumentReference, goals: number};
-    teamBPlayer2: {playerRef: DocumentReference, goals: number};
+    teamA: {playerRef: DocumentReference, goals: number}[] = [];
+    teamB: {playerRef: DocumentReference, goals: number}[] = [];
 }

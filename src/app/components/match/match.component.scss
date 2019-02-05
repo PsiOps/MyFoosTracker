@@ -18,11 +18,13 @@
     background-color: rgb(238, 206, 184);
     border-top-right-radius: 0.7rem;
     border-bottom-right-radius: 0.7rem;
+    border-left: 1px solid white;
 }
 .scoreTeamB{
     background-color: rgb(195, 195, 245);
     border-top-left-radius: 0.7rem;
     border-bottom-left-radius: 0.7rem;
+    border-right: 1px solid white;
 }
 .separator{
     flex: 0 1 auto;

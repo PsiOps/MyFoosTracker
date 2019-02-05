@@ -32,37 +32,42 @@
       </ion-card-content>
     </ion-card>
     <div *ngIf="currentMatch$ | async as currentMatch">
-      <ion-card *ngIf="currentMatch.status === 0">
-        <ion-card-header>
-          <ion-card-title text-center> Game PIN: {{currentMatch.pin}}
-          </ion-card-title>
+      <ion-card>
+        <ion-card-header *ngIf="currentMatch.status === 0">
+          <ion-card-title text-center> Game PIN: {{currentMatch.pin}}</ion-card-title>
+        </ion-card-header>
+        <ion-card-header *ngIf="currentMatch.status === 1 || currentMatch.status === 2">
+          <ion-card-title text-center> Match in progress!</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <app-match [match]="currentMatch" [currentUser]="authService.user"></app-match>
+          <app-match [match]="currentMatch" [currentUser]="authService.user" (scoreConfirmed)="onScored($event)"
+            (scoringCancelled)="onScoringCancelled()" (matchJoined)="onMatchJoined($event)"></app-match>
           <div *ngIf="currentMatch.organizer === authService.user.uid">
-            <div text-center>Waiting for other players to join...</div>
-            <ion-button expand="block" (click)="startMatch()">
-              Start match
+            <div *ngIf="currentMatch.status === 0">
+              <div text-center>Waiting for other players to join...</div>
+              <ion-button expand="block" (click)="startMatch()">
+                Start match
+              </ion-button>
+            </div>
+            <ion-button *ngIf="currentMatch.status === 1" expand="block" (click)="finishMatch()">
+              Finish match
             </ion-button>
           </div>
-          <div *ngIf="currentMatch.organizer !== authService.user.uid">
+          <div *ngIf="currentMatch.organizer !== authService.user.uid && currentMatch.status === 0">
             <div text-center>Waiting for organizer to start the match...</div>
+            <ion-button *ngIf="currentMatch.participants.indexOf(authService.user.uid) > -1" expand="block" (click)="leaveTeam()">
+              Leave Team
+            </ion-button>
             <ion-button expand="block" (click)="leaveMatch()">
               Leave match
             </ion-button>
           </div>
-        </ion-card-content>
-      </ion-card>
-      <ion-card *ngIf="currentMatch.status === 1 || currentMatch.status === 2">
-        <ion-card-header>
-          <ion-card-title text-center> Match in progress!
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <app-match [match]="currentMatch" [currentUser]="authService.user" (scoreConfirmed)="onScored($event)" (scoringCancelled)="onScoringCancelled()"></app-match>
-          <ion-button *ngIf="currentMatch.status === 1" expand="block" (click)="finishMatch()">
-            Finish match
-          </ion-button>
+          <div *ngIf="currentMatch.organizer !== authService.user.uid && currentMatch.status === 3">
+            <div text-center>Match over!</div>
+            <ion-button expand="block" (click)="dismissMatch()">
+              Dismiss
+            </ion-button>
+          </div>
         </ion-card-content>
       </ion-card>
     </div>
