@@ -79,7 +79,7 @@
       </ion-card>
     </div>
     <div *ngIf="!(currentMatch$ | async)">
-      <ion-button margin expand="block" (click)="createMatch()">
+      <ion-button margin expand="block" (click)="createMatch(player)">
         Create a Match!
       </ion-button>
       <div text-center>or</div>

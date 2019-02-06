@@ -1,5 +1,4 @@
 import { DocumentReference } from '@angular/fire/firestore';
-import { Player } from './player';
 
 export enum Teams {
     A, B
@@ -13,6 +12,7 @@ export enum Team {
 export class Match {
     pin: number = Math.floor(Math.random() * 10000);
     status: MatchStatus = MatchStatus.open;
+    tableRef: DocumentReference;
     goalsTeamA = 0;
     goalsTeamB = 0;
     organizer: string;

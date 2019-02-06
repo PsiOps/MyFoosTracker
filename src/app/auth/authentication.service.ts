@@ -25,10 +25,14 @@ export class AuthenticationService {
       this.user = u;
       this.playerDoc = this.afs.doc<Player>(`players/${u.uid}`);
       this.player$ = this.playerDoc.valueChanges();
-      this.playerDoc.update({ lastLogin: new Date() }).catch((error) => {
+      const now = new Date();
+      this.playerDoc.update({ lastLogin: now }).catch((error) => {
         // Error means player does not exist yet, so we create a new one:
         const player = new Player();
+        player.defaultTableRef = afs.doc('/foosball-tables/BtVwELRPwtmykmDlFy46').ref;
         player.nickname = 'Player1';
+        player.playerSince = now;
+        player.lastLogin = now;
         this.playerDoc.set(Object.assign({}, player));
       });
     });

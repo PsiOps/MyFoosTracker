@@ -1,6 +1,6 @@
 {
   "name": "My Foos Tracker",
-  "short_name": "MyFoosTracker",
+  "short_name": "Foos Tracker",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

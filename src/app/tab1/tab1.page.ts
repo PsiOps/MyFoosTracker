@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Match, MatchStatus, Team } from '../domain/match';
 import { ToastController } from '@ionic/angular';
 import { firestore } from 'firebase/app';
+import { Player } from '../domain/player';
 
 @Component({
   selector: 'app-tab1',
@@ -37,8 +38,9 @@ export class Tab1Page {
       this.currentMatch$ = this.currentMatchDocument.valueChanges();
     });
   }
-  public async createMatch() {
+  public async createMatch(player: Player) {
     const match = new Match();
+    match.tableRef = player.defaultTableRef;
     match.organizer = this.authService.user.uid;
     match.participants.push(this.authService.user.uid);
     match.teamA.push({ playerRef: this.authService.playerDoc.ref, goals: 0 });
