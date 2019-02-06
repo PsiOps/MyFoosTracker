@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { Match, Team } from 'src/app/domain/match';
 import { Player } from 'src/app/domain/player';
-import { User } from 'firebase';
+import { User } from 'firebase/app';
 
 @Component({
   selector: 'app-match',

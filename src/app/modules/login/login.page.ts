@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from 'src/app/auth/authentication.service';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { mergeMap, tap, switchMap, withLatestFrom, first, filter } from 'rxjs/operators';
-import { Player } from 'src/app/domain/player';
 import { Router } from '@angular/router';
-import { merge, of, zip, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-login',

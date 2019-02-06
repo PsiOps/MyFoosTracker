@@ -6,8 +6,7 @@ import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Match, MatchStatus, Team } from '../domain/match';
 import { ToastController } from '@ionic/angular';
-import { map } from 'rxjs/operators';
-import { firestore } from 'firebase';
+import { firestore } from 'firebase/app';
 
 @Component({
   selector: 'app-tab1',
