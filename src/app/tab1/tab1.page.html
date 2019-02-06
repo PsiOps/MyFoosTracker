@@ -45,9 +45,14 @@
           <div *ngIf="currentMatch.organizer === authService.user.uid">
             <div *ngIf="currentMatch.status === 0">
               <div text-center>Waiting for other players to join...</div>
-              <ion-button expand="block" (click)="startMatch()">
-                Start match
-              </ion-button>
+              <div class="buttonContainer">
+                <ion-button (click)="startMatch()">
+                  Start match
+                </ion-button>
+                <ion-button color="warning" (click)="cancelMatch()">
+                  Cancel match
+                </ion-button>
+              </div>
             </div>
             <ion-button *ngIf="currentMatch.status === 1" expand="block" (click)="finishMatch()">
               Finish match
@@ -55,12 +60,14 @@
           </div>
           <div *ngIf="currentMatch.organizer !== authService.user.uid && currentMatch.status === 0">
             <div text-center>Waiting for organizer to start the match...</div>
-            <ion-button *ngIf="currentMatch.participants.indexOf(authService.user.uid) > -1" expand="block" (click)="leaveTeam()">
-              Leave Team
-            </ion-button>
-            <ion-button expand="block" (click)="leaveMatch()">
-              Leave match
-            </ion-button>
+            <div class="buttonContainer">
+              <ion-button *ngIf="currentMatch.participants.indexOf(authService.user.uid) > -1" (click)="leaveTeam()">
+                Leave Team
+              </ion-button>
+              <ion-button color="warning" (click)="leaveMatch()">
+                Leave match
+              </ion-button>
+            </div>
           </div>
           <div *ngIf="currentMatch.organizer !== authService.user.uid && currentMatch.status === 3">
             <div text-center>Match over!</div>

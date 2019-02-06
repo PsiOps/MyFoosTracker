@@ -50,6 +50,10 @@ export class Tab1Page {
   public async startMatch() {
     await this.currentMatchDocument.update({ dateTimeStart: new Date(), status: 1 });
   }
+  public async cancelMatch() {
+    await this.currentMatchDocument.delete();
+    this.clearMatch();
+  }
   public async finishMatch() {
     // Show the scoring inputs
     await this.currentMatchDocument.update({ status: 2 });
