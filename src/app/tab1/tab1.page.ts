@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFireFunctions } from '@angular/fire/functions';
 import { Observable } from 'rxjs';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -22,6 +23,7 @@ export class Tab1Page {
   public gamePin?: number = null;
   constructor(public authService: AuthenticationService,
     private afs: AngularFirestore,
+    private fns: AngularFireFunctions,
     private router: Router,
     private toastController: ToastController) {
     this.findCurrentMatch();
@@ -67,6 +69,10 @@ export class Tab1Page {
       goalsTeamA: $event.goalsTeamA,
       goalsTeamB: $event.goalsTeamB
     });
+    const matchDoc = await this.currentMatchDocument.ref.get();
+    const match = matchDoc.data() as Match;
+    console.log('About to send match:', match);
+    console.log(this.fns.httpsCallable('updatePlayerStats')({participants: match.participants}));
     this.clearMatch();
   }
   public async onScoringCancelled() {

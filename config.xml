@@ -20,6 +20,7 @@
     <preference name="SplashScreen" value="/resources/splash.png" />
     <preference name="SplashScreenDelay" value="3000" />
     <platform name="browser">
+        <preference name="SplashScreen" value="/resources/splash.png" />
         <preference name="SplashScreenWidth" value="800" />
         <preference name="SplashScreenHeight" value="400" />
     </platform>
@@ -83,9 +84,9 @@
     <plugin name="cordova-plugin-whitelist" spec="1.3.3" />
     <plugin name="cordova-plugin-statusbar" spec="2.4.2" />
     <plugin name="cordova-plugin-device" spec="2.0.2" />
-    <plugin name="cordova-plugin-splashscreen" spec="5.0.2" />
     <plugin name="cordova-plugin-ionic-webview" spec="^2.0.0" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
+    <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <engine name="browser" spec="5.0.4" />
     <engine name="android" spec="7.1.4" />
 </widget>
