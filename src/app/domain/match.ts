@@ -1,8 +1,5 @@
 import { DocumentReference } from '@angular/fire/firestore';
 
-export enum Teams {
-    A, B
-}
 export enum MatchStatus {
     open, started, scoring, over
 }

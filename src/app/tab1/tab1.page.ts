@@ -58,21 +58,17 @@ export class Tab1Page {
     this.clearMatch();
   }
   public async finishMatch() {
-    // Show the scoring inputs
     await this.currentMatchDocument.update({ status: 2 });
   }
   public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
-    // Update the document with the teamgoals and playergoals
     await this.currentMatchDocument.update({
       dateTimeEnd: new Date(),
       status: 3,
       goalsTeamA: $event.goalsTeamA,
       goalsTeamB: $event.goalsTeamB
     });
-    const matchDoc = await this.currentMatchDocument.ref.get();
-    const match = matchDoc.data() as Match;
-    console.log('About to send match:', match);
-    console.log(this.fns.httpsCallable('updatePlayerStats')({participants: match.participants}));
+    const updateStatsPayload = {matchPath: this.currentMatchDocument.ref.path, config: {}};
+    this.fns.httpsCallable('updatePlayerStats')(updateStatsPayload);
     this.clearMatch();
   }
   public async onScoringCancelled() {
