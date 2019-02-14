@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="playerStats$ | async as playerStats">
+  <div *ngIf="playerStats$ | async as playerStats;else noStats">
     <ion-card>
       <ion-card-content class="matchCounts">
         <div class="countContainer">
@@ -25,16 +25,26 @@
       </ion-card-content>
     </ion-card>
     <ion-card>
-        <ion-card-content class="matchCounts">
-          <div class="countContainer">
-            <div class="count">{{playerStats.minutesPlayedCount}}</div>
-            <div class="label">total minutes played</div>
-          </div>
-          <div class="countContainer">
-            <div class="count">{{playerStats.matchDurationMinutesAverage}}</div>
-            <div class="label">avg match duration</div>
-          </div>
-        </ion-card-content>
-      </ion-card>
+      <ion-card-content class="matchCounts">
+        <div class="countContainer">
+          <div class="count">{{playerStats.minutesPlayedCount}}</div>
+          <div class="label">total minutes played</div>
+        </div>
+        <div class="countContainer">
+          <div class="count">{{playerStats.matchDurationMinutesAverage}}</div>
+          <div class="label">avg match duration</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
+  <ng-template #noStats>
+    <ion-card>
+      <ion-card-content>
+        <ion-card-header>
+          <ion-card-title>No Statistics Yet</ion-card-title>
+        </ion-card-header>
+        Play matches to generate statistics!
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
 </ion-content>
