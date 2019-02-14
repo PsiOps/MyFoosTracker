@@ -6,14 +6,20 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <div class="options">
+    <ion-item>
+      <ion-label>show all</ion-label>
+        <ion-toggle [(ngModel)]="showAll"></ion-toggle>
+    </ion-item>     
+  </div>
   <ion-list lines="none">
-    <ion-card *ngFor="let playerMatchDay of playerMatchesPerDay$ | async">
+    <ion-card *ngFor="let matchDay of matchesPerDay$ | async">
       <ion-card-header>
-        <ion-card-title>Day: {{playerMatchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
+        <ion-card-title text-center>{{matchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <div class="match" *ngFor="let playerMatch of playerMatchDay.matches">
-          <app-match [match]="playerMatch"></app-match>
+        <div class="match" *ngFor="let match of matchDay.matches">
+          <app-match [match]="match"></app-match>
         </div>
       </ion-card-content>
     </ion-card>

@@ -13,6 +13,7 @@ import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,6 +29,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
       messagingSenderId: '786590478328'
     }),
     AngularFireAuthModule,
+    AngularFireFunctionsModule,
     AngularFirestoreModule
   ],
   providers: [
