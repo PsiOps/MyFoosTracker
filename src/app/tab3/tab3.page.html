@@ -7,9 +7,34 @@
 </ion-header>
 
 <ion-content>
-  <ion-card>
-    <ion-card-content>
-      Coming soon! :)
-    </ion-card-content>
-  </ion-card>
+  <div *ngIf="playerStats$ | async as playerStats">
+    <ion-card>
+      <ion-card-content class="matchCounts">
+        <div class="countContainer">
+          <div class="count good">{{playerStats.matchesWonCount}}</div>
+          <div class="label good">wins</div>
+        </div>
+        <div class="countContainer">
+          <div class="count bad">{{playerStats.matchesLostCount}}</div>
+          <div class="label bad">losses</div>
+        </div>
+        <div *ngIf="playerStats.matchesTiedCount > 0" class="countContainer">
+          <div class="count">2</div>
+          <div class="label">ties</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+        <ion-card-content class="matchCounts">
+          <div class="countContainer">
+            <div class="count">{{playerStats.minutesPlayedCount}}</div>
+            <div class="label">total minutes played</div>
+          </div>
+          <div class="countContainer">
+            <div class="count">{{playerStats.matchDurationMinutesAverage}}</div>
+            <div class="label">avg match duration</div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+  </div>
 </ion-content>
