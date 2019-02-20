@@ -14,8 +14,7 @@ export class MatchService {
   public currentMatch$: Observable<Match> = of(null);
   private currentMatchDocument: AngularFirestoreDocument<Match>;
 
-  constructor(
-    private authService: AuthenticationService,
+  constructor(private authService: AuthenticationService,
     private statsService: StatsService,
     private afs: AngularFirestore) { }
 

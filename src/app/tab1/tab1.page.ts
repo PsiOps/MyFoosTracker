@@ -5,6 +5,8 @@ import { Team } from '../domain/match';
 import { ToastController } from '@ionic/angular';
 import { Player } from '../domain/player';
 import { MatchService } from '../services/match.service';
+import { ModalController } from '@ionic/angular';
+import { PlayerSelectComponent } from './components/player-select/player-select.component';
 
 @Component({
   selector: 'app-tab1',
@@ -17,14 +19,19 @@ export class Tab1Page {
   constructor(public authService: AuthenticationService,
     private matchService: MatchService,
     private router: Router,
-    private toastController: ToastController) {
+    private toastController: ToastController,
+    private modalController: ModalController) {
     this.matchService.findCurrentMatch();
   }
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);
   }
   public async addPlayers() {
-
+    const modal = await this.modalController.create({
+      component: PlayerSelectComponent,
+      componentProps: { value: 123 }
+    });
+    return await modal.present();
   }
   public async startMatch() {
     await this.matchService.startMatch();

@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Select Players for Match
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-segment (ionChange)="segmentChanged($event)" value="teamA">
+    <ion-segment-button value="teamA">
+      <ion-label>Team A</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="teamB">
+      <ion-label>Team B</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <ion-searchbar></ion-searchbar>
+  <ion-list>
+    <ion-item *ngFor="let player of players$ | async">
+      <ion-label>{{player.nickname}}</ion-label>
+      <ion-checkbox slot="start" mode="ios"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <div>
+    <ion-button>Accept</ion-button>
+    <ion-button>Cancel</ion-button>
+  </div>
+</ion-content>
