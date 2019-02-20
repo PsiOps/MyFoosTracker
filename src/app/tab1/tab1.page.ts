@@ -1,14 +1,10 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { AngularFireFunctions } from '@angular/fire/functions';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs';
 import { Router } from '@angular/router';
-import { Match, MatchStatus, Team } from '../domain/match';
+import { Team } from '../domain/match';
 import { ToastController } from '@ionic/angular';
-import { firestore } from 'firebase/app';
 import { Player } from '../domain/player';
+import { MatchService } from '../services/match.service';
 
 @Component({
   selector: 'app-tab1',
@@ -16,128 +12,62 @@ import { Player } from '../domain/player';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-  public currentMatch$: Observable<Match> = of(null);
-  private currentMatchDocument: AngularFirestoreDocument<Match>;
-  public isMatchOrganiser$: Observable<boolean>;
   public isInEditMode = false;
   public gamePin?: number = null;
   constructor(public authService: AuthenticationService,
-    private afs: AngularFirestore,
-    private fns: AngularFireFunctions,
+    private matchService: MatchService,
     private router: Router,
     private toastController: ToastController) {
-    this.findCurrentMatch();
-  }
-  private findCurrentMatch(): void {
-    const currentUserMatches = this.afs.collection<Match>('matches',
-      ref => ref.where('status', '<', MatchStatus.over)
-        .where('participants', 'array-contains', this.authService.user.uid)
-        .limit(1)
-    );
-    currentUserMatches.get().subscribe(qs => {
-      if (qs.docs.length === 0) { return; }
-      this.currentMatchDocument = this.afs.doc<Match>(qs.docs[0].ref.path);
-      this.currentMatch$ = this.currentMatchDocument.valueChanges();
-    });
+    this.matchService.findCurrentMatch();
   }
   public async createMatch(player: Player) {
-    const match = new Match();
-    match.tableRef = player.defaultTableRef;
-    match.organizer = this.authService.user.uid;
-    match.participants.push(this.authService.user.uid);
-    match.teamA.push({ playerRef: this.authService.playerDoc.ref, goals: 0 });
-    const doc = await this.afs.collection('matches').add(Object.assign({}, match));
-    this.currentMatchDocument = this.afs.doc<Match>(doc.path);
-    this.currentMatch$ = this.currentMatchDocument.valueChanges();
+    this.matchService.createMatch(player);
+  }
+  public async addPlayers() {
+
   }
   public async startMatch() {
-    await this.currentMatchDocument.update({ dateTimeStart: new Date(), status: 1 });
+    await this.matchService.startMatch();
   }
   public async cancelMatch() {
-    await this.currentMatchDocument.delete();
-    this.clearMatch();
+    await this.matchService.cancelMatch();
   }
   public async finishMatch() {
-    await this.currentMatchDocument.update({ status: 2 });
+    await this.matchService.finishMatch();
   }
   public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
-    await this.currentMatchDocument.update({
-      dateTimeEnd: new Date(),
-      status: 3,
-      goalsTeamA: $event.goalsTeamA,
-      goalsTeamB: $event.goalsTeamB
-    });
-    const updateStatsPayload = {matchPath: this.currentMatchDocument.ref.path, config: {}};
-    this.fns.httpsCallable('updatePlayerStats')(updateStatsPayload);
-    this.clearMatch();
+    await this.matchService.onScored($event);
   }
   public async onScoringCancelled() {
-    // Hide the scoring inputs
-    await this.currentMatchDocument.update({ status: 1 });
+    await this.matchService.onScoringCancelled();
   }
   public async onMatchJoined($event: Team) {
-    const teamPlayer = { playerRef: this.authService.playerDoc.ref, goals: 0 };
-    let payload: firestore.UpdateData;
-    if ($event === Team.teamA) {
-      payload = {
-        participants: firestore.FieldValue.arrayUnion(this.authService.user.uid),
-        teamA: firestore.FieldValue.arrayUnion(teamPlayer)
-      };
-    } else {
-      payload = {
-        participants: firestore.FieldValue.arrayUnion(this.authService.user.uid),
-        teamB: firestore.FieldValue.arrayUnion(teamPlayer)
-      };
-    }
-    await this.currentMatchDocument.ref.update(payload);
+    await this.matchService.onMatchJoined($event);
   }
   public async leaveTeam() {
-    const teamPlayer = { playerRef: this.authService.playerDoc.ref, goals: 0 };
-    const payload = {
-      participants: firestore.FieldValue.arrayRemove(this.authService.user.uid),
-      teamA: firestore.FieldValue.arrayRemove(teamPlayer),
-      teamB: firestore.FieldValue.arrayRemove(teamPlayer)
-    };
-    await this.currentMatchDocument.ref.update(payload);
+    await this.matchService.leaveMatch();
   }
   public async leaveMatch() {
-    await this.leaveTeam();
-    this.clearMatch();
+    await this.matchService.leaveMatch();
   }
   public async dismissMatch() {
-    this.clearMatch();
+    await this.matchService.dismissMatch();
   }
   public startEditMode(): void {
     this.isInEditMode = true;
   }
   public async findMatchToJoin() {
     if (!this.gamePin) { return; }
-    // Get the match with the pin
-    // Set as current match
-    console.log(this.gamePin);
-    const matchesWithPin = this.afs.collection<Match>('matches',
-      ref => ref
-        .where('pin', '==', Number(this.gamePin))
-        .where('status', '==', MatchStatus.open)
-        .limit(1)
-    );
-    matchesWithPin.get().subscribe(async qs => {
-      console.log(qs);
-      if (qs.docs.length === 0) {
-        const toast = await this.toastController.create({
-          message: 'No open matches found with that PIN.',
-          duration: 2000,
-          color: 'warning',
-          animated: true,
-          translucent: true
-        });
-        toast.present();
-        return;
-      }
-      this.currentMatchDocument = this.afs.doc<Match>(qs.docs[0].ref.path);
-      this.currentMatch$ = this.currentMatchDocument.valueChanges();
+    await this.matchService.findMatchToJoin(this.gamePin, async () => {
+      const toast = await this.toastController.create({
+        message: 'No open matches found with that PIN.',
+        duration: 2000,
+        color: 'warning',
+        animated: true,
+        translucent: true
+      });
+      toast.present();
     });
-
   }
   public submitNickname(nickname: string): void {
     this.isInEditMode = false;
@@ -146,10 +76,5 @@ export class Tab1Page {
   public logout() {
     this.authService.logout();
     this.router.navigateByUrl('/login');
-  }
-  private clearMatch() {
-    this.currentMatchDocument = null;
-    this.currentMatch$ = of(null);
-    this.gamePin = null;
   }
 }

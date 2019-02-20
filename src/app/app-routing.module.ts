@@ -4,7 +4,8 @@ import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   { path: '', loadChildren: './tabs/tabs.module#TabsPageModule' },
-  { path: 'login', loadChildren: './modules/login/login.module#LoginPageModule' }
+  { path: 'login', loadChildren: './modules/login/login.module#LoginPageModule' },
+  { path: 'user-select', loadChildren: './modules/user-select/user-select.module#UserSelectPageModule' }
 ];
 @NgModule({
   imports: [
