@@ -24,6 +24,10 @@ export class Tab2Page {
   constructor(private afs: AngularFirestore, private authService: AuthenticationService) {
     this.updateMatches(this.showAllValue);
   }
+  public refresh($event: any) {
+    this.updateMatches(this.showAllValue);
+    setTimeout(() => $event.target.complete(), 500);
+  }
   private updateMatches(showAll: boolean) {
     this.matches = showAll ?
       this.afs.collection<Match>('matches', ref => this.showAllFinished(ref)) :
