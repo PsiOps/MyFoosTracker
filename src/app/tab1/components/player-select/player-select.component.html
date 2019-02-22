@@ -6,23 +6,29 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-segment (ionChange)="segmentChanged($event)" value="teamA">
-    <ion-segment-button value="teamA">
-      <ion-label>Team A</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="teamB">
-      <ion-label>Team B</ion-label>
-    </ion-segment-button>
-  </ion-segment>
-  <ion-searchbar></ion-searchbar>
-  <ion-list>
-    <ion-item *ngFor="let player of players$ | async">
-      <ion-label>{{player.nickname}}</ion-label>
-      <ion-checkbox slot="start" mode="ios"></ion-checkbox>
-    </ion-item>
-  </ion-list>
-  <div>
-    <ion-button>Accept</ion-button>
-    <ion-button>Cancel</ion-button>
+  <div id="container">
+    <div id="toolbar">
+      <ion-segment (ionChange)="selectedTeamChanged($event)" value=0>
+        <ion-segment-button value=0>
+          <ion-label>Team A</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value=1>
+          <ion-label>Team B</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <!-- <ion-searchbar></ion-searchbar> -->
+    </div>
+    <div scrollY="true" id="scrollList">
+      <ion-list>
+        <ion-item *ngFor="let player of players$ | async">
+          <ion-label>{{player.nickname}}</ion-label>
+          <ion-checkbox slot="start" mode="ios" [(ngModel)]="player.isSelected" (ionChange)="checkboxChanged(player)"
+            [disabled]="player.isOrganizer || ((isTeamFull$ | async) && !player.isSelected)"></ion-checkbox>
+        </ion-item>
+      </ion-list>
+    </div>
+    <div id="buttons">
+      <ion-button expand="block" (click)="dismiss()">Done</ion-button>
+    </div>
   </div>
 </ion-content>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Match, MatchStatus, Team } from '../domain/match';
-import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestoreDocument, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
 import { AuthenticationService } from '../auth/authentication.service';
 import { StatsService } from './stats.service';
@@ -11,8 +11,8 @@ import { firestore } from 'firebase/app';
   providedIn: 'root'
 })
 export class MatchService {
-  public currentMatch$: Observable<Match> = of(null);
-  private currentMatchDocument: AngularFirestoreDocument<Match>;
+  public currentMatch$: Observable<Match>;
+  public currentMatchDocument: AngularFirestoreDocument<Match>;
 
   constructor(private authService: AuthenticationService,
     private statsService: StatsService,
@@ -63,33 +63,41 @@ export class MatchService {
   public async onScoringCancelled() {
     await this.currentMatchDocument.update({ status: 1 });
   }
-  public async onMatchJoined($event: Team) {
-    const teamPlayer = { playerRef: this.authService.playerDoc.ref, goals: 0 };
+  public async addTeamPlayerToMatch(playerId: string, team: Team){
+    const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
+    await this.onMatchJoined(playerDocRef, team);
+  }
+  public async removeTeamPlayerFromMatch(playerId: string){
+    const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
+    await this.leaveTeam(playerDocRef);
+  }
+  public async onMatchJoined(playerDocRef: DocumentReference, team: Team) {
+    const teamPlayer = { playerRef: playerDocRef, goals: 0 };
     let payload: firestore.UpdateData;
-    if ($event === Team.teamA) {
+    if (team === Team.teamA) {
       payload = {
-        participants: firestore.FieldValue.arrayUnion(this.authService.user.uid),
+        participants: firestore.FieldValue.arrayUnion(playerDocRef.id),
         teamA: firestore.FieldValue.arrayUnion(teamPlayer)
       };
     } else {
       payload = {
-        participants: firestore.FieldValue.arrayUnion(this.authService.user.uid),
+        participants: firestore.FieldValue.arrayUnion(playerDocRef.id),
         teamB: firestore.FieldValue.arrayUnion(teamPlayer)
       };
     }
     await this.currentMatchDocument.ref.update(payload);
   }
-  public async leaveTeam() {
-    const teamPlayer = { playerRef: this.authService.playerDoc.ref, goals: 0 };
+  public async leaveTeam(playerDocRef: DocumentReference) {
+    const teamPlayer = { playerRef: playerDocRef, goals: 0 };
     const payload = {
-      participants: firestore.FieldValue.arrayRemove(this.authService.user.uid),
+      participants: firestore.FieldValue.arrayRemove(playerDocRef.id),
       teamA: firestore.FieldValue.arrayRemove(teamPlayer),
       teamB: firestore.FieldValue.arrayRemove(teamPlayer)
     };
     await this.currentMatchDocument.ref.update(payload);
   }
-  public async leaveMatch() {
-    await this.leaveTeam();
+  public async leaveMatch(playerDocRef: DocumentReference) {
+    await this.leaveTeam(playerDocRef);
     this.clearMatch();
   }
   public async dismissMatch() {

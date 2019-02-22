@@ -28,8 +28,7 @@ export class Tab1Page {
   }
   public async addPlayers() {
     const modal = await this.modalController.create({
-      component: PlayerSelectComponent,
-      componentProps: { value: 123 }
+      component: PlayerSelectComponent
     });
     return await modal.present();
   }
@@ -49,13 +48,13 @@ export class Tab1Page {
     await this.matchService.onScoringCancelled();
   }
   public async onMatchJoined($event: Team) {
-    await this.matchService.onMatchJoined($event);
+    await this.matchService.onMatchJoined(this.authService.playerDoc.ref, $event);
   }
   public async leaveTeam() {
-    await this.matchService.leaveMatch();
+    await this.matchService.leaveMatch(this.authService.playerDoc.ref);
   }
   public async leaveMatch() {
-    await this.matchService.leaveMatch();
+    await this.matchService.leaveMatch(this.authService.playerDoc.ref);
   }
   public async dismissMatch() {
     await this.matchService.dismissMatch();
