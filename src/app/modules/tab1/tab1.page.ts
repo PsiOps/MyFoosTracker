@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { AuthenticationService } from '../auth/authentication.service';
+import { AuthenticationService } from '../../auth/authentication.service';
 import { Router } from '@angular/router';
-import { Team } from '../domain/match';
+import { Team, Player } from '../../domain';
 import { ToastController } from '@ionic/angular';
-import { Player } from '../domain/player';
-import { MatchService } from '../services/match.service';
+import { MatchService } from '../../services/match.service';
 import { ModalController } from '@ionic/angular';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 
