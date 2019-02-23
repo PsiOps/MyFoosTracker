@@ -1,34 +1,24 @@
-import { Component } from '@angular/core';
-import { AuthenticationService } from '../auth/authentication.service';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { AngularFireFunctions } from '@angular/fire/functions';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs';
-import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import { Match, MatchStatus, Team } from '../domain/match';
-import { ToastController } from '@ionic/angular';
-import { firestore } from 'firebase/app';
+import { AngularFirestoreDocument, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
+import { AuthenticationService } from '../auth/authentication.service';
+import { StatsService } from './stats.service';
+import { firestore } from 'firebase/app';
 
-@Component({
-  selector: 'app-tab1',
-  templateUrl: 'tab1.page.html',
-  styleUrls: ['tab1.page.scss']
+@Injectable({
+  providedIn: 'root'
 })
-export class Tab1Page {
-  public currentMatch$: Observable<Match> = of(null);
-  private currentMatchDocument: AngularFirestoreDocument<Match>;
-  public isMatchOrganiser$: Observable<boolean>;
-  public isInEditMode = false;
-  public gamePin?: number = null;
-  constructor(public authService: AuthenticationService,
-    private afs: AngularFirestore,
-    private fns: AngularFireFunctions,
-    private router: Router,
-    private toastController: ToastController) {
-    this.findCurrentMatch();
-  }
-  private findCurrentMatch(): void {
+export class MatchService {
+  public currentMatch$: Observable<Match>;
+  public currentMatchDocument: AngularFirestoreDocument<Match>;
+
+  constructor(private authService: AuthenticationService,
+    private statsService: StatsService,
+    private afs: AngularFirestore) { }
+
+  public findCurrentMatch(): void {
     const currentUserMatches = this.afs.collection<Match>('matches',
       ref => ref.where('status', '<', MatchStatus.over)
         .where('participants', 'array-contains', this.authService.user.uid)
@@ -58,102 +48,79 @@ export class Tab1Page {
     this.clearMatch();
   }
   public async finishMatch() {
-    // Show the scoring inputs
     await this.currentMatchDocument.update({ status: 2 });
   }
   public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
-    // Update the document with the teamgoals and playergoals
     await this.currentMatchDocument.update({
       dateTimeEnd: new Date(),
       status: 3,
       goalsTeamA: $event.goalsTeamA,
       goalsTeamB: $event.goalsTeamB
     });
-    const matchDoc = await this.currentMatchDocument.ref.get();
-    const match = matchDoc.data() as Match;
-    console.log('About to send match:', match);
-    console.log(this.fns.httpsCallable('updatePlayerStats')({participants: match.participants}));
+    this.statsService.updateStats(this.currentMatchDocument.ref.path);
     this.clearMatch();
   }
   public async onScoringCancelled() {
-    // Hide the scoring inputs
     await this.currentMatchDocument.update({ status: 1 });
   }
-  public async onMatchJoined($event: Team) {
-    const teamPlayer = { playerRef: this.authService.playerDoc.ref, goals: 0 };
+  public async addTeamPlayerToMatch(playerId: string, team: Team){
+    const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
+    await this.onMatchJoined(playerDocRef, team);
+  }
+  public async removeTeamPlayerFromMatch(playerId: string){
+    const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
+    await this.leaveTeam(playerDocRef);
+  }
+  public async onMatchJoined(playerDocRef: DocumentReference, team: Team) {
+    const teamPlayer = { playerRef: playerDocRef, goals: 0 };
     let payload: firestore.UpdateData;
-    if ($event === Team.teamA) {
+    if (team === Team.teamA) {
       payload = {
-        participants: firestore.FieldValue.arrayUnion(this.authService.user.uid),
+        participants: firestore.FieldValue.arrayUnion(playerDocRef.id),
         teamA: firestore.FieldValue.arrayUnion(teamPlayer)
       };
     } else {
       payload = {
-        participants: firestore.FieldValue.arrayUnion(this.authService.user.uid),
+        participants: firestore.FieldValue.arrayUnion(playerDocRef.id),
         teamB: firestore.FieldValue.arrayUnion(teamPlayer)
       };
     }
     await this.currentMatchDocument.ref.update(payload);
   }
-  public async leaveTeam() {
-    const teamPlayer = { playerRef: this.authService.playerDoc.ref, goals: 0 };
+  public async leaveTeam(playerDocRef: DocumentReference) {
+    const teamPlayer = { playerRef: playerDocRef, goals: 0 };
     const payload = {
-      participants: firestore.FieldValue.arrayRemove(this.authService.user.uid),
+      participants: firestore.FieldValue.arrayRemove(playerDocRef.id),
       teamA: firestore.FieldValue.arrayRemove(teamPlayer),
       teamB: firestore.FieldValue.arrayRemove(teamPlayer)
     };
     await this.currentMatchDocument.ref.update(payload);
   }
-  public async leaveMatch() {
-    await this.leaveTeam();
+  public async leaveMatch(playerDocRef: DocumentReference) {
+    await this.leaveTeam(playerDocRef);
     this.clearMatch();
   }
   public async dismissMatch() {
     this.clearMatch();
   }
-  public startEditMode(): void {
-    this.isInEditMode = true;
-  }
-  public async findMatchToJoin() {
-    if (!this.gamePin) { return; }
-    // Get the match with the pin
-    // Set as current match
-    console.log(this.gamePin);
+  public async findMatchToJoin(gamePin: number, notFoundAction: () => void) {
     const matchesWithPin = this.afs.collection<Match>('matches',
       ref => ref
-        .where('pin', '==', Number(this.gamePin))
+        .where('pin', '==', Number(gamePin))
         .where('status', '==', MatchStatus.open)
         .limit(1)
     );
     matchesWithPin.get().subscribe(async qs => {
-      console.log(qs);
       if (qs.docs.length === 0) {
-        const toast = await this.toastController.create({
-          message: 'No open matches found with that PIN.',
-          duration: 2000,
-          color: 'warning',
-          animated: true,
-          translucent: true
-        });
-        toast.present();
+        notFoundAction();
         return;
       }
       this.currentMatchDocument = this.afs.doc<Match>(qs.docs[0].ref.path);
       this.currentMatch$ = this.currentMatchDocument.valueChanges();
     });
-
-  }
-  public submitNickname(nickname: string): void {
-    this.isInEditMode = false;
-    this.authService.setNickname(nickname);
-  }
-  public logout() {
-    this.authService.logout();
-    this.router.navigateByUrl('/login');
   }
   private clearMatch() {
     this.currentMatchDocument = null;
     this.currentMatch$ = of(null);
-    this.gamePin = null;
   }
 }

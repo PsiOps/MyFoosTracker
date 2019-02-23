@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, CollectionReference, Query } from '@angular/fire/firestore';
-import { Match, MatchStatus } from '../domain/match';
+import { Match, MatchStatus } from '../../domain';
 import { Observable, of } from 'rxjs';
-import { AuthenticationService } from '../auth/authentication.service';
+import { AuthenticationService } from '../../auth/authentication.service';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -23,6 +23,10 @@ export class Tab2Page {
   }
   constructor(private afs: AngularFirestore, private authService: AuthenticationService) {
     this.updateMatches(this.showAllValue);
+  }
+  public refresh($event: any) {
+    this.updateMatches(this.showAllValue);
+    setTimeout(() => $event.target.complete(), 500);
   }
   private updateMatches(showAll: boolean) {
     this.matches = showAll ?

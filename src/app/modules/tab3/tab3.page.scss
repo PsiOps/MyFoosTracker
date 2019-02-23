@@ -1,0 +1,24 @@
+.matchCounts{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+.countContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.count{
+    font-size: 4rem;
+}
+.label{
+    font-size: 1rem;
+}
+.good {
+    color: green;
+}
+.bad {
+    color: red;
+}

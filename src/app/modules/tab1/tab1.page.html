@@ -22,8 +22,8 @@
           </ion-item>
           <ion-item *ngIf="isInEditMode">
             <ion-label>Player nickname: </ion-label>
-            <ion-input class="nick-input" [(ngModel)]="player.nickname" name="playerNickName" placeholder="enter nickname"
-              type="text"></ion-input>
+            <ion-input class="nick-input" [(ngModel)]="player.nickname" name="playerNickName"
+              placeholder="enter nickname" type="text"></ion-input>
             <ion-button (click)="submitNickname(player.nickname)" color="secondary">
               <ion-icon name=checkmark></ion-icon>
             </ion-button>
@@ -31,7 +31,7 @@
         </ion-list>
       </ion-card-content>
     </ion-card>
-    <div *ngIf="currentMatch$ | async as currentMatch">
+    <div *ngIf="matchService.currentMatch$ | async as currentMatch">
       <ion-card>
         <ion-card-header *ngIf="currentMatch.status === 0">
           <ion-card-title text-center> Game PIN: {{currentMatch.pin}}</ion-card-title>
@@ -46,11 +46,14 @@
             <div *ngIf="currentMatch.status === 0">
               <div text-center>Waiting for other players to join...</div>
               <div class="buttonContainer">
+                <ion-button (click)="addPlayers()">
+                  Add players
+                </ion-button>
                 <ion-button (click)="startMatch()">
-                  Start match
+                  Start
                 </ion-button>
                 <ion-button color="warning" (click)="cancelMatch()">
-                  Cancel match
+                  Cancel
                 </ion-button>
               </div>
             </div>
@@ -78,14 +81,15 @@
         </ion-card-content>
       </ion-card>
     </div>
-    <div *ngIf="!(currentMatch$ | async)">
+    <div *ngIf="!(matchService.currentMatch$ | async)">
       <ion-button margin expand="block" (click)="createMatch(player)">
         Create a Match!
       </ion-button>
       <div text-center>or</div>
       <div class="pin-input-container">
-        <ion-input margin-start [(ngModel)]="gamePin" class="pin-input" name="gamepin-input" type="text" placeholder="Enter game pin"
-          color="secondary" inputmode="numeric" minlength=4 maxlength=4 min=0 max=9999 pattern="\d{4}"></ion-input>
+        <ion-input margin-start [(ngModel)]="gamePin" class="pin-input" name="gamepin-input" type="text"
+          placeholder="Enter game pin" color="secondary" inputmode="numeric" minlength=4 maxlength=4 min=0 max=9999
+          pattern="\d{4}"></ion-input>
         <ion-button margin expand="block" (click)="findMatchToJoin()" [disabled]="!gamePin">
           Join a match
         </ion-button>
