@@ -18,6 +18,7 @@ export class PlayerSelectComponent implements OnInit {
   public selectedTeam: Team = Team.teamA;
   public selectedTeam$: BehaviorSubject<Team>;
   public isTeamFull$: Observable<boolean>;
+  public terms = '';
   private matchDoc: AngularFirestoreDocument<Match>;
   constructor(private matchService: MatchService,
     private afs: AngularFirestore,
