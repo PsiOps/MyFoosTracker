@@ -17,7 +17,6 @@ export class Tab1Page {
   public gamePin?: number = null;
   constructor(public authService: AuthenticationService,
     private matchService: MatchService,
-    private router: Router,
     private toastController: ToastController,
     private modalController: ModalController) {
     this.matchService.findCurrentMatch();
@@ -77,9 +76,5 @@ export class Tab1Page {
   public submitNickname(nickname: string): void {
     this.isInEditMode = false;
     this.authService.setNickname(nickname);
-  }
-  public logout() {
-    this.authService.logout();
-    this.router.navigateByUrl('/login');
   }
 }
