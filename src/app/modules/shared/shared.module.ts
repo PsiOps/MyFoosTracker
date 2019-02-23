@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatchComponent } from './components/match/match.component';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { HeaderComponent } from './header/header.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
