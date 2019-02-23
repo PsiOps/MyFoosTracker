@@ -16,10 +16,9 @@
           <ion-label>Team B</ion-label>
         </ion-segment-button>
       </ion-segment>
-      <!-- <ion-searchbar></ion-searchbar> -->
+      <ion-searchbar [(ngModel)]="terms"></ion-searchbar>
     </div>
     <div scrollY="true" id="scrollList">
-      <ion-searchbar [(ngModel)]="terms"></ion-searchbar>
       <ion-list>
         <ion-item *ngFor="let player of players$ | async | search : terms">
           <ion-label>{{player.nickname}}</ion-label>
