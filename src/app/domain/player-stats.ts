@@ -11,4 +11,6 @@ export class PlayerStats {
     public tableMatchStats: { tableRef: DocumentReference, matchesWonCount: number, matchesLostCount: number }[] = [];
     public teamMateMatchStats: { teamMateRef: DocumentReference, matchesWonCount: number, matchesLostCount: number }[] = [];
     public opponentTeamMatchStats: { opponentTeamRefs: DocumentReference[], matchesWonCount: number, matchesLostCount: number }[] = [];
+
+    public averageMatchDuration: string;
 }

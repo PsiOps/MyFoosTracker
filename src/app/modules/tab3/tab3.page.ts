@@ -3,6 +3,7 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import { AuthenticationService } from '../../auth/authentication.service';
 import { PlayerStats } from '../../domain';
 import { of, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tab3',
@@ -12,9 +13,13 @@ import { of, Observable } from 'rxjs';
 export class Tab3Page implements OnInit {
   public playerStatsDoc: AngularFirestoreDocument<PlayerStats>;
   public playerStats$: Observable<PlayerStats> = of(null);
-  constructor(private afs: AngularFirestore, private authService: AuthenticationService) {  }
+
+  constructor(private afs: AngularFirestore, private authService: AuthenticationService) { }
+
   ngOnInit(): void {
     this.playerStatsDoc = this.afs.doc(`player-stats/${this.authService.user.uid}`);
-    this.playerStats$ = this.playerStatsDoc.valueChanges();
+    this.playerStats$ = this.playerStatsDoc.valueChanges().pipe(
+      map((stats) => ({ ...stats, averageMatchDuration: stats.matchDurationMinutesAverage.toFixed(2) })
+      ));
   }
 }
