@@ -1,10 +1,4 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Match
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header title="Match"></app-header>
 
 <ion-content>
   <div *ngIf="authService.player$ | async as player">
@@ -15,9 +9,6 @@
             <span slot="start">Nickname: {{ player.nickname }}</span>
             <ion-button (click)="startEditMode()" color="secondary">
               <ion-icon name=create></ion-icon>
-            </ion-button>
-            <ion-button (click)="logout()">
-              <ion-icon name=log-out></ion-icon>
             </ion-button>
           </ion-item>
           <ion-item *ngIf="isInEditMode">
