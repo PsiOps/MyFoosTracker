@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Tab1Page } from './tab1.page';
 import { SharedModule } from '../shared/shared.module';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
+import { SearchPipe } from './components/player-select/search/search.pipe';
 
 @NgModule({
   imports: [
@@ -15,7 +16,10 @@ import { PlayerSelectComponent } from './components/player-select/player-select.
     RouterModule.forChild([{ path: '', component: Tab1Page }]),
     SharedModule
   ],
-  declarations: [Tab1Page, PlayerSelectComponent],
+  declarations: [
+    Tab1Page,
+    PlayerSelectComponent,
+    SearchPipe],
   entryComponents: [PlayerSelectComponent]
 })
 export class Tab1PageModule {}
