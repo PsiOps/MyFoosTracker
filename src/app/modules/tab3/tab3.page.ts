@@ -3,7 +3,6 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import { AuthenticationService } from '../../auth/authentication.service';
 import { PlayerStats } from '../../domain';
 import { of, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tab3',
