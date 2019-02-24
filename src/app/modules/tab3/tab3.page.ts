@@ -18,8 +18,6 @@ export class Tab3Page implements OnInit {
 
   ngOnInit(): void {
     this.playerStatsDoc = this.afs.doc(`player-stats/${this.authService.user.uid}`);
-    this.playerStats$ = this.playerStatsDoc.valueChanges().pipe(
-      map((stats) => ({ ...stats, averageMatchDuration: stats.matchDurationMinutesAverage.toFixed(2) })
-      ));
+    this.playerStats$ = this.playerStatsDoc.valueChanges();
   }
 }
