@@ -16,11 +16,11 @@
           <ion-label>Team B</ion-label>
         </ion-segment-button>
       </ion-segment>
-      <!-- <ion-searchbar></ion-searchbar> -->
+      <ion-searchbar [(ngModel)]="terms"></ion-searchbar>
     </div>
     <div scrollY="true" id="scrollList">
       <ion-list>
-        <ion-item *ngFor="let player of players$ | async">
+        <ion-item *ngFor="let player of players$ | async | search : terms">
           <ion-label>{{player.nickname}}</ion-label>
           <ion-checkbox slot="start" mode="ios" [(ngModel)]="player.isSelected" (ionChange)="checkboxChanged(player)"
             [disabled]="player.isOrganizer || ((isTeamFull$ | async) && !player.isSelected)"></ion-checkbox>
