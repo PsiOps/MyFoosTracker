@@ -12,7 +12,9 @@ import { of, Observable } from 'rxjs';
 export class Tab3Page implements OnInit {
   public playerStatsDoc: AngularFirestoreDocument<PlayerStats>;
   public playerStats$: Observable<PlayerStats> = of(null);
-  constructor(private afs: AngularFirestore, private authService: AuthenticationService) {  }
+
+  constructor(private afs: AngularFirestore, private authService: AuthenticationService) { }
+
   ngOnInit(): void {
     this.playerStatsDoc = this.afs.doc(`player-stats/${this.authService.user.uid}`);
     this.playerStats$ = this.playerStatsDoc.valueChanges();
