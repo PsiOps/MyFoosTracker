@@ -15,6 +15,10 @@ export class HeaderComponent {
     private authService: AuthenticationService,
     private router: Router) { }
 
+  public home() {
+    this.router.navigateByUrl('/');
+  }
+
   public logout() {
     this.authService.logout();
     this.router.navigateByUrl('/login');
