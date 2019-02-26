@@ -1,8 +1,15 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="home()" title="Go back to the home page">
+        <img src="/assets/icon/favicon.png" title="MyFoosTracker" height="40">
+      </ion-button>
+    </ion-buttons>
+
     <ion-title>
       {{title}}
     </ion-title>
+
     <ion-buttons slot="end">
       <ion-button (click)="logout()" title="Log out of MyFoosTracker">
         <ion-icon name=log-out></ion-icon>
