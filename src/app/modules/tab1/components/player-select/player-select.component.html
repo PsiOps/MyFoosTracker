@@ -22,8 +22,10 @@
       <ion-list>
         <ion-item *ngFor="let player of players$ | async | search : terms">
           <ion-label>{{player.nickname}}</ion-label>
-          <ion-checkbox slot="start" mode="ios" [(ngModel)]="player.isSelected" (ionChange)="checkboxChanged(player)"
+          <ion-checkbox slot="start" mode="ios" [(ngModel)]="player.isSelected" (ionChange)="playerSelectionChanged(player)"
             [disabled]="player.isOrganizer || ((isTeamFull$ | async) && !player.isSelected)"></ion-checkbox>
+          <ion-toggle slot="end" mode="ios" [(ngModel)]="player.isFavourite" (ionChange)="playerFavouriteChanged(player)"
+            [disabled]="player.isOrganizer"></ion-toggle>
         </ion-item>
       </ion-list>
     </div>
