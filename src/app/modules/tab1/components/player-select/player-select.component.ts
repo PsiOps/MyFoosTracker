@@ -15,7 +15,7 @@ import { PlayerService } from 'src/app/services/player.service';
 })
 export class PlayerSelectComponent implements OnInit {
   public players: AngularFirestoreCollection<Player>;
-  public players$: Observable<any>;
+  public players$: Observable<PlayerSelectModel[]>;
   public selectedTeam: Team = Team.teamA;
   public selectedTeam$: BehaviorSubject<Team>;
   public isTeamFull$: Observable<boolean>;
