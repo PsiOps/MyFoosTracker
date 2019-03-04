@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Player, Team, Match } from '../../../../domain';
 import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { map, withLatestFrom, tap } from 'rxjs/operators';
 import { PlayerSelectModel } from './player-select.model';
 import { ModalController } from '@ionic/angular';
 import { MatchService } from 'src/app/services/match.service';
@@ -90,6 +90,12 @@ export class PlayerSelectComponent implements OnInit {
   }
 
   public playerFavouriteChanged(player: PlayerSelectModel) {
+    if (player.isOrganizer) {
+      return;
+    }
+
+    player.isFavourite = !player.isFavourite;
+
     if (player.isFavourite) {
       this.playerService.addPlayerToFavourites(player.id);
     } else {

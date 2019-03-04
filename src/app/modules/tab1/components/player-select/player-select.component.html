@@ -21,11 +21,13 @@
     <div scrollY="true" id="scrollList">
       <ion-list>
         <ion-item *ngFor="let player of players$ | async | search : terms">
-          <ion-label>{{player.nickname}}</ion-label>
-          <ion-checkbox slot="start" mode="ios" [(ngModel)]="player.isSelected" (ionChange)="playerSelectionChanged(player)"
+          <ion-checkbox slot="start" mode="ios" [(ngModel)]="player.isSelected"
+            (ionChange)="playerSelectionChanged(player)"
             [disabled]="player.isOrganizer || ((isTeamFull$ | async) && !player.isSelected)"></ion-checkbox>
-          <ion-toggle slot="end" mode="ios" [(ngModel)]="player.isFavourite" (ionChange)="playerFavouriteChanged(player)"
-            [disabled]="player.isOrganizer"></ion-toggle>
+          <ion-label>{{player.nickname}}</ion-label>
+          <ion-icon class="favourite" slot="end" [name]="player.isFavourite ? 'star' :'star-outline'"
+            (click)="playerFavouriteChanged(player)">
+          </ion-icon>
         </ion-item>
       </ion-list>
     </div>

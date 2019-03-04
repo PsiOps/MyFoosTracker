@@ -28,3 +28,9 @@ div[scrolly=true] {
     flex-grow:0;
     flex-shrink: 0;
 }
+
+.favourite {
+    color: orange;
+    cursor: pointer;
+    z-index: 2;
+}
