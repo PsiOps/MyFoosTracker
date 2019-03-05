@@ -10,7 +10,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploypwa": "ionic build --prod --service-worker && firebase deploy"
+    "deploypwa": "ionic build --prod --service-worker && firebase deploy --only hosting"
   },
   "private": true,
   "dependencies": {
