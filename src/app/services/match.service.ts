@@ -63,11 +63,11 @@ export class MatchService {
   public async onScoringCancelled() {
     await this.currentMatchDocument.update({ status: 1 });
   }
-  public async addTeamPlayerToMatch(playerId: string, team: Team){
+  public async addTeamPlayerToMatch(playerId: string, team: Team) {
     const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
     await this.onMatchJoined(playerDocRef, team);
   }
-  public async removeTeamPlayerFromMatch(playerId: string){
+  public async removeTeamPlayerFromMatch(playerId: string) {
     const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
     await this.leaveTeam(playerDocRef);
   }
