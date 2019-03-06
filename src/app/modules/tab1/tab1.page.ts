@@ -28,6 +28,9 @@ export class Tab1Page {
     const modal = await this.modalController.create({
       component: PlayerSelectComponent
     });
+    modal.onDidDismiss().then(() => {
+      console.log('Dismissed!');
+    });
     return await modal.present();
   }
   public async startMatch() {
