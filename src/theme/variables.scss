@@ -1,6 +1,13 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/theming/
 
+/** MyFoosTracker Variables **/
+:root {
+  --mft-red-team-color: rgb(221, 11, 11);
+  --mft-blue-team-color: rgb(39, 29, 214);
+  --mft-inactive-color: rgb(218, 223, 232);
+}
+
 /** Ionic CSS Variables **/
 :root {
   /** primary **/

@@ -1,12 +1,13 @@
-.container{
+.container {
     border-radius: 5px;
-    display:flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     color: white;
 }
-.score{
+
+.score {
     width: 10%;
     height: 100px;
     display: flex;
@@ -14,19 +15,8 @@
     justify-content: center;
 
 }
-.scoreTeamA{
-    background-color: rgb(238, 206, 184);
-    border-top-right-radius: 0.7rem;
-    border-bottom-right-radius: 0.7rem;
-    border-left: 1px solid white;
-}
-.scoreTeamB{
-    background-color: rgb(195, 195, 245);
-    border-top-left-radius: 0.7rem;
-    border-bottom-left-radius: 0.7rem;
-    border-right: 1px solid white;
-}
-.separator{
+
+.separator {
     flex: 0 1 auto;
     width: 6%;
     height: 100px;
@@ -34,8 +24,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: blue;
+    color: var(--ion-color-primary);
 }
+
 .teamContainer {
     flex: 0 1 auto;
     width: 37%;
@@ -45,7 +36,8 @@
     align-items: center;
     justify-content: center;
 }
-.player{
+
+.player {
     flex: 0 1 auto;
     height: 50%;
     width: 100%;
@@ -54,37 +46,72 @@
     align-items: center;
     justify-content: center;
 }
-.teamAPlayer1{
-    background-color: rgb(201, 162, 148);
+
+.teamAPlayer1,
+.teamAPlayer2,
+.teamBPlayer1,
+.teamBPlayer2 {
+    background-color: var(--mft-inactive-color);
+}
+
+.scoreTeamA,
+.teamAPlayer1.active,
+.teamAPlayer2.active {
+    background-color: var(--mft-red-team-color);
+}
+
+.scoreTeamB,
+.teamBPlayer1.active,
+.teamBPlayer2.active {
+    background-color: var(--mft-blue-team-color);
+}
+
+.scoreTeamA {
+    border-top-right-radius: 0.7rem;
+    border-bottom-right-radius: 0.7rem;
+    border-left: 1px solid white;
+}
+
+.scoreTeamB {
+    border-top-left-radius: 0.7rem;
+    border-bottom-left-radius: 0.7rem;
+    border-right: 1px solid white;
+}
+
+.teamAPlayer1 {
     border-top-left-radius: 0.7rem;
     border-bottom: 1px solid white;
 }
-.teamAPlayer2{
-    background-color: rgb(158, 129, 102);
+
+.teamAPlayer2 {
     border-bottom-left-radius: 0.7rem;
 }
-.teamBPlayer1{
-    background-color: rgb(103, 103, 148);
+
+.teamBPlayer1 {
     border-top-right-radius: 0.7rem;
     border-bottom: 1px solid white;
 }
-.teamBPlayer2{
-    background-color: rgb(166, 201, 212);
+
+.teamBPlayer2 {
     border-bottom-right-radius: 0.7rem;
 }
-.edit{
+
+.edit {
     display: flex;
     flex-direction: column;
 }
-.inputs{
+
+.inputs {
     display: flex;
     align-items: center;
     justify-content: space-around;
 }
-.score-input{
+
+.score-input {
     width: 40%;
 }
-.buttons{
+
+.buttons {
     display: flex;
     align-items: center;
     justify-content: space-around;

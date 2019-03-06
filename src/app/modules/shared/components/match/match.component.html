@@ -1,6 +1,6 @@
 <div class="container">
   <div class="teamContainer">
-    <div class="teamAPlayer1 player">
+    <div class="teamAPlayer1 player" [ngClass]="teamAPlayer1 ? 'active' : 'inactive'">
       <div *ngIf="teamAPlayer1">
         {{teamAPlayer1?.nickname}}
       </div>
@@ -10,7 +10,7 @@
         </ion-fab-button>
       </div>
     </div>
-    <div class="teamAPlayer2 player">
+    <div class="teamAPlayer2 player" [ngClass]="teamAPlayer2 ? 'active' : 'inactive'">
       <div *ngIf="teamAPlayer2">
         {{teamAPlayer2?.nickname}}
       </div>
@@ -27,7 +27,7 @@
   </div>
   <div class="score scoreTeamB">{{match.goalsTeamB}}</div>
   <div class="teamContainer">
-    <div class="teamBPlayer1 player">
+    <div class="teamBPlayer1 player" [ngClass]="teamBPlayer1 ? 'active' : 'inactive'">
       <div *ngIf="teamBPlayer1">
         {{teamBPlayer1?.nickname}}
       </div>
@@ -37,7 +37,7 @@
         </ion-fab-button>
       </div>
     </div>
-    <div class="teamBPlayer2 player">
+    <div class="teamBPlayer2 player" [ngClass]="teamBPlayer2 ? 'active' : 'inactive'">
       <div *ngIf="teamBPlayer2">
         {{teamBPlayer2?.nickname}}
       </div>
