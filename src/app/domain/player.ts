@@ -5,4 +5,5 @@ export class Player {
     lastLogin: Date;
     defaultTableRef: DocumentReference;
     playerSince: Date;
+    favouritePlayerIds: string[] = [];
 }

@@ -35,7 +35,7 @@
             (scoringCancelled)="onScoringCancelled()" (matchJoined)="onMatchJoined($event)"></app-match>
           <div *ngIf="currentMatch.organizer === authService.user.uid">
             <div *ngIf="currentMatch.status === 0">
-              <div text-center>Waiting for other players to join...</div>
+              <div text-center class="waiting">Waiting for other players to join<span>.</span><span>.</span><span>.</span></div>
               <div class="buttonContainer">
                 <ion-button (click)="addPlayers()">
                   Add players
