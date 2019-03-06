@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../../auth/authentication.service';
-import { Router } from '@angular/router';
 import { Team, Player } from '../../domain';
 import { ToastController } from '@ionic/angular';
 import { MatchService } from '../../services/match.service';
@@ -15,7 +14,9 @@ import { PlayerSelectComponent } from './components/player-select/player-select.
 export class Tab1Page {
   public isInEditMode = false;
   public gamePin?: number = null;
-  constructor(public authService: AuthenticationService,
+
+  constructor(
+    public authService: AuthenticationService,
     private matchService: MatchService,
     private toastController: ToastController,
     private modalController: ModalController) {
@@ -24,6 +25,7 @@ export class Tab1Page {
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);
   }
+
   public async addPlayers() {
     const modal = await this.modalController.create({
       component: PlayerSelectComponent
@@ -33,36 +35,47 @@ export class Tab1Page {
     });
     return await modal.present();
   }
+
   public async startMatch() {
     await this.matchService.startMatch();
   }
+
   public async cancelMatch() {
     await this.matchService.cancelMatch();
   }
+
   public async finishMatch() {
     await this.matchService.finishMatch();
   }
+
   public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
     await this.matchService.onScored($event);
   }
+
   public async onScoringCancelled() {
     await this.matchService.onScoringCancelled();
   }
+
   public async onMatchJoined($event: Team) {
     await this.matchService.onMatchJoined(this.authService.playerDoc.ref, $event);
   }
+
   public async leaveTeam() {
     await this.matchService.leaveMatch(this.authService.playerDoc.ref);
   }
+
   public async leaveMatch() {
     await this.matchService.leaveMatch(this.authService.playerDoc.ref);
   }
+
   public async dismissMatch() {
     await this.matchService.dismissMatch();
   }
+
   public startEditMode(): void {
     this.isInEditMode = true;
   }
+
   public async findMatchToJoin() {
     if (!this.gamePin) { return; }
     await this.matchService.findMatchToJoin(this.gamePin, async () => {

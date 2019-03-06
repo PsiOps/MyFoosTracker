@@ -1,22 +1,56 @@
-.nick-input{
+.nick-input {
   --background: aliceblue;
   --color: darkblue;
   border-radius: 5px;
 }
-.pin-input-container{
+
+.pin-input-container {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.pin-input{
+
+.pin-input {
   --background: aliceblue;
   --color: darkblue;
   border-radius: 5px;
-  
+
   text-align: center;
   flex: 0 1 auto;
 }
-.buttonContainer{
-  display:flex;
+
+.buttonContainer {
+  display: flex;
   justify-content: space-around;
+}
+
+@keyframes blink {
+  0% {
+    opacity: .2;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: .2;
+  }
+}
+
+.waiting {
+  span {
+    animation-name: blink;
+    animation-duration: 1.4s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+  }
+
+  span:nth-child(2) {
+    animation-delay: .2s;
+  }
+
+  span:nth-child(3) {
+    animation-delay: .4s;
+  }
 }

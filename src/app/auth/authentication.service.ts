@@ -13,7 +13,11 @@ export class AuthenticationService {
   public user$: Observable<firebase.User> = this.afAuth.authState;
   public playerDoc: AngularFirestoreDocument<Player>;
   public player$: Observable<Player> = of(null);
-  constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore) {
+
+  constructor(
+    private afAuth: AngularFireAuth,
+    private afs: AngularFirestore
+  ) {
 
     this.user$.subscribe(u => {
       if (!u) {
@@ -33,6 +37,7 @@ export class AuthenticationService {
         player.nickname = 'Player1';
         player.playerSince = now;
         player.lastLogin = now;
+        player.favouritePlayerIds = [];
         this.playerDoc.set(Object.assign({}, player));
       });
     });
@@ -46,6 +51,7 @@ export class AuthenticationService {
   login() {
     this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
   }
+
   logout() {
     this.user = null;
     this.playerDoc = null;
