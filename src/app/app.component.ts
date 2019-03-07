@@ -35,6 +35,7 @@ export class AppComponent implements OnInit {
     this.authenticationService.user$
       .pipe(filter(user => !!user)) // filter null
       .pipe(switchMap(u => this.authenticationService.playerDoc.valueChanges()))
+      .pipe(take(1))
       .subscribe(player => {
         if (player) {
           this.messagingService.requestPermission(player);
