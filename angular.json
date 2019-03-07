@@ -30,7 +30,8 @@
                 "input": "node_modules/ionicons/dist/ionicons/svg",
                 "output": "./svg"
               },
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               {
@@ -113,7 +114,8 @@
                 "input": "src/assets",
                 "output": "/assets"
               },
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/firebase-messaging-sw.js"
             ]
           },
           "configurations": {

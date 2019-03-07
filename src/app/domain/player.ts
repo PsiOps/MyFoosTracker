@@ -6,4 +6,5 @@ export class Player {
     defaultTableRef: DocumentReference;
     playerSince: Date;
     favouritePlayerIds: string[] = [];
+    fcmTokens?: { [token: string]: boolean };
 }
