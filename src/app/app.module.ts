@@ -23,7 +23,7 @@ import { UpdateService } from './services/update-service';
   entryComponents: [],
   imports: [
     BrowserModule, IonicModule.forRoot(), AppRoutingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     AngularFireModule.initializeApp({
       apiKey: 'AIzaSyCw7oNQZj17ABRMiG925TOl5TOsHnrx3XE',
       authDomain: 'myfoostracker.firebaseapp.com',

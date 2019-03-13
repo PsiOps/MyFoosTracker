@@ -7,15 +7,14 @@ import { UpdateService } from './services/update-service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['./app.component.scss']
+  templateUrl: 'app.component.html'
 })
 export class AppComponent {
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private update: UpdateService
+    private updateService: UpdateService
   ) {
     this.initializeApp();
   }
