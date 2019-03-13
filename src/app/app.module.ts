@@ -14,6 +14,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { UpdateService } from './services/update-service';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { AngularFireFunctionsModule } from '@angular/fire/functions';
   entryComponents: [],
   imports: [
     BrowserModule, IonicModule.forRoot(), AppRoutingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
     AngularFireModule.initializeApp({
       apiKey: 'AIzaSyCw7oNQZj17ABRMiG925TOl5TOsHnrx3XE',
       authDomain: 'myfoostracker.firebaseapp.com',
@@ -38,6 +39,7 @@ import { AngularFireFunctionsModule } from '@angular/fire/functions';
   providers: [
     StatusBar,
     SplashScreen,
+    UpdateService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
