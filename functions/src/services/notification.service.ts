@@ -10,7 +10,7 @@ export class NotificationService{
         if (!match) { return { message: 'Unable to send invites: Match not found' }; }
         let sentIds = '';
         const organizer = (await this.firestore.doc(`players/${match.organizer}`).get()).data() as Player;
-        for(const inviteeId in match.participants.filter(p => !match.organizer)){
+        for(const inviteeId of match.participants.filter(p => !match.organizer)){
             const participant = (await this.firestore.doc(`players/${inviteeId}`).get()).data() as Player;
             if(!participant.fcmTokens) continue;
             const payload: admin.messaging.MessagingPayload = {
@@ -21,6 +21,7 @@ export class NotificationService{
                 }
             };    
             for(const token in participant.fcmTokens){
+                console.log(`Sending invitation to ${participant.nickname} with token ${token}`, participant);
                 await this.messaging.sendToDevice(token, payload);
                 sentIds += inviteeId;
             }        
