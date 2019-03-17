@@ -5,11 +5,16 @@ import * as functions from 'firebase-functions';
 import { StatsUpdateService } from './services/stats-update.service';
 import { StatsRecalcService } from './services/stats-recalc.service';
 import { Player } from './domain/player';
+import { NotificationService } from './services/notification.service';
 
 const statsUpdateService = new StatsUpdateService(firestore);
 
 export const updatePlayerStats = functions.https.onCall(async (data, context) => {
     return await statsUpdateService.updateStatsForMatch(data.matchPath);
+});
+export const sendMatchInvitations = functions.https.onCall(async (data, context) => {
+    const notificationService = new NotificationService(admin.messaging(), firestore);
+    return await notificationService.sendMatchInvites(data.matchPath);
 });
 export const recalculatePlayerStats = functions.https.onRequest(async (req, res) => {
     console.log('Starting recalculation');

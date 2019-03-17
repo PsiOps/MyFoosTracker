@@ -42,6 +42,6 @@ export class AppComponent implements OnInit {
           this.messagingService.monitorTokenRefresh(player);
           this.messagingService.receiveMessages();
         }
-      })
+      });
   }
 }
