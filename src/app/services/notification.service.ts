@@ -16,6 +16,6 @@ export class NotificationService {
   public async sendInvites(): Promise<void> {
     const matchPath = this.matchService.currentMatchDocument.ref.path;
     const updateStatsPayload = { matchPath: matchPath, config: {} };
-    await this.fns.httpsCallable('updatePlayerStats')(updateStatsPayload).toPromise();
+    await this.fns.httpsCallable('sendMatchInvitations')(updateStatsPayload).toPromise();
   }
 }
