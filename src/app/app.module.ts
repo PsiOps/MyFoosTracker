@@ -14,6 +14,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { AngularFireMessagingModule } from '@angular/fire/messaging';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { AngularFireFunctionsModule } from '@angular/fire/functions';
     }),
     AngularFireAuthModule,
     AngularFireFunctionsModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    AngularFireMessagingModule
   ],
   providers: [
     StatusBar,

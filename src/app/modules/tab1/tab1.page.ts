@@ -5,6 +5,7 @@ import { ToastController } from '@ionic/angular';
 import { MatchService } from '../../services/match.service';
 import { ModalController } from '@ionic/angular';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-tab1',
@@ -19,7 +20,8 @@ export class Tab1Page {
     public authService: AuthenticationService,
     private matchService: MatchService,
     private toastController: ToastController,
-    private modalController: ModalController) {
+    private modalController: ModalController,
+    private notificationService: NotificationService) {
     this.matchService.findCurrentMatch();
   }
   public async createMatch(player: Player) {
@@ -29,6 +31,10 @@ export class Tab1Page {
   public async addPlayers() {
     const modal = await this.modalController.create({
       component: PlayerSelectComponent
+    });
+    modal.onDidDismiss().then(async () => {
+      console.log('Sending invites');
+      await this.notificationService.sendInvites();
     });
     return await modal.present();
   }
@@ -46,15 +52,15 @@ export class Tab1Page {
   }
 
   public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
-    await this.matchService.onScored($event);
+    await this.matchService.saveScoreAndUpdateStats($event);
   }
 
   public async onScoringCancelled() {
-    await this.matchService.onScoringCancelled();
+    await this.matchService.reopenMatch();
   }
 
   public async onMatchJoined($event: Team) {
-    await this.matchService.onMatchJoined(this.authService.playerDoc.ref, $event);
+    await this.matchService.addPlayerToTeam(this.authService.playerDoc.ref, $event);
   }
 
   public async leaveTeam() {
