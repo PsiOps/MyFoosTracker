@@ -50,7 +50,7 @@ export class MatchService {
   public async finishMatch() {
     await this.currentMatchDocument.update({ status: 2 });
   }
-  public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
+  public async saveScoreAndUpdateStats($event: { goalsTeamA: number, goalsTeamB: number }) {
     await this.currentMatchDocument.update({
       dateTimeEnd: new Date(),
       status: 3,
@@ -60,18 +60,18 @@ export class MatchService {
     this.statsService.updateStats(this.currentMatchDocument.ref.path);
     this.clearMatch();
   }
-  public async onScoringCancelled() {
+  public async reopenMatch() {
     await this.currentMatchDocument.update({ status: 1 });
   }
   public async addTeamPlayerToMatch(playerId: string, team: Team) {
     const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
-    await this.onMatchJoined(playerDocRef, team);
+    await this.addPlayerToTeam(playerDocRef, team);
   }
   public async removeTeamPlayerFromMatch(playerId: string) {
     const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
     await this.leaveTeam(playerDocRef);
   }
-  public async onMatchJoined(playerDocRef: DocumentReference, team: Team) {
+  public async addPlayerToTeam(playerDocRef: DocumentReference, team: Team) {
     const teamPlayer = { playerRef: playerDocRef, goals: 0 };
     let payload: firestore.UpdateData;
     if (team === Team.teamA) {

@@ -15,6 +15,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { UpdateService } from './services/update-service';
+import { AngularFireMessagingModule } from '@angular/fire/messaging';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { UpdateService } from './services/update-service';
     }),
     AngularFireAuthModule,
     AngularFireFunctionsModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    AngularFireMessagingModule
   ],
   providers: [
     StatusBar,
