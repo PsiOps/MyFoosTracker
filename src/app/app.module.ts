@@ -14,6 +14,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { UpdateService } from './services/update-service';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 
 @NgModule({
@@ -40,6 +41,7 @@ import { AngularFireMessagingModule } from '@angular/fire/messaging';
   providers: [
     StatusBar,
     SplashScreen,
+    UpdateService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

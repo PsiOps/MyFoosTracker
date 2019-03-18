@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { UpdateService } from './services/update-service';
 import { MessagingService } from './services/messaging.service';
 import { AuthenticationService } from './auth/authentication.service';
 import { filter, take, switchMap } from 'rxjs/operators';
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
+    private updateService: UpdateService,
     private authenticationService: AuthenticationService,
     private messagingService: MessagingService
   ) {
