@@ -116,10 +116,12 @@ export class PlayerSelectComponent implements OnInit {
     const aScore = (a.isOrganizer ? 1 : 0) + (a.isSelected ? 1 : 0) + (a.isFavourite ? 1 : 0);
     const bScore = (b.isOrganizer ? 1 : 0) + (b.isSelected ? 1 : 0) + (b.isFavourite ? 1 : 0);
 
-    return bScore === aScore ?
-      (b.nickname <= a.nickname ? 1 : 0) :
-      bScore - aScore;
-  }
+    if (aScore < bScore) { return 1; }
+    if (aScore > bScore) { return -1; }
+    if (a.nickname < b.nickname) { return -1; }
+    if (a.nickname > b.nickname) { return 1; }
+    return 0;
+}
 
   private isNotInOtherTeam(player: PlayerSelectModel, team: Team, match: Match): boolean {
     return team === Team.teamA ? match.teamB.map(p => p.playerRef.id).indexOf(player.id) === -1
