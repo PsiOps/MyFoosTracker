@@ -6,14 +6,24 @@ export class StatsUpdateService {
     public async updateStatsForMatch(matchPath: string): Promise<{ message: string }> {
         const match = (await this.firestore.doc(matchPath).get()).data() as Match;
         if (!match) { return { message: 'Unable to update statistics: Match not found' }; }
-        const winningTeam = match.goalsTeamA === match.goalsTeamB ? Team.none : (match.goalsTeamA > match.goalsTeamB ? Team.teamA : Team.teamB);
-        const diffMs = match.dateTimeEnd.valueOf() - match.dateTimeStart.valueOf();
-        const matchDurationMinutes = Math.floor((diffMs / 1000) / 60);
-        match.teamA.forEach((tm: { playerRef: { id: string } }) => this.updateStatsForPlayer(tm.playerRef.id, Team.teamA, winningTeam, matchDurationMinutes, match));
-        match.teamB.forEach((tm: { playerRef: { id: string } }) => this.updateStatsForPlayer(tm.playerRef.id, Team.teamB, winningTeam, matchDurationMinutes, match));
+        match.participants.forEach(async playerId => {
+            const playerStatsDocRef = this.firestore.doc(`player-stats/${playerId}`);
+            await this.firestore.runTransaction(async transaction => {
+                const doc = await transaction.get(playerStatsDocRef);
+                const currentStats = doc.data() as PlayerStats;
+                if (!currentStats) {
+                    const newStats = new PlayerStats();
+                    this.updatePlayerStats(match, playerId, newStats);
+                    transaction.set(playerStatsDocRef, Object.assign({}, newStats))
+                    return;
+                }
+                this.updatePlayerStats(match, playerId, currentStats);
+                transaction.update(playerStatsDocRef, Object.assign({}, currentStats))
+            });
+        });
         return { message: 'Succes' }
-
     }
+
     public updatePlayerStats(match: Match, playerId: string, playerStats: PlayerStats) {
         const winningTeam = match.goalsTeamA === match.goalsTeamB ? Team.none : (match.goalsTeamA > match.goalsTeamB ? Team.teamA : Team.teamB);
         const diffMs = match.dateTimeEnd.valueOf() - match.dateTimeStart.valueOf();
@@ -28,38 +38,20 @@ export class StatsUpdateService {
         const matchesTiedIncrement = isTie ? 1 : 0;
         const matchesOrganizedIncrement = isOrganizer ? 1 : 0;
         const teamGoalsScoredIncrement = playerTeam === Team.teamA ? match.goalsTeamA : match.goalsTeamB;
+        const teamMateId = playerTeam === Team.teamA ? this.getTeamMateId(playerId, match.teamA) 
+            : this.getTeamMateId(playerId, match.teamB)
+        const teamMateDocRef = this.firestore.doc(`players/${teamMateId}`);
         this.incrementBasicStats(playerStats, matchesWonIncrement, matchesLostIncrement, matchesTiedIncrement,
             matchesOrganizedIncrement, teamGoalsScoredIncrement, matchDurationMinutes);
         this.updateCalculatedStats(playerStats);
+        this.updateTeamMateStatistics(playerStats, teamMateDocRef, matchesWonIncrement, matchesLostIncrement);
     }
-    private async updateStatsForPlayer(playerId: string, playerTeam: Team, winningTeam: Team, minutesPlayedIncrement: number, match: Match) {
-        const docRef = this.firestore.doc(`player-stats/${playerId}`);
-        const isWinner = playerTeam === winningTeam;
-        const isTie = winningTeam === Team.none;
-        const isOrganizer = playerId === match.organizer;
-        const matchesWonIncrement = isWinner ? 1 : 0;
-        const matchesLostIncrement = isWinner ? 0 : (isTie ? 0 : 1);
-        const matchesTiedIncrement = isTie ? 1 : 0;
-        const matchesOrganizedIncrement = isOrganizer ? 1 : 0;
-        const teamGoalsScoredIncrement = playerTeam === Team.teamA ? match.goalsTeamA : match.goalsTeamB;
 
-        await this.firestore.runTransaction(async transaction => {
-            const doc = await transaction.get(docRef);
-            const currentStats = doc.data() as PlayerStats;
-            if (!currentStats) {
-                const newStats = new PlayerStats();
-                this.incrementBasicStats(newStats, matchesWonIncrement, matchesLostIncrement, matchesTiedIncrement,
-                    matchesOrganizedIncrement, teamGoalsScoredIncrement, minutesPlayedIncrement);
-                this.updateCalculatedStats(newStats);
-                transaction.set(docRef, Object.assign({}, newStats))
-                return;
-            }
-            this.incrementBasicStats(currentStats, matchesWonIncrement, matchesLostIncrement, matchesTiedIncrement,
-                matchesOrganizedIncrement, teamGoalsScoredIncrement, minutesPlayedIncrement);
-            this.updateCalculatedStats(currentStats);
-            transaction.update(docRef, Object.assign({}, currentStats))
-        });
+    private getTeamMateId(playerId: string, team: {playerRef: FirebaseFirestore.DocumentReference}[]): string {
+        const teamPlayerIds = team.map(p => p.playerRef.id)
+        return teamPlayerIds.find(id => id !== playerId);
     }
+
     private incrementBasicStats(playerStats: PlayerStats, matchesWonInc: number, matchesLostInc: number, matchesTiedInc: number,
         matchesOrgInc: number, teamGoalsScoredInc: number, matchDurationInc: number) {
         playerStats.matchesWonCount = playerStats.matchesWonCount + matchesWonInc;
@@ -69,13 +61,21 @@ export class StatsUpdateService {
         playerStats.teamGoalsScoredCount = playerStats.teamGoalsScoredCount + teamGoalsScoredInc;
         playerStats.minutesPlayedCount = playerStats.minutesPlayedCount + matchDurationInc;
     }
+
     private updateCalculatedStats(playerStats: PlayerStats): void {
         playerStats.matchDurationMinutesAverage = playerStats.minutesPlayedCount / (playerStats.matchesWonCount + playerStats.matchesLostCount);
     }
-    // const updateComplexStats = (playerStats: PlayerStats, isWinner: boolean, team: Team, match: Match): void => {
-    //     const winInc = isWinner ? x
-    //     const tableStat = playerStats.tableMatchStats[match.tableRef.id]  as IStat;
-    //     if(tableStat) { tableStat.matchesWonCount = }
-    // }
 
+    private updateTeamMateStatistics(
+        playerStats: PlayerStats, 
+        teamMateDocRef: FirebaseFirestore.DocumentReference, 
+        matchesWonInc: number, 
+        matchesLostInc: number){
+            let existingTeammateStats = playerStats.teamMateMatchStats.find(st => st.teamMateRef.id === teamMateDocRef.id);
+            if(!existingTeammateStats){
+                existingTeammateStats = { teamMateRef: teamMateDocRef, matchesWonCount: 0, matchesLostCount: 0}
+            }
+            existingTeammateStats.matchesWonCount += matchesWonInc;
+            existingTeammateStats.matchesLostCount += matchesLostInc;
+    }
 }
