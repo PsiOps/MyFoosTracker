@@ -71,11 +71,12 @@ export class StatsUpdateService {
         teamMateDocRef: FirebaseFirestore.DocumentReference, 
         matchesWonInc: number, 
         matchesLostInc: number){
-            let existingTeammateStats = playerStats.teamMateMatchStats.find(st => st.teamMateRef.id === teamMateDocRef.id);
-            if(!existingTeammateStats){
-                existingTeammateStats = { teamMateRef: teamMateDocRef, matchesWonCount: 0, matchesLostCount: 0}
+            let teammateStats = playerStats.teamMateMatchStats.find(st => st.teamMateRef.id === teamMateDocRef.id);
+            if(!teammateStats){
+                teammateStats = { teamMateRef: teamMateDocRef, matchesWonCount: 0, matchesLostCount: 0}
+                playerStats.teamMateMatchStats.push(teammateStats)
             }
-            existingTeammateStats.matchesWonCount += matchesWonInc;
-            existingTeammateStats.matchesLostCount += matchesLostInc;
+            teammateStats.matchesWonCount += matchesWonInc;
+            teammateStats.matchesLostCount += matchesLostInc;
     }
 }
