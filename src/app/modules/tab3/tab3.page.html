@@ -23,11 +23,8 @@
         <ion-card>
           <ion-card-content>
             <ion-list lines="none">
-              <ion-item *ngFor="let stat of teamMateStats$ | async">
-                {{stat.rank}}. {{stat.name$ | async}}
-                <span class="statDetail"><span class="good">{{stat.stats.matchesWonCount}}</span> -
-                  <span class="bad">{{stat.stats.matchesLostCount}}</span>
-                </span>
+              <ion-item *ngFor="let item of teamMateStats$ | async">
+                {{item.rank}}. {{item.name$ | async}}
               </ion-item>
             </ion-list>
             <div class="label centered">Best partners</div>

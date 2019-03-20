@@ -13,7 +13,7 @@ import { map, tap } from 'rxjs/operators';
 export class Tab3Page implements OnInit {
   public playerStatsDoc: AngularFirestoreDocument<PlayerStats>;
   public playerStats$: Observable<PlayerStats> = of(null);
-  public teamMateStats$: Observable<{rank: number, name$: Promise<string>, stats: TeamMateStat}[]> = of([]);
+  public teamMateStats$: Observable<{rank: number, name$: Promise<string>}[]> = of([]);
 
   constructor(private afs: AngularFirestore, private authService: AuthenticationService) { }
 
@@ -36,10 +36,10 @@ export class Tab3Page implements OnInit {
       : bRatio - aRatio;
   }
 
-  private getRankEntry(teamMateStat: TeamMateStat, index: number): {rank: number, name$: Promise<string>, stats: TeamMateStat} {
+  private getRankEntry(teamMateStat: TeamMateStat, index: number): {rank: number, name$: Promise<string>} {
     const namePromise = teamMateStat.teamMateRef.get()
       .then(doc => (doc.data() as Player).nickname);
-    return {rank: index + 1, name$: namePromise, stats: teamMateStat};
+    return { rank: index + 1, name$: namePromise };
   }
 }
 
