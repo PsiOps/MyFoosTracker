@@ -8,6 +8,13 @@ export class PlayerStats {
     public matchDurationMinutesAverage = 0;
     public teamGoalsScoredCount = 0;
     public tableMatchStats: { tableRef: admin.firestore.DocumentReference, matchesWonCount: number, matchesLostCount: number }[] = [];
-    public teamMateMatchStats: { teamMateRef: admin.firestore.DocumentReference, matchesWonCount: number, matchesLostCount: number }[] = [];
+    public teamMateMatchStats: TeamMateStat[] = [];
     public opponentTeamMatchStats: { opponentTeamRefs: admin.firestore.DocumentReference[], matchesWonCount: number, matchesLostCount: number }[] = [];
 }
+
+export interface TeamMateStat {
+    teamMateRef: admin.firestore.DocumentReference;
+    matchesWonCount: number;
+    matchesLostCount: number;
+}
+

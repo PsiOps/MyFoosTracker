@@ -9,6 +9,12 @@ export class PlayerStats {
     public matchDurationMinutesAverage = 0;
     public teamGoalsScoredCount = 0;
     public tableMatchStats: { tableRef: DocumentReference, matchesWonCount: number, matchesLostCount: number }[] = [];
-    public teamMateMatchStats: { teamMateRef: DocumentReference, matchesWonCount: number, matchesLostCount: number }[] = [];
+    public teamMateMatchStats: TeamMateStat[] = [];
     public opponentTeamMatchStats: { opponentTeamRefs: DocumentReference[], matchesWonCount: number, matchesLostCount: number }[] = [];
+}
+
+export interface TeamMateStat {
+    teamMateRef: DocumentReference;
+    matchesWonCount: number;
+    matchesLostCount: number;
 }
