@@ -23,9 +23,12 @@
         <ion-card>
           <ion-card-content>
             <ion-list lines="none">
-              <ion-item>1. Me</ion-item>
-              <ion-item>2. Myself</ion-item>
-              <ion-item>3. I</ion-item>
+              <ion-item *ngFor="let stat of teamMateStats$ | async">
+                {{stat.rank}}. {{stat.name$ | async}}
+                <span class="statDetail"><span class="good">{{stat.stats.matchesWonCount}}</span> -
+                  <span class="bad">{{stat.stats.matchesLostCount}}</span>
+                </span>
+              </ion-item>
             </ion-list>
             <div class="label centered">Best partners</div>
           </ion-card-content>
@@ -33,11 +36,13 @@
       </ion-col>
       <ion-col width-50>
         <ion-card>
-          <ion-card-content class="matchCounts">
-            <div class="countContainer">
-              <div class="count">2</div>
-              <div class="label">Bloe</div>
-            </div>
+          <ion-card-content>
+            <ion-list lines="none">
+              <ion-item>1. ycoming soon</ion-item>
+              <ion-item>2. coming soon</ion-item>
+              <ion-item>3. coming soon</ion-item>
+            </ion-list>
+            <div class="label centered">Deadliest opponents</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
