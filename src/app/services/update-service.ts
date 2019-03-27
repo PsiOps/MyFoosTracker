@@ -19,13 +19,13 @@ export class UpdateService {
         this.check();
     }
 
-    private async check(): Promise<void> {
+    private check(): void {
         if (!this.swUpdate.isEnabled) {
             console.log('PWA update available check is disabled...');
 
             return;
         }
 
-        await this.swUpdate.activateUpdate();
+        this.swUpdate.activateUpdate();
     }
 }
