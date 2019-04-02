@@ -23,6 +23,7 @@ export class Tab1Page {
     private modalController: ModalController,
     private notificationService: NotificationService) {
     this.matchService.findCurrentMatch();
+    this.matchService.findMatchesOnWatchedTables();
   }
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);

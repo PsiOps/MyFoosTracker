@@ -6,5 +6,6 @@ export class Player {
     defaultTableRef: DocumentReference;
     playerSince: Date;
     favouritePlayerIds: string[] = [];
+    watchingTableIds: string[] = [];
     fcmTokens?: { [token: string]: boolean };
 }

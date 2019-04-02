@@ -35,7 +35,8 @@
             (scoringCancelled)="onScoringCancelled()" (matchJoined)="onMatchJoined($event)"></app-match>
           <div *ngIf="currentMatch.organizer === authService.user.uid">
             <div *ngIf="currentMatch.status === 0">
-              <div text-center class="waiting">Waiting for other players to join<span>.</span><span>.</span><span>.</span></div>
+              <div text-center class="waiting">Waiting for other players to
+                join<span>.</span><span>.</span><span>.</span></div>
               <div class="buttonContainer">
                 <ion-button (click)="addPlayers()">
                   Add players
@@ -85,6 +86,14 @@
           Join a match
         </ion-button>
       </div>
+    </div>
+    <div *ngIf="matchService.matchesOfWatchedTables$ | async as currentMatches">
+      <div text-center >Current Matches</div>
+      <ion-list lines="none">
+        <div class="match" *ngFor="let match of currentMatches">
+          <app-match [match]="match"></app-match>
+        </div>
+      </ion-list>
     </div>
   </div>
 </ion-content>

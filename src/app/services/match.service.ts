@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Match, MatchStatus, Team } from '../domain/match';
-import { AngularFirestoreDocument, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
+import { AngularFirestoreDocument, AngularFirestore, DocumentReference, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
 import { AuthenticationService } from '../auth/authentication.service';
 import { StatsService } from './stats.service';
 import { firestore } from 'firebase/app';
+import { map, flatMap, switchAll } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ import { firestore } from 'firebase/app';
 export class MatchService {
   public currentMatch$: Observable<Match>;
   public currentMatchDocument: AngularFirestoreDocument<Match>;
+  public matchesOfWatchedTables$: Observable<Match[]>;
 
   constructor(private authService: AuthenticationService,
     private statsService: StatsService,
@@ -30,6 +32,21 @@ export class MatchService {
       this.currentMatch$ = this.currentMatchDocument.valueChanges();
     });
   }
+
+  public findMatchesOnWatchedTables(): void {
+    this.matchesOfWatchedTables$ = this.authService.playerDoc.valueChanges()
+      .pipe(map(p => p.watchingTableIds.map(tId => {
+        const tableRef = this.afs.doc(`foosball-tables/${tId}`).ref;
+        const currentTableMatchCollection = this.afs.collection<Match>('matches',
+          ref => ref
+            .where('status', '==', MatchStatus.started)
+            .where('tableRef', '==', tableRef).limit(1));
+        return currentTableMatchCollection;
+      })))
+      .pipe(flatMap(cs => cs.map(c => c.valueChanges())))
+      .pipe(switchAll());
+  }
+
   public async createMatch(player: Player) {
     const match = new Match();
     match.tableRef = player.defaultTableRef;
