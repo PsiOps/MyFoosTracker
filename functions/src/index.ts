@@ -9,12 +9,11 @@ import { NotificationService } from './services/notification.service';
 
 const statsUpdateService = new StatsUpdateService(firestore);
 
-const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
-    docs.forEach(doc => {
-        doc.ref.update(updateObject).catch(err => console.log(err));
-    })
-}
-
+// const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
+//     docs.forEach(doc => {
+//         doc.ref.update(updateObject).catch(err => console.log(err));
+//     })
+// }
 export const updatePlayerStats = functions.https.onCall(async (data, context) => {
     return await statsUpdateService.updateStatsForMatch(data.matchPath);
 });
@@ -40,6 +39,16 @@ export const updateData = functions.https.onRequest(async (req, res) => {
     // const matchDocs = await firestore.collection('matches').get();
     // updateDocs(matchDocs, {tableRef: firestore.doc(`foosball-tables/HvPz1XQMtOGAxw0pq1dq`)})
     res.send('done');
+});
+export const removeBadData = functions.https.onRequest(async (req, res) => {
+    const nonMatchDocs = await firestore.collection('matches')
+        .where('goalsTeamA', '==', 0)
+        .where('goalsTeamB', '==', 0)
+        .get();
+    nonMatchDocs.forEach(doc => {
+        doc.ref.delete().catch(err => console.log(err));
+    })
+    res.send('removed ' + nonMatchDocs.size);
 });
 export const testNotifications = functions.https.onRequest(async (req, res) => {
     const testPlayer = (await firestore.doc(`players/SrjvBNMltdRZ2jQsV8bd6kpwIm53`).get()).data() as Player;
