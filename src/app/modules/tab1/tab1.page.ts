@@ -6,6 +6,7 @@ import { MatchService } from '../../services/match.service';
 import { ModalController } from '@ionic/angular';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { NotificationService } from '../../services/notification.service';
+import { of, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
@@ -15,6 +16,7 @@ import { NotificationService } from '../../services/notification.service';
 export class Tab1Page {
   public isInEditMode = false;
   public gamePin?: number = null;
+  public player$: Observable<Player>;
 
   constructor(
     public authService: AuthenticationService,
@@ -22,6 +24,7 @@ export class Tab1Page {
     private toastController: ToastController,
     private modalController: ModalController,
     private notificationService: NotificationService) {
+    this.player$ = this.authService.playerDoc.valueChanges();
     this.matchService.findCurrentMatch();
     this.matchService.findMatchesOnWatchedTables();
   }

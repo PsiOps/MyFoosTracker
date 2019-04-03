@@ -52,16 +52,19 @@
 <div class="edit" *ngIf="match.status == 2">
   <div class="inputs">
     <ion-item class="score-input">
-      <ion-input [(ngModel)]="match.goalsTeamA" name="teamAScore" placeholder="enter score" type="number" color="secondary"
-        inputmode="numeric"></ion-input>
+      <ion-input [(ngModel)]="match.goalsTeamA" name="teamAScore" placeholder="enter score" type="number"
+        color="secondary" inputmode="numeric"></ion-input>
     </ion-item>
     <ion-item class="score-input">
-      <ion-input [(ngModel)]="match.goalsTeamB" name="teamBScore" placeholder="enter score" type="number" color="secondary"
-        inputmode="numeric"></ion-input>
+      <ion-input [(ngModel)]="match.goalsTeamB" name="teamBScore" placeholder="enter score" type="number"
+        color="secondary" inputmode="numeric"></ion-input>
     </ion-item>
   </div>
   <div class="buttons">
     <ion-button (click)="confirmScore()">Confirm</ion-button>
     <ion-button (click)="cancelScoring()">Cancel</ion-button>
   </div>
+</div>
+<div text-center *ngIf="showTable && table$ | async as table">
+  <p>in progress on: {{table.brand}} @ {{table.location}}</p>
 </div>

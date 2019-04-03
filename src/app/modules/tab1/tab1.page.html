@@ -1,7 +1,7 @@
 <app-header title="Match"></app-header>
 
 <ion-content>
-  <div *ngIf="authService.player$ | async as player">
+  <div *ngIf="player$ | async as player">
     <ion-card>
       <ion-card-content>
         <ion-list lines="none">
@@ -87,11 +87,12 @@
         </ion-button>
       </div>
     </div>
-    <div *ngIf="matchService.matchesOfWatchedTables$ | async as currentMatches">
+    <div class="currentMatches" *ngIf="matchService.matchesOfWatchedTables$ | async as currentMatches">
       <div text-center >Current Matches</div>
+      <div text-center class="noCurrentMatches" *ngIf="currentMatches.length===0">no matches in progress on watched tables</div>
       <ion-list lines="none">
         <div class="match" *ngFor="let match of currentMatches">
-          <app-match [match]="match"></app-match>
+          <app-match [match]="match" [showTable]="true"></app-match>
         </div>
       </ion-list>
     </div>

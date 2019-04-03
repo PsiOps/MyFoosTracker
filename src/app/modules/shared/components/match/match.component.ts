@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, OnChanges, EventEmitter, Output } from '@angular/core';
-import { Match, Team } from 'src/app/domain/match';
-import { Player } from 'src/app/domain/player';
+import { Match, Team, Player, Table } from 'src/app/domain';
 import { User } from 'firebase/app';
 
 @Component({
@@ -11,10 +10,12 @@ import { User } from 'firebase/app';
 export class MatchComponent implements OnInit, OnChanges {
   @Input() match: Match;
   @Input() currentUser: User;
+  @Input() showTable: boolean;
   @Output() scoreConfirmed = new EventEmitter();
   @Output() scoringCancelled = new EventEmitter();
   @Output() matchJoined = new EventEmitter();
 
+  public table$: Promise<Table>;
   public teamAPlayer1: Player;
   public teamAPlayer2: Player;
   public teamBPlayer1: Player;
@@ -22,6 +23,7 @@ export class MatchComponent implements OnInit, OnChanges {
 
   ngOnInit() { }
   ngOnChanges() {
+    this.table$ = this.match.tableRef.get().then(s => s.data() as Table);
     if (this.match.teamA[0]) { this.match.teamA[0].playerRef.get().then(s => this.teamAPlayer1 = s.data() as Player); } else {
       this.teamAPlayer1 = null; }
     if (this.match.teamA[1]) { this.match.teamA[1].playerRef.get().then(s => this.teamAPlayer2 = s.data() as Player); } else {

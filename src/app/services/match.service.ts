@@ -40,16 +40,19 @@ export class MatchService {
         const currentTableMatchCollection = this.afs.collection<Match>('matches',
           ref => ref
             .where('status', '==', MatchStatus.started)
-            .where('tableRef', '==', tableRef).limit(1));
+            .where('tableRef', '==', tableRef)
+            .limit(1)
+        );
         return currentTableMatchCollection;
       })))
       .pipe(flatMap(cs => cs.map(c => c.valueChanges())))
-      .pipe(switchAll());
+      .pipe(switchAll())
+      .pipe(map(matches => matches.filter(m => m.organizer !== this.authService.user.uid)));
   }
 
   public async createMatch(player: Player) {
     const match = new Match();
-    match.tableRef = player.defaultTableRef;
+    match.tableRef = this.afs.doc(`/foosball-tables/${player.defaultTableId || 'HvPz1XQMtOGAxw0pq1dq'}`).ref;
     match.organizer = this.authService.user.uid;
     match.participants.push(this.authService.user.uid);
     match.teamA.push({ playerRef: this.authService.playerDoc.ref, goals: 0 });
