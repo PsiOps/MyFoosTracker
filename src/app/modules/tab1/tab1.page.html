@@ -44,14 +44,19 @@
                 <ion-button (click)="startMatch()">
                   Start
                 </ion-button>
-                <ion-button color="warning" (click)="cancelMatch()">
+                <ion-button color="warning" (click)="cancelNotStartedMatch()">
                   Cancel
                 </ion-button>
               </div>
             </div>
-            <ion-button *ngIf="currentMatch.status === 1" expand="block" (click)="finishMatch()">
-              Finish match
-            </ion-button>
+            <div *ngIf="currentMatch.status === 1" class="buttonContainer">
+              <ion-button expand="block" (click)="finishMatch()">
+                Finish match
+              </ion-button>
+              <ion-button color="warning" (click)="cancelStartedMatch()">
+                Cancel match
+              </ion-button>
+            </div>
           </div>
           <div *ngIf="currentMatch.organizer !== authService.user.uid && currentMatch.status === 0">
             <div text-center>Waiting for organizer to start the match...</div>
@@ -88,8 +93,9 @@
       </div>
     </div>
     <div class="currentMatches" *ngIf="matchService.matchesOfWatchedTables$ | async as currentMatches">
-      <div text-center >Current Matches</div>
-      <div text-center class="noCurrentMatches" *ngIf="currentMatches.length===0">no matches in progress on watched tables</div>
+      <div text-center>Current Matches</div>
+      <div text-center class="noCurrentMatches" *ngIf="currentMatches.length===0">no matches in progress on watched
+        tables</div>
       <ion-list lines="none">
         <div class="match" *ngFor="let match of currentMatches">
           <app-match [match]="match" [showTable]="true"></app-match>

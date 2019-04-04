@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
+import { ToastController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
+import { MatchService } from '../../services/match.service';
 import { AuthenticationService } from '../../auth/authentication.service';
 import { Team, Player } from '../../domain';
-import { ToastController } from '@ionic/angular';
-import { MatchService } from '../../services/match.service';
-import { ModalController } from '@ionic/angular';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { NotificationService } from '../../services/notification.service';
-import { of, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
@@ -23,6 +24,7 @@ export class Tab1Page {
     private matchService: MatchService,
     private toastController: ToastController,
     private modalController: ModalController,
+    private alertController: AlertController,
     private notificationService: NotificationService) {
     this.player$ = this.authService.playerDoc.valueChanges();
     this.matchService.findCurrentMatch();
@@ -37,7 +39,6 @@ export class Tab1Page {
       component: PlayerSelectComponent
     });
     modal.onDidDismiss().then(async () => {
-      console.log('Sending invites');
       await this.notificationService.sendInvites();
     });
     return await modal.present();
@@ -47,8 +48,30 @@ export class Tab1Page {
     await this.matchService.startMatch();
   }
 
-  public async cancelMatch() {
+  public async cancelNotStartedMatch() {
     await this.matchService.cancelMatch();
+  }
+
+  public async cancelStartedMatch() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Match Cancellation',
+      message: 'Do you really want to stop the current match? The match information will be lost!',
+      buttons: [
+        {
+          text: 'NO',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => { }
+        }, {
+          text: 'YES, STOP MATCH',
+          handler: async () => {
+            await this.matchService.cancelMatch();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   public async finishMatch() {
