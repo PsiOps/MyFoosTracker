@@ -1,10 +1,9 @@
-import * as admin from 'firebase-admin';
-
 export class Player {
     nickname: string;
     lastLogin: Date;
-    defaultTableRef: admin.firestore.DocumentReference;
+    defaultTableId: string;
     playerSince: Date;
     favouritePlayerIds: string[] = [];
+    watchingTableIds: string[] = [];
     fcmTokens?: { [token: string]: boolean };
 }
