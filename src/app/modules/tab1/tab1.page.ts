@@ -8,6 +8,8 @@ import { Team, Player } from '../../domain';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { NotificationService } from '../../services/notification.service';
 import { Observable } from 'rxjs';
+import { TableService } from 'src/app/services/table.service';
+import { TableSelectComponent } from './components/table-select/table-select.component';
 
 @Component({
   selector: 'app-tab1',
@@ -22,6 +24,7 @@ export class Tab1Page {
   constructor(
     public authService: AuthenticationService,
     private matchService: MatchService,
+    private tableService: TableService,
     private toastController: ToastController,
     private modalController: ModalController,
     private alertController: AlertController,
@@ -32,6 +35,13 @@ export class Tab1Page {
   }
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);
+  }
+
+  public async pickTable() {
+    const modal = await this.modalController.create({
+      component: TableSelectComponent
+    });
+    return await modal.present();
   }
 
   public async addPlayers() {

@@ -7,6 +7,7 @@ import { Tab1Page } from './tab1.page';
 import { SharedModule } from '../shared/shared.module';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { SearchPipe } from './components/player-select/search/search.pipe';
+import { TableSelectComponent } from './components/table-select/table-select.component';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { SearchPipe } from './components/player-select/search/search.pipe';
   declarations: [
     Tab1Page,
     PlayerSelectComponent,
-    SearchPipe],
-  entryComponents: [PlayerSelectComponent]
+    SearchPipe,
+    TableSelectComponent],
+  entryComponents: [PlayerSelectComponent, TableSelectComponent]
 })
 export class Tab1PageModule {}
