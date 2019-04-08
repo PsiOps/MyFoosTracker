@@ -5,5 +5,6 @@ export class Player {
     playerSince: Date;
     favouritePlayerIds: string[] = [];
     watchingTableIds: string[] = [];
+    favouriteTableIds: string[] = [];
     fcmTokens?: { [token: string]: boolean };
 }

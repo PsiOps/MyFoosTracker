@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Player, Team, Match } from '../../../../domain';
 import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
@@ -14,7 +14,6 @@ import { PlayerService } from 'src/app/services/player.service';
   styleUrls: ['./player-select.component.scss']
 })
 export class PlayerSelectComponent implements OnInit {
-  public players: AngularFirestoreCollection<Player>;
   public players$: Observable<PlayerSelectModel[]>;
   public selectedTeam: Team = Team.teamA;
   public selectedTeam$: BehaviorSubject<Team>;
@@ -38,8 +37,7 @@ export class PlayerSelectComponent implements OnInit {
         return team === Team.teamA ? match.teamA.length === 2 : match.teamB.length === 2;
       }));
 
-    this.players = this.afs.collection<Player>('players');
-    const playerChanges = this.players.snapshotChanges();
+    const playerChanges = this.afs.collection<Player>('players').snapshotChanges();
 
     this.players$ =
       combineLatest(
