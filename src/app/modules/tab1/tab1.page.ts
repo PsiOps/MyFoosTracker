@@ -16,7 +16,6 @@ import { Observable } from 'rxjs';
 })
 export class Tab1Page {
   public isInEditMode = false;
-  public gamePin?: number = null;
   public player$: Observable<Player>;
 
   constructor(
@@ -107,8 +106,38 @@ export class Tab1Page {
   }
 
   public async findMatchToJoin() {
-    if (!this.gamePin) { return; }
-    await this.matchService.findMatchToJoin(this.gamePin, async () => {
+    const alert = await this.alertController.create({
+      header: 'Join Match',
+      message: 'Enter the game PIN of the match you want to join',
+      inputs: [
+        {
+          name: 'gamePin',
+          placeholder: 'Enter Game PIN',
+          type: 'number',
+          min: 1,
+          max: 9999
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => { }
+        }, {
+          text: 'Join Match',
+          handler: async (data) => {
+            await this.joinMatch(data.gamePin);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async joinMatch(gamePin: number) {
+    await this.matchService.findMatchToJoin(gamePin, async () => {
       const toast = await this.toastController.create({
         message: 'No open matches found with that PIN.',
         duration: 2000,
@@ -119,6 +148,7 @@ export class Tab1Page {
       toast.present();
     });
   }
+
   public submitNickname(nickname: string): void {
     this.isInEditMode = false;
     this.authService.setNickname(nickname);
