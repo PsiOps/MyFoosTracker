@@ -4,24 +4,13 @@
   border-radius: 5px;
 }
 
-.pin-input-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pin-input {
-  --background: aliceblue;
-  --color: darkblue;
-  border-radius: 5px;
-
-  text-align: center;
-  flex: 0 1 auto;
-}
-
 .buttonContainer {
   display: flex;
   justify-content: space-around;
+
+  .button-create {
+    flex-grow: 1;
+  }
 }
 
 @keyframes blink {
