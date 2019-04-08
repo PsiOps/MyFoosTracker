@@ -28,6 +28,10 @@ export class Tab3Page implements OnInit {
       .pipe(map(tms => tms.map(this.getRankEntry)));
   }
 
+  public refresh($event: any) {
+    setTimeout(() => $event.target.complete(), 500);
+  }
+
   private sortTeamMates(a: TeamMateStat, b: TeamMateStat): number {
     const aNoOfMatches = a.matchesLostCount + a.matchesWonCount;
     const bNoOfMatches = b.matchesLostCount + b.matchesWonCount;

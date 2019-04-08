@@ -29,6 +29,7 @@ export class Tab1Page {
     this.matchService.findCurrentMatch();
     this.matchService.findMatchesOnWatchedTables();
   }
+
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);
   }
@@ -75,6 +76,13 @@ export class Tab1Page {
 
   public async finishMatch() {
     await this.matchService.finishMatch();
+  }
+
+  public refresh($event: any) {
+    this.matchService.findCurrentMatch();
+    this.matchService.findMatchesOnWatchedTables();
+
+    setTimeout(() => $event.target.complete(), 500);
   }
 
   public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
