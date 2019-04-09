@@ -1,6 +1,10 @@
 <app-header title="Match"></app-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <div *ngIf="player$ | async as player">
     <ion-card>
       <ion-card-content>
@@ -81,19 +85,9 @@
         </ion-card-content>
       </ion-card>
     </div>
-    <div *ngIf="!(matchService.currentMatch$ | async)">
-      <ion-button margin expand="block" (click)="createMatch(player)">
-        Create a Match!
-      </ion-button>
-      <div text-center>or</div>
-      <div class="pin-input-container">
-        <ion-input margin-start [(ngModel)]="gamePin" class="pin-input" name="gamepin-input" type="text"
-          placeholder="Enter game pin" color="secondary" inputmode="numeric" minlength=4 maxlength=4 min=0 max=9999
-          pattern="\d{4}"></ion-input>
-        <ion-button margin expand="block" (click)="findMatchToJoin()" [disabled]="!gamePin">
-          Join a match
-        </ion-button>
-      </div>
+    <div *ngIf="!(matchService.currentMatch$ | async)" class="buttonContainer">
+      <ion-button class="button-create" margin (click)="createMatch(player)">Create a Match!</ion-button>
+      <ion-button margin (click)="findMatchToJoin()">Join a match</ion-button>
     </div>
     <div class="currentMatches" *ngIf="matchService.matchesOfWatchedTables$ | async as currentMatches">
       <div text-center>Current Matches</div>

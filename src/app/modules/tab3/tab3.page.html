@@ -1,6 +1,10 @@
 <app-header title="Player Statistics"></app-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <div *ngIf="playerStats$ | async as playerStats;else noStats">
     <ion-card>
       <ion-card-content class="matchCounts">

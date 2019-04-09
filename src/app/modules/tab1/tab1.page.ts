@@ -18,7 +18,6 @@ import { TableSelectComponent } from './components/table-select/table-select.com
 })
 export class Tab1Page {
   public isInEditMode = false;
-  public gamePin?: number = null;
   public player$: Observable<Player>;
 
   constructor(
@@ -34,6 +33,7 @@ export class Tab1Page {
     this.matchService.findCurrentMatch();
     this.matchService.findMatchesOnWatchedTables();
   }
+
   public async createMatch(player: Player) {
     this.tableService.setCurrentTable(player.defaultTableId);
     this.matchService.createMatch(player);
@@ -95,6 +95,13 @@ export class Tab1Page {
     await this.matchService.finishMatch();
   }
 
+  public refresh($event: any) {
+    this.matchService.findCurrentMatch();
+    this.matchService.findMatchesOnWatchedTables();
+
+    setTimeout(() => $event.target.complete(), 500);
+  }
+
   public async onScored($event: { goalsTeamA: number, goalsTeamB: number }) {
     await this.matchService.saveScoreAndUpdateStats($event);
   }
@@ -124,8 +131,38 @@ export class Tab1Page {
   }
 
   public async findMatchToJoin() {
-    if (!this.gamePin) { return; }
-    await this.matchService.findMatchToJoin(this.gamePin, async () => {
+    const alert = await this.alertController.create({
+      header: 'Join Match',
+      message: 'Enter the game PIN of the match you want to join',
+      inputs: [
+        {
+          name: 'gamePin',
+          placeholder: 'Enter Game PIN',
+          type: 'number',
+          min: 1,
+          max: 9999
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => { }
+        }, {
+          text: 'Join Match',
+          handler: async (data) => {
+            await this.joinMatch(data.gamePin);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async joinMatch(gamePin: number) {
+    await this.matchService.findMatchToJoin(gamePin, async () => {
       const toast = await this.toastController.create({
         message: 'No open matches found with that PIN.',
         duration: 2000,
@@ -136,6 +173,7 @@ export class Tab1Page {
       toast.present();
     });
   }
+
   public submitNickname(nickname: string): void {
     this.isInEditMode = false;
     this.authService.setNickname(nickname);
