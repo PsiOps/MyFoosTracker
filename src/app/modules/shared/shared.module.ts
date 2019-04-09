@@ -4,11 +4,15 @@ import { MatchComponent } from './components/match/match.component';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from './components/header/header.component';
+import { TableManageComponent } from './components/table-manage/table-manage.component';
+import { TableSearchPipe } from './pipes/table-search.pipe';
 
 @NgModule({
   declarations: [
     MatchComponent,
-    HeaderComponent
+    HeaderComponent,
+    TableManageComponent,
+    TableSearchPipe
   ],
   imports: [
     IonicModule,
@@ -17,7 +21,9 @@ import { HeaderComponent } from './components/header/header.component';
   ],
   exports: [
     MatchComponent,
-    HeaderComponent
+    HeaderComponent,
+    TableManageComponent,
+    TableSearchPipe
   ]
 })
 export class SharedModule { }

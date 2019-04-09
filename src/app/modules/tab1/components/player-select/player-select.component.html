@@ -20,7 +20,7 @@
     </div>
     <div scrollY="true" id="scrollList">
       <ion-list>
-        <ion-item *ngFor="let player of players$ | async | search : terms">
+        <ion-item *ngFor="let player of players$ | async | playerSearch : terms">
           <ion-checkbox slot="start" mode="ios" [(ngModel)]="player.isSelected"
             (ionChange)="playerSelectionChanged(player)"
             [disabled]="player.isOrganizer || ((isTeamFull$ | async) && !player.isSelected)"></ion-checkbox>

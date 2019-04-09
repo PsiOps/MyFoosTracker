@@ -37,6 +37,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'tables',
+        children: [
+          {
+            path: '',
+            loadChildren: '../tables/tables.module#TablesPageModule'
+          }
+        ]
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full'

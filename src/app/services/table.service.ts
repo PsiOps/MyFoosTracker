@@ -1,23 +1,25 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
 import { firestore } from 'firebase/app';
-import { TableSelectModel } from '../modules/tab1/components/table-select/table-select.model';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { withLatestFrom, map } from 'rxjs/operators';
+import { withLatestFrom, map, switchMap, filter } from 'rxjs/operators';
 import { Table } from '../domain';
+import { TableManageModel } from '../modules/shared/models/table-manage.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TableService {
 
+  public currentTable$: Observable<Table>;
+
   constructor(
     public authService: AuthenticationService,
     private afs: AngularFirestore
   ) { }
 
-  public getTables$(): Observable<TableSelectModel[]> {
+  public getTables$(): Observable<TableManageModel[]> {
     return this.afs.collection<Table>('foosball-tables').snapshotChanges()
       .pipe(withLatestFrom(this.authService.playerDoc.valueChanges()))
       .pipe(map(data => {
@@ -27,17 +29,23 @@ export class TableService {
           const tableDoc = t.payload.doc;
           const tableId = tableDoc.id;
           const tableData = tableDoc.data();
-          const tableSelectModel = new TableSelectModel();
-          tableSelectModel.id = tableId;
-          tableSelectModel.name = tableData.name;
-          tableSelectModel.location = tableData.location;
-          tableSelectModel.isFavourite = player.favouriteTableIds && player.favouriteTableIds.some(tid => tid === tableId);
-          tableSelectModel.isDefault = player.defaultTableId === tableId;
-          return tableSelectModel;
+          const tableManageModel = new TableManageModel();
+          tableManageModel.id = tableId;
+          tableManageModel.name = tableData.name;
+          tableManageModel.location = tableData.location;
+          tableManageModel.isFavourite = player.favouriteTableIds && player.favouriteTableIds.some(tid => tid === tableId);
+          tableManageModel.isDefault = player.defaultTableId === tableId;
+          return tableManageModel;
         });
       }));
   }
 
+  public setCurrentTable(tableId: string): void {
+    this.currentTable$ = this.getTables$()
+      .pipe(map(ts => ts.filter(t => t.id === tableId)))
+      .pipe(map(ts => ts.map(t => t as Table)))
+      .pipe(switchMap(ts => ts));
+  }
   public async addTableToFavourites(tableId: string): Promise<void> {
     const playerDocRef = this.authService.playerDoc.ref;
 
@@ -56,8 +64,6 @@ export class TableService {
       favouriteTableIds: firestore.FieldValue.arrayRemove(tableId),
       watchingTableIds: firestore.FieldValue.arrayRemove(tableId),
     };
-
     await playerDocRef.update(payload);
   }
-
 }

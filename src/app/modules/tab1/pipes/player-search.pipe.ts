@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { PlayerSelectModel } from '../player-select.model';
+import { PlayerSelectModel } from '../models/player-select.model';
 
 @Pipe({
-  name: 'search'
+  name: 'playerSearch'
 })
-export class SearchPipe implements PipeTransform {
+export class PlayerSearchPipe implements PipeTransform {
 
   transform(players: PlayerSelectModel[], terms: string): any[] {
     if (!players) {

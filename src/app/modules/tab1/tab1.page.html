@@ -37,7 +37,7 @@
             <div *ngIf="currentMatch.status === 0">
               <div>
                 <ion-button expand="block" (click)="pickTable()">
-                  {{(tableService.currentTable$ | async)?.name || "Choose table"}}
+                  {{(tableService.currentTable$ | async)?.name  || "Choose table"}}
                 </ion-button>
               </div>
               <div class="buttonContainer">

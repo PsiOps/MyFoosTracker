@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TableSelectModel } from './table-select.model';
-import { ModalController } from '@ionic/angular';
+import { TableSelectModel } from '../../models/table-select.model';
+import { PopoverController } from '@ionic/angular';
 import { TableService } from 'src/app/services/table.service';
 
 @Component({
@@ -12,34 +12,14 @@ import { TableService } from 'src/app/services/table.service';
 export class TableSelectComponent implements OnInit {
   public tables$: Observable<TableSelectModel[]>;
 
-  constructor(private modalController: ModalController,
+  constructor(private popoverController: PopoverController,
     private tableService: TableService) { }
 
   ngOnInit() {
     this.tables$ = this.tableService.getTables$();
   }
 
-  public tableFavouriteChanged(table: TableSelectModel) {
-    table.isFavourite = !table.isFavourite;
-
-    if (table.isFavourite) {
-      this.tableService.addTableToFavourites(table.id);
-    } else {
-      this.tableService.removeTableFromFavourites(table.id);
-    }
-  }
-
-  public defaultTableChanged(table: TableSelectModel) {
-    table.isFavourite = !table.isFavourite;
-
-    if (table.isFavourite) {
-      this.tableService.addTableToFavourites(table.id);
-    } else {
-      this.tableService.removeTableFromFavourites(table.id);
-    }
-  }
-
-  public dismiss(): void {
-    this.modalController.dismiss();
+  public onTableSelected(table: TableSelectModel): void {
+    this.popoverController.dismiss(table.id);
   }
 }
