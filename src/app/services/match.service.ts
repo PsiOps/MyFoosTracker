@@ -83,6 +83,10 @@ export class MatchService {
   public async reopenMatch() {
     await this.currentMatchDocument.update({ status: 1 });
   }
+  public async setTable(tableId: string){
+    const tableRef = this.afs.collection('foosball-tables').doc(tableId).ref;
+    await this.currentMatchDocument.ref.update({tableRef: tableRef});
+  }
   public async addTeamPlayerToMatch(playerId: string, team: Team) {
     const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
     await this.addPlayerToTeam(playerDocRef, team);

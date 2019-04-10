@@ -1,25 +1,38 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { TableSelectModel } from '../../models/table-select.model';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { TableService } from 'src/app/services/table.service';
+import { TableSelectDialogComponent } from './table-select-dialog/table-select-dialog.component';
+import { Match, Table } from 'src/app/domain';
+import { MatchService } from 'src/app/services/match.service';
 
 @Component({
   selector: 'app-table-select',
   templateUrl: './table-select.component.html',
   styleUrls: ['./table-select.component.scss']
 })
-export class TableSelectComponent implements OnInit {
-  public tables$: Observable<TableSelectModel[]>;
+export class TableSelectComponent implements OnInit, OnChanges {
+  @Input() match: Match;
+  public currentTable$: Promise<Table>;
+  constructor(
+    private popoverController: PopoverController,
+    private matchService: MatchService
+    ) { }
 
-  constructor(private popoverController: PopoverController,
-    private tableService: TableService) { }
-
-  ngOnInit() {
-    this.tables$ = this.tableService.getTables$();
+  ngOnInit() { }
+  ngOnChanges() {
+    console.log('TableSelectComponent: Changes detected');
+    this.currentTable$ = this.match.tableRef.get().then(s => s.data() as Table);
   }
 
-  public onTableSelected(table: TableSelectModel): void {
-    this.popoverController.dismiss(table.id);
+  public async pickTable() {
+    const popover = await this.popoverController.create({
+      component: TableSelectDialogComponent,
+      translucent: true
+    });
+    popover.onWillDismiss().then(event => {
+      const tableId = event.data;
+      this.matchService.setTable(tableId);
+    });
+    return await popover.present();
   }
+
 }

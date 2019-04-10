@@ -40,9 +40,7 @@
           <div *ngIf="currentMatch.organizer === authService.user.uid">
             <div *ngIf="currentMatch.status === 0">
               <div>
-                <ion-button expand="block" (click)="pickTable()">
-                  {{(tableService.currentTable$ | async)?.name  || "Choose table"}}
-                </ion-button>
+                <app-table-select [match]="currentMatch"></app-table-select>
               </div>
               <div class="buttonContainer">
                 <ion-button (click)="addPlayers()">

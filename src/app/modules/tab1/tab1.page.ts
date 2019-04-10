@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ToastController, PopoverController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { MatchService } from '../../services/match.service';
@@ -8,8 +8,6 @@ import { Team, Player } from '../../domain';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { NotificationService } from '../../services/notification.service';
 import { Observable } from 'rxjs';
-import { TableService } from 'src/app/services/table.service';
-import { TableSelectComponent } from './components/table-select/table-select.component';
 
 @Component({
   selector: 'app-tab1',
@@ -23,10 +21,8 @@ export class Tab1Page {
   constructor(
     public authService: AuthenticationService,
     private matchService: MatchService,
-    private tableService: TableService,
     private toastController: ToastController,
     private modalController: ModalController,
-    private popoverController: PopoverController,
     private alertController: AlertController,
     private notificationService: NotificationService) {
     this.player$ = this.authService.playerDoc.valueChanges();
@@ -35,21 +31,9 @@ export class Tab1Page {
   }
 
   public async createMatch(player: Player) {
-    this.tableService.setCurrentTable(player.defaultTableId);
     this.matchService.createMatch(player);
   }
 
-  public async pickTable() {
-    const popover = await this.popoverController.create({
-      component: TableSelectComponent,
-      translucent: true
-    });
-    popover.onWillDismiss().then(id => {
-      // this.tableService.setCurrentTable(id.data);
-      // Set the tableRef on the match to set the binding to the button
-    });
-    return await popover.present();
-  }
 
   public async addPlayers() {
     const modal = await this.modalController.create({

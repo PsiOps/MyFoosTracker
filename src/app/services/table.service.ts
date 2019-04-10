@@ -3,7 +3,7 @@ import { AuthenticationService } from '../auth/authentication.service';
 import { firestore } from 'firebase/app';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { withLatestFrom, map, switchMap, filter } from 'rxjs/operators';
+import { withLatestFrom, map } from 'rxjs/operators';
 import { Table } from '../domain';
 import { TableManageModel } from '../modules/shared/models/table-manage.model';
 
@@ -11,8 +11,6 @@ import { TableManageModel } from '../modules/shared/models/table-manage.model';
   providedIn: 'root'
 })
 export class TableService {
-
-  public currentTable$: Observable<Table>;
 
   constructor(
     public authService: AuthenticationService,
@@ -40,12 +38,6 @@ export class TableService {
       }));
   }
 
-  public setCurrentTable(tableId: string): void {
-    this.currentTable$ = this.getTables$()
-      .pipe(map(ts => ts.filter(t => t.id === tableId)))
-      .pipe(map(ts => ts.map(t => t as Table)))
-      .pipe(switchMap(ts => ts));
-  }
   public async addTableToFavourites(tableId: string): Promise<void> {
     const playerDocRef = this.authService.playerDoc.ref;
 
