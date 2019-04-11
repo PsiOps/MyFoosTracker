@@ -19,7 +19,6 @@ export class TableSelectComponent implements OnInit, OnChanges {
 
   ngOnInit() { }
   ngOnChanges() {
-    console.log('TableSelectComponent: Changes detected');
     this.currentTable$ = this.match.tableRef.get().then(s => s.data() as Table);
   }
 
@@ -30,9 +29,9 @@ export class TableSelectComponent implements OnInit, OnChanges {
     });
     popover.onWillDismiss().then(event => {
       const tableId = event.data;
+      if (!tableId) { return; }
       this.matchService.setTable(tableId);
     });
     return await popover.present();
   }
-
 }

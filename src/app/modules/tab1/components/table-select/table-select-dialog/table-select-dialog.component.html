@@ -1,20 +1,33 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Choose Table for Match
+      Choose Table
     </ion-title>
+    <ion-button slot="end" (click)="goToTableManagement()">
+      <ion-icon name="cog"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <div id="container">
+<ion-content *ngIf="playerTables$ | async as playerTables; else errorMessage">
+  <div id="container" *ngIf="playerTables.length > 0; else cogMessage">
     <div scrollY="true" id="scrollList">
       <ion-list>
-        <ion-item *ngFor="let table of tables$ | async" (click)="onTableSelected(table)">
+        <ion-item *ngFor="let table of playerTables" (click)="onTableSelected(table)">
           <ion-label>{{table.name}} @ {{table.location}}</ion-label>
-          <ion-icon *ngIf="table.isDefault" class="favourite" slot="end" name="refresh-circle">
+          <ion-icon *ngIf="table.isDefault" slot="end" name="refresh-circle" class="isDefault">
           </ion-icon>
         </ion-item>
       </ion-list>
     </div>
   </div>
 </ion-content>
+<ng-template #errorMessage>
+  <ion-item>
+    Something went wrong, please try again.
+  </ion-item>
+</ng-template>
+<ng-template #cogMessage>
+  <ion-item id="container">
+    You have not selected any tables yet. Hit the cog button. 
+  </ion-item>
+</ng-template>

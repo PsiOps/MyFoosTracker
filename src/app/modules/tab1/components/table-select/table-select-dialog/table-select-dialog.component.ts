@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { TableSelectModel } from '../../../models/table-select.model';
-import { Observable } from 'rxjs';
-import { PopoverController } from '@ionic/angular';
+import { TableSelectModel } from '../../../../shared/models/table-select.model';
+import { PopoverController, ModalController } from '@ionic/angular';
 import { TableService } from 'src/app/services/table.service';
+import { TableManageComponent } from 'src/app/modules/shared/components/table-manage/table-manage.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-table-select-dialog',
@@ -10,15 +11,25 @@ import { TableService } from 'src/app/services/table.service';
   styleUrls: ['./table-select-dialog.component.scss']
 })
 export class TableSelectDialogComponent implements OnInit {
-  public tables$: Observable<TableSelectModel[]>;
 
-  constructor(private popoverController: PopoverController,
-    private tableService: TableService) { }
+  public playerTables$: Observable<TableSelectModel[]>;
+  constructor(
+    private popoverController: PopoverController,
+    private modalController: ModalController,
+    public tableService: TableService) { }
 
   ngOnInit() {
-    this.tables$ = this.tableService.getTables$();
+    this.playerTables$ = this.tableService.getPlayerTables$();
   }
+
   public onTableSelected(table: TableSelectModel): void {
     this.popoverController.dismiss(table.id);
+  }
+
+  public async goToTableManagement() {
+    const modal = await this.modalController.create({
+      component: TableManageComponent
+    });
+    return await modal.present();
   }
 }

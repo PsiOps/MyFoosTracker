@@ -24,6 +24,7 @@ import { TableSearchPipe } from './pipes/table-search.pipe';
     HeaderComponent,
     TableManageComponent,
     TableSearchPipe
-  ]
+  ],
+  entryComponents: [TableManageComponent]
 })
 export class SharedModule { }

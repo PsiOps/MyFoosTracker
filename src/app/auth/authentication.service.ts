@@ -31,10 +31,11 @@ export class AuthenticationService {
         // Error means player does not exist yet, so we create a new one:
         const player = new Player();
         player.nickname = 'Player1';
-        player.defaultTableId = 'HvPz1XQMtOGAxw0pq1dq'; // unspecified
         player.playerSince = now;
         player.lastLogin = now;
         player.favouritePlayerIds = [];
+        player.favouriteTableIds = [];
+        player.watchingTableIds = [];
         this.playerDoc.set(Object.assign({}, player));
       });
     });

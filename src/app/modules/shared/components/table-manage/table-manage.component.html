@@ -1,3 +1,10 @@
+<ion-header *ngIf="isModal$ | async">
+  <ion-toolbar>
+    <ion-title>
+      Your Favourite Tables
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content>
   <div id="container">
     <div id="toolbar">
@@ -5,18 +12,18 @@
     </div>
     <div scrollY="true" id="scrollList">
       <ion-list>
-        <ion-item *ngFor="let table of tables$ | async | tableSearch : terms">
+        <ion-item *ngFor="let table of allTables$ | async | tableSearch : terms">
           <ion-label>{{table.name}} @ {{table.location}}</ion-label>
           <ion-icon class="favourite" slot="end" [name]="table.isFavourite ? 'star' :'star-outline'"
             (click)="tableFavouriteChanged(table)">
           </ion-icon>
-          <ion-icon class="favourite" slot="end" [name]="table.isDefault ? 'refresh-circle' :'refresh'"
+          <ion-icon class="default" slot="end" [name]="table.isDefault ? 'refresh-circle' :'refresh'"
             (click)="defaultTableChanged(table)">
           </ion-icon>
         </ion-item>
       </ion-list>
     </div>
-    <div id="buttons">
+    <div id="buttons" *ngIf="isModal$ | async">
       <ion-button expand="block" (click)="dismiss()">Done</ion-button>
     </div>
   </div>

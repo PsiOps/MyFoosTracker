@@ -10,16 +10,18 @@ import { TableService } from 'src/app/services/table.service';
   styleUrls: ['./table-manage.component.scss']
 })
 export class TableManageComponent implements OnInit {
-  public tables$: Observable<TableManageModel[]>;
-
-  constructor(private modalController: ModalController,
+  public allTables$: Observable<TableManageModel[]>;
+  public isModal$: Promise<boolean>;
+  constructor(public modalController: ModalController,
     private tableService: TableService) { }
 
   ngOnInit() {
-    this.tables$ = this.tableService.getTables$();
+    this.allTables$ = this.tableService.getAllTables$();
+    this.isModal$ = this.modalController.getTop().then(m => m ? true : false);
   }
 
   public tableFavouriteChanged(table: TableManageModel) {
+    if (table.isDefault) { return; }
     table.isFavourite = !table.isFavourite;
 
     if (table.isFavourite) {
@@ -30,12 +32,12 @@ export class TableManageComponent implements OnInit {
   }
 
   public defaultTableChanged(table: TableManageModel) {
-    table.isFavourite = !table.isFavourite;
+    table.isDefault = !table.isDefault;
 
-    if (table.isFavourite) {
-      this.tableService.addTableToFavourites(table.id);
+    if (table.isDefault) {
+      this.tableService.setTableAsDefault(table.id);
     } else {
-      this.tableService.removeTableFromFavourites(table.id);
+      this.tableService.clearDefaultTable();
     }
   }
 

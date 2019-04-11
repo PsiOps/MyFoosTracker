@@ -46,7 +46,7 @@
                 <ion-button (click)="addPlayers()">
                   Add players
                 </ion-button>
-                <ion-button (click)="startMatch()">
+                <ion-button (click)="startMatch()" [disabled]="!currentMatch.tableRef">
                   Start
                 </ion-button>
                 <ion-button color="warning" (click)="cancelNotStartedMatch()">
