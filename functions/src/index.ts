@@ -33,11 +33,17 @@ export const markForRecalculation = functions.https.onRequest(async (req, res) =
     res.send(message);
 });
 export const updateData = functions.https.onRequest(async (req, res) => {
+    // 1/4/2019
     // const fieldValue = admin.firestore.FieldValue;
     // const playerDocs = await firestore.collection('players').get();
     // updateDocs(playerDocs, {defaultTableRef: fieldValue.delete(), defaultTableId: 'HvPz1XQMtOGAxw0pq1dq', watchingTableIds: ['HvPz1XQMtOGAxw0pq1dq']});
     // const matchDocs = await firestore.collection('matches').get();
     // updateDocs(matchDocs, {tableRef: firestore.doc(`foosball-tables/HvPz1XQMtOGAxw0pq1dq`)})
+
+    // 11/4/2019
+    // const fieldValue = admin.firestore.FieldValue;
+    // const playerDocs = await firestore.collection('players').get();
+    // updateDocs(playerDocs, { defaultTableId: fieldValue.delete(), watchingTableIds: ['iVk4Sl15wrAUqlQnyhoK', 'BtVwELRPwtmykmDlFy46'], favouriteTableIds: ['iVk4Sl15wrAUqlQnyhoK', 'BtVwELRPwtmykmDlFy46']});
     res.send('done');
 });
 export const removeBadData = functions.https.onRequest(async (req, res) => {
