@@ -23,7 +23,7 @@ export class MatchComponent implements OnInit, OnChanges {
 
   ngOnInit() { }
   ngOnChanges() {
-    this.table$ = this.match.tableRef.get().then(s => s.data() as Table);
+    if (this.match.tableRef) { this.table$ = this.match.tableRef.get().then(s => s.data() as Table); }
     if (this.match.teamA[0]) { this.match.teamA[0].playerRef.get().then(s => this.teamAPlayer1 = s.data() as Player); } else {
       this.teamAPlayer1 = null; }
     if (this.match.teamA[1]) { this.match.teamA[1].playerRef.get().then(s => this.teamAPlayer2 = s.data() as Player); } else {

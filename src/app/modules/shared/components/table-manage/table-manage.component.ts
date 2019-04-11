@@ -12,6 +12,8 @@ import { TableService } from 'src/app/services/table.service';
 export class TableManageComponent implements OnInit {
   public allTables$: Observable<TableManageModel[]>;
   public isModal$: Promise<boolean>;
+  public terms = '';
+
   constructor(public modalController: ModalController,
     private tableService: TableService) { }
 

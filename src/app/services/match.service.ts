@@ -6,7 +6,7 @@ import { Player } from '../domain/player';
 import { AuthenticationService } from '../auth/authentication.service';
 import { StatsService } from './stats.service';
 import { firestore } from 'firebase/app';
-import { map, flatMap, switchAll } from 'rxjs/operators';
+import { map, flatMap, switchAll, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -33,8 +33,8 @@ export class MatchService {
     });
   }
 
-  public findMatchesOnWatchedTables(): void {
-    this.matchesOfWatchedTables$ = this.authService.playerDoc.valueChanges()
+  public getMatchesOnWatchedTables(): Observable<Match[]> {
+    return this.authService.playerDoc.valueChanges()
       .pipe(map(p => p.watchingTableIds.map(tId => {
         const tableRef = this.afs.doc(`foosball-tables/${tId}`).ref;
         const currentTableMatchCollection = this.afs.collection<Match>('matches',
@@ -52,7 +52,9 @@ export class MatchService {
 
   public async createMatch(player: Player) {
     const match = new Match();
-    match.tableRef = this.afs.doc(`/foosball-tables/${player.defaultTableId || 'HvPz1XQMtOGAxw0pq1dq'}`).ref;
+    if (player.defaultTableId) {
+      match.tableRef = this.afs.doc(`/foosball-tables/${player.defaultTableId}`).ref;
+    }
     match.organizer = this.authService.user.uid;
     match.participants.push(this.authService.user.uid);
     match.teamA.push({ playerRef: this.authService.playerDoc.ref, goals: 0 });

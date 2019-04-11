@@ -19,7 +19,9 @@ export class TableSelectComponent implements OnInit, OnChanges {
 
   ngOnInit() { }
   ngOnChanges() {
-    this.currentTable$ = this.match.tableRef.get().then(s => s.data() as Table);
+    if (this.match.tableRef) {
+      this.currentTable$ = this.match.tableRef.get().then(s => s.data() as Table);
+    }
   }
 
   public async pickTable() {

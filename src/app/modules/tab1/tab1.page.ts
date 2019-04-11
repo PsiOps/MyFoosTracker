@@ -4,7 +4,7 @@ import { AlertController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { MatchService } from '../../services/match.service';
 import { AuthenticationService } from '../../auth/authentication.service';
-import { Team, Player } from '../../domain';
+import { Team, Player, Match } from '../../domain';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { NotificationService } from '../../services/notification.service';
 import { Observable } from 'rxjs';
@@ -17,7 +17,7 @@ import { Observable } from 'rxjs';
 export class Tab1Page {
   public isInEditMode = false;
   public player$: Observable<Player>;
-
+  public matchesOnWatchedTables$: Observable<Match[]>;
   constructor(
     public authService: AuthenticationService,
     private matchService: MatchService,
@@ -27,7 +27,7 @@ export class Tab1Page {
     private notificationService: NotificationService) {
     this.player$ = this.authService.playerDoc.valueChanges();
     this.matchService.findCurrentMatch();
-    this.matchService.findMatchesOnWatchedTables();
+    this.matchesOnWatchedTables$ = this.matchService.getMatchesOnWatchedTables();
   }
 
   public async createMatch(player: Player) {
@@ -81,7 +81,6 @@ export class Tab1Page {
 
   public refresh($event: any) {
     this.matchService.findCurrentMatch();
-    this.matchService.findMatchesOnWatchedTables();
 
     setTimeout(() => $event.target.complete(), 500);
   }
