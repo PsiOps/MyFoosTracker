@@ -87,12 +87,12 @@
       <ion-button class="button-create" margin (click)="createMatch(player)">Create a Match!</ion-button>
       <ion-button margin (click)="findMatchToJoin()">Join a match</ion-button>
     </div>
-    <div class="currentMatches" *ngIf="matchesOnWatchedTables$ | async as currentMatches">
+    <div class="currentMatches" *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (matchesOnWatchedTables$ | async) as matchesOnWatchedTables">
       <div text-center>Current Matches</div>
-      <div text-center class="noCurrentMatches" *ngIf="currentMatches.length===0">no matches in progress on watched
+      <div text-center class="noCurrentMatches" *ngIf="matchesOnWatchedTables.length===0">no matches in progress on watched
         tables</div>
       <ion-list lines="none">
-        <div class="match" *ngFor="let match of currentMatches">
+        <div class="match" *ngFor="let match of matchesOnWatchedTables">
           <app-match [match]="match" [showTable]="true"></app-match>
         </div>
       </ion-list>

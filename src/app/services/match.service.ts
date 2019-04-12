@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, combineLatest } from 'rxjs';
 import { Match, MatchStatus, Team } from '../domain/match';
 import { AngularFirestoreDocument, AngularFirestore, DocumentReference, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
 import { AuthenticationService } from '../auth/authentication.service';
 import { StatsService } from './stats.service';
 import { firestore } from 'firebase/app';
-import { map, flatMap, switchAll, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -34,20 +34,24 @@ export class MatchService {
   }
 
   public getMatchesOnWatchedTables(): Observable<Match[]> {
+
     return this.authService.playerDoc.valueChanges()
-      .pipe(map(p => p.watchingTableIds.map(tId => {
-        const tableRef = this.afs.doc(`foosball-tables/${tId}`).ref;
-        const currentTableMatchCollection = this.afs.collection<Match>('matches',
-          ref => ref
-            .where('status', '==', MatchStatus.started)
-            .where('tableRef', '==', tableRef)
-            .limit(1)
-        );
-        return currentTableMatchCollection;
-      })))
-      .pipe(flatMap(cs => cs.map(c => c.valueChanges())))
-      .pipe(switchAll())
-      .pipe(map(matches => matches.filter(m => m.organizer !== this.authService.user.uid)));
+      .pipe(map(p => p.watchingTableIds))
+      .pipe(switchMap(ids => {
+        return combineLatest(ids.map(id => {
+          const tableRef = this.afs.doc(`foosball-tables/${id}`).ref;
+          const currentTableMatchCollection = this.afs.collection<Match>('matches',
+            ref => ref
+              .where('status', '==', MatchStatus.started)
+              .where('tableRef', '==', tableRef)
+              .limit(1)
+          );
+          return currentTableMatchCollection.valueChanges();
+        }))
+          .pipe(map(arraysOfMatches => {
+            return [].concat.apply([], arraysOfMatches) as Match[];
+          }));
+      }));
   }
 
   public async createMatch(player: Player) {
@@ -85,9 +89,9 @@ export class MatchService {
   public async reopenMatch() {
     await this.currentMatchDocument.update({ status: 1 });
   }
-  public async setTable(tableId: string){
+  public async setTable(tableId: string) {
     const tableRef = this.afs.collection('foosball-tables').doc(tableId).ref;
-    await this.currentMatchDocument.ref.update({tableRef: tableRef});
+    await this.currentMatchDocument.ref.update({ tableRef: tableRef });
   }
   public async addTeamPlayerToMatch(playerId: string, team: Team) {
     const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
