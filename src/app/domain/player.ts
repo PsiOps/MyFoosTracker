@@ -1,5 +1,7 @@
 export class Player {
+
     nickname: string;
+    photoUrl: string;
     lastLogin: Date;
     defaultTableId: string;
     playerSince: Date;

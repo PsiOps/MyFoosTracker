@@ -21,9 +21,10 @@
     <div scrollY="true" id="scrollList">
       <ion-list>
         <ion-item *ngFor="let player of players$ | async | playerSearch : terms">
-          <ion-checkbox slot="start" mode="ios" [(ngModel)]="player.isSelected"
+          <ion-checkbox slot="start" mode="ios" class="playerCheckbox" [(ngModel)]="player.isSelected"
             (ionChange)="playerSelectionChanged(player)"
             [disabled]="player.isOrganizer || ((isTeamFull$ | async) && !player.isSelected)"></ion-checkbox>
+          <img [src]="player.photoUrl" class="profilePic">
           <ion-label>{{player.nickname}}</ion-label>
           <ion-icon class="favourite" slot="end" [name]="player.isFavourite ? 'star' :'star-outline'"
             (click)="playerFavouriteChanged(player)">

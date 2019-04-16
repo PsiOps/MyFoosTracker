@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Player, Team, Match } from '../../../../domain';
-import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs';
+import { map, withLatestFrom, catchError } from 'rxjs/operators';
 import { PlayerSelectModel } from 'src/app/modules/tab1/models/player-select.model';
 import { ModalController } from '@ionic/angular';
 import { MatchService } from 'src/app/services/match.service';
@@ -58,14 +58,15 @@ export class PlayerSelectComponent implements OnInit {
           return playerDocs
             .map((p) => {
               const playerDoc = p.payload.doc;
+              const player = playerDoc.data();
               const playerSelectModel = new PlayerSelectModel();
               playerSelectModel.id = playerDoc.id;
-              playerSelectModel.nickname = playerDoc.data().nickname;
+              playerSelectModel.nickname = player.nickname;
               playerSelectModel.isSelected = this.isInSelectedTeam(playerDoc.id, team, match);
               playerSelectModel.isOrganizer = playerDoc.id === match.organizer;
               playerSelectModel.isFavourite = playerFavourites && playerFavourites
                 .some((favouriteId: string) => favouriteId === playerDoc.id);
-
+              playerSelectModel.photoUrl = player.photoUrl;
               return playerSelectModel;
             })
             .filter(p => this.isNotInOtherTeam(p, team, match))

@@ -31,6 +31,7 @@ export class AuthenticationService {
         // Error means player does not exist yet, so we create a new one:
         const player = new Player();
         player.nickname = 'Player1';
+        player.photoUrl = u.photoURL;
         player.playerSince = now;
         player.lastLogin = now;
         player.favouritePlayerIds = [];

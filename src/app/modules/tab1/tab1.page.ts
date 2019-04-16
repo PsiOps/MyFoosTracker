@@ -29,10 +29,6 @@ export class Tab1Page {
     this.matchesOnWatchedTables$ = this.matchService.getMatchesOnWatchedTables();
   }
 
-  public async uploadPWA(event) {
-    console.log(event);
-  }
-
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);
   }
@@ -182,9 +178,5 @@ export class Tab1Page {
       });
       toast.present();
     });
-  }
-
-  public submitNickname(nickname: string): void {
-    this.authService.setNickname(nickname);
   }
 }
