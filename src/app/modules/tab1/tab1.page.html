@@ -68,7 +68,7 @@
       <ion-button margin (click)="findMatchToJoin()">Join a match</ion-button>
     </div>
     <div class="currentMatches"
-      *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (matchesOnWatchedTables$ | async) as matchesOnWatchedTables">
+      *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (matchesOnWatchedTables$ | async) as matchesOnWatchedTables; else selectTables">
       <div text-center>Current Matches</div>
       <div text-center class="noCurrentMatches" *ngIf="matchesOnWatchedTables.length===0">no matches in progress on
         watched
@@ -81,3 +81,9 @@
     </div>
   </div>
 </ion-content>
+<ng-template #selectTables>
+  <div class="currentMatches">
+    <div text-center>Current Matches</div>
+    <div text-center class="noCurrentMatches">You are not currently watching any tables</div>
+  </div>
+</ng-template>
