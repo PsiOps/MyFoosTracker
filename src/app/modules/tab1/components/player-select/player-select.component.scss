@@ -28,9 +28,16 @@ div[scrolly=true] {
     flex-grow:0;
     flex-shrink: 0;
 }
-
+.profilePic {
+    height: 32px;
+    width: 32px;
+    margin-right: 12px;
+}
 .favourite {
     color: orange;
     cursor: pointer;
     z-index: 2;
+}
+.playerCheckbox {
+    margin-right: 12px;
 }

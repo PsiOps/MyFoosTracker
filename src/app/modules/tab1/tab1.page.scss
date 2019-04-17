@@ -4,6 +4,20 @@
   border-radius: 5px;
 }
 
+.inputFile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.profilePic {
+  height: 40px;
+  width: 40px;
+}
+
 .buttonContainer {
   display: flex;
   justify-content: space-between;

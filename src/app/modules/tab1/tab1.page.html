@@ -8,22 +8,14 @@
   <div *ngIf="player$ | async as player">
     <ion-card>
       <ion-card-content>
-        <ion-list lines="none">
-          <ion-item *ngIf="!isInEditMode" style="width: 100%;">
-            <span slot="start">Nickname: {{ player.nickname }}</span>
-            <ion-button (click)="startEditMode()" color="secondary">
-              <ion-icon name=create></ion-icon>
-            </ion-button>
-          </ion-item>
-          <ion-item *ngIf="isInEditMode">
-            <ion-label>Player nickname: </ion-label>
-            <ion-input class="nick-input" [(ngModel)]="player.nickname" name="playerNickName"
-              placeholder="enter nickname" type="text"></ion-input>
-            <ion-button (click)="submitNickname(player.nickname)" color="secondary">
-              <ion-icon name=checkmark></ion-icon>
-            </ion-button>
-          </ion-item>
-        </ion-list>
+        <ion-item>
+          <img slot="start" [src]="authService.user?.photoURL" class="profilePic">
+          <span>Nickname: {{ player.nickname }}</span>
+          <ion-button (click)="editNickname(player)" slot="end">
+            <ion-icon name="create"></ion-icon>
+          </ion-button>
+        </ion-item>
+
       </ion-card-content>
     </ion-card>
     <div *ngIf="matchService.currentMatch$ | async as currentMatch">
@@ -87,9 +79,11 @@
       <ion-button class="button-create" margin (click)="createMatch(player)">Create a Match!</ion-button>
       <ion-button margin (click)="findMatchToJoin()">Join a match</ion-button>
     </div>
-    <div class="currentMatches" *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (matchesOnWatchedTables$ | async) as matchesOnWatchedTables">
+    <div class="currentMatches"
+      *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (matchesOnWatchedTables$ | async) as matchesOnWatchedTables">
       <div text-center>Current Matches</div>
-      <div text-center class="noCurrentMatches" *ngIf="matchesOnWatchedTables.length===0">no matches in progress on watched
+      <div text-center class="noCurrentMatches" *ngIf="matchesOnWatchedTables.length===0">no matches in progress on
+        watched
         tables</div>
       <ion-list lines="none">
         <div class="match" *ngFor="let match of matchesOnWatchedTables">

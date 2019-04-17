@@ -4,4 +4,5 @@ export class PlayerSelectModel {
     public isFavourite: boolean;
     public nickname: string;
     public isOrganizer: boolean;
+    public photoUrl: string;
 }

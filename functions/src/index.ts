@@ -44,6 +44,19 @@ export const updateData = functions.https.onRequest(async (req, res) => {
     // const fieldValue = admin.firestore.FieldValue;
     // const playerDocs = await firestore.collection('players').get();
     // updateDocs(playerDocs, { defaultTableId: fieldValue.delete(), watchingTableIds: ['iVk4Sl15wrAUqlQnyhoK', 'BtVwELRPwtmykmDlFy46'], favouriteTableIds: ['iVk4Sl15wrAUqlQnyhoK', 'BtVwELRPwtmykmDlFy46']});
+
+    // 16/4/2019
+    // const playerDocs = await firestore.collection('players').get();
+    // playerDocs.forEach(doc => {
+    //     admin.auth().getUser(doc.id)
+    //         .then(user => {
+    //             const updateObject = { photoUrl: user.photoURL };
+    //             doc.ref.update(updateObject).catch(err => console.log(err));
+    //         })
+    //         .catch(err => console.log(err));
+    // })
+
+    // Always
     res.send('done');
 });
 export const removeBadData = functions.https.onRequest(async (req, res) => {
@@ -70,8 +83,8 @@ export const testNotifications = functions.https.onRequest(async (req, res) => {
             message: "Yo yo wassup"
         }
     };
-    const result =[];
-    for(const token in testPlayer.fcmTokens){
+    const result = [];
+    for (const token in testPlayer.fcmTokens) {
         result.push(await admin.messaging().sendToDevice(token, payload))
     }
     res.send(result);

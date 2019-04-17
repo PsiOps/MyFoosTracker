@@ -8,7 +8,6 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class PlayerService {
-
   constructor(
     public authService: AuthenticationService
   ) { }

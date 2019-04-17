@@ -15,7 +15,6 @@ import { Observable } from 'rxjs';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-  public isInEditMode = false;
   public player$: Observable<Player>;
   public matchesOnWatchedTables$: Observable<Match[]>;
   constructor(
@@ -33,7 +32,6 @@ export class Tab1Page {
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);
   }
-
 
   public async addPlayers() {
     const modal = await this.modalController.create({
@@ -109,8 +107,33 @@ export class Tab1Page {
     await this.matchService.dismissMatch();
   }
 
-  public startEditMode(): void {
-    this.isInEditMode = true;
+  public async editNickname(player: Player): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Edit Nickname',
+      inputs: [
+        {
+          name: 'Nickname',
+          value: player.nickname,
+          type: 'text'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => { }
+        }, {
+          text: 'OK',
+          handler: async (data) => {
+            await this.authService.setNickname(data.Nickname);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+
   }
 
   public async findMatchToJoin() {
@@ -155,10 +178,5 @@ export class Tab1Page {
       });
       toast.present();
     });
-  }
-
-  public submitNickname(nickname: string): void {
-    this.isInEditMode = false;
-    this.authService.setNickname(nickname);
   }
 }
