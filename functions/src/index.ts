@@ -32,6 +32,16 @@ export const markForRecalculation = functions.https.onRequest(async (req, res) =
     const message = await statsRecalcService.markForRecalculation();
     res.send(message);
 });
+export const removeUser = functions.https.onRequest(async (req, res) => {
+    const userId = req.body.userId;
+    const playerDoc = await firestore.doc(`/players/${userId}`);
+    await playerDoc.delete();
+    const playerStatsDoc = await firestore.doc(`/player-stats/${userId}`);
+    await playerStatsDoc.delete();
+    await admin.auth().deleteUser(userId);
+
+    res.send('User removed');
+});
 export const updateData = functions.https.onRequest(async (req, res) => {
     // 1/4/2019
     // const fieldValue = admin.firestore.FieldValue;
