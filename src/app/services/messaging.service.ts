@@ -14,10 +14,8 @@ export class MessagingService {
     private afm: AngularFireMessaging) { }
 
   public requestPermission(player: Player) {
-    console.log('Requesting Messaging Permission');
     this.afm.requestToken.subscribe(
       (token) => {
-        console.log(token);
         this.saveToken(player, token);
       },
       (err) => {
@@ -27,7 +25,6 @@ export class MessagingService {
   }
   public monitorTokenRefresh(player: Player) {
     this.afm.tokenChanges.subscribe(token => {
-      console.log('Token refreshed');
       this.saveToken(player, token);
     });
   }
