@@ -6,18 +6,6 @@
   </ion-refresher>
 
   <div *ngIf="player$ | async as player">
-    <ion-card>
-      <ion-card-content>
-        <ion-item>
-          <img slot="start" [src]="authService.user?.photoURL" class="profilePic">
-          <span>Nickname: {{ player.nickname }}</span>
-          <ion-button (click)="editNickname(player)" slot="end">
-            <ion-icon name="create"></ion-icon>
-          </ion-button>
-        </ion-item>
-
-      </ion-card-content>
-    </ion-card>
     <div *ngIf="matchService.currentMatch$ | async as currentMatch">
       <ion-card>
         <ion-card-header *ngIf="currentMatch.status === 0">

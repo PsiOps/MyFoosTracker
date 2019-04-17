@@ -107,35 +107,6 @@ export class Tab1Page {
     await this.matchService.dismissMatch();
   }
 
-  public async editNickname(player: Player): Promise<void> {
-    const alert = await this.alertController.create({
-      header: 'Edit Nickname',
-      inputs: [
-        {
-          name: 'Nickname',
-          value: player.nickname,
-          type: 'text'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => { }
-        }, {
-          text: 'OK',
-          handler: async (data) => {
-            await this.authService.setNickname(data.Nickname);
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-
-  }
-
   public async findMatchToJoin() {
     const alert = await this.alertController.create({
       header: 'Join Match',

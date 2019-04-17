@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="home()" title="Go back to the home page">
+        <img src="/assets/icon/favicon.png" title="MyFoosTracker" height="40">
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      Profile
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" title="Log out of FoosTracker">
+        <ion-icon name=log-out></ion-icon>Logout
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <div *ngIf="player$ | async as player">
+    <ion-card>
+      <ion-card-content>
+        <ion-item>
+          <img slot="start" [src]="player.photoUrl" class="profilePic">
+          <span>{{ player.nickname }}</span>
+          <ion-button (click)="editNickname(player)" slot="end">
+            <ion-icon name="create"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

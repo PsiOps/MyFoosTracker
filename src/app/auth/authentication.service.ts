@@ -3,7 +3,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { auth } from 'firebase/app';
 import { Player } from '../domain/player';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class AuthenticationService {
 
   constructor(
     private afAuth: AngularFireAuth,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    private router: Router
   ) {
 
     this.user$.subscribe(u => {
@@ -28,9 +30,9 @@ export class AuthenticationService {
       this.playerDoc = this.afs.doc<Player>(`players/${u.uid}`);
       const now = new Date();
       this.playerDoc.update({ lastLogin: now }).catch((error) => {
+        this.router.navigateByUrl('/profile?isNewUser=true');
         // Error means player does not exist yet, so we create a new one:
         const player = new Player();
-        player.nickname = 'Player1';
         player.photoUrl = u.photoURL;
         player.playerSince = now;
         player.lastLogin = now;
