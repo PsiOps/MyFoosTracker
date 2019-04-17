@@ -5,6 +5,7 @@ import { Player } from 'src/app/domain';
 import { Router, ActivatedRoute } from '@angular/router';
 import { take, filter } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -14,14 +15,21 @@ import { AlertController } from '@ionic/angular';
 export class ProfilePage implements OnInit {
 
   public player$: Observable<Player>;
+  private isNewUser = false;
   constructor(
     private authService: AuthenticationService,
     private router: Router,
     private alertController: AlertController,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location
   ) {
     this.route.queryParams.subscribe(params => {
-      if (params.isNewUser) { this.showEnterNicknameAlert(true); }
+      if (params.isNewUser) {
+        this.isNewUser = true;
+        this.showEnterNicknameAlert(true);
+      } else {
+        this.isNewUser = false;
+      }
     });
   }
 
@@ -45,6 +53,13 @@ export class ProfilePage implements OnInit {
     this.router.navigateByUrl('/login');
   }
 
+  public dismissProfile() {
+    if (this.isNewUser) {
+      this.home();
+    } else {
+      this.location.back();
+    }
+  }
   private async showEnterNicknameAlert(isNewUser: boolean, initialValue?: string) {
     const alert = await this.alertController.create({
       header: isNewUser ? 'Enter Nickname' : 'Edit Nickname',
