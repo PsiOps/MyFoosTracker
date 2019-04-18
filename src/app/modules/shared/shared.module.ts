@@ -6,13 +6,15 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from './components/header/header.component';
 import { TableManageComponent } from './components/table-manage/table-manage.component';
 import { TableSearchPipe } from './pipes/table-search.pipe';
+import { AppSelectAllDirective } from 'src/app/directives/app-select-all.directive';
 
 @NgModule({
   declarations: [
     MatchComponent,
     HeaderComponent,
     TableManageComponent,
-    TableSearchPipe
+    TableSearchPipe,
+    AppSelectAllDirective
   ],
   imports: [
     IonicModule,
