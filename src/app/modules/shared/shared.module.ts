@@ -7,6 +7,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { TableManageComponent } from './components/table-manage/table-manage.component';
 import { TableSearchPipe } from './pipes/table-search.pipe';
 import { AppSelectAllDirective } from 'src/app/directives/app-select-all.directive';
+import { AppAutoClearDirective } from 'src/app/directives/app-auto-clear.directive';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { AppSelectAllDirective } from 'src/app/directives/app-select-all.directi
     HeaderComponent,
     TableManageComponent,
     TableSearchPipe,
-    AppSelectAllDirective
+    AppSelectAllDirective,
+    AppAutoClearDirective
   ],
   imports: [
     IonicModule,
