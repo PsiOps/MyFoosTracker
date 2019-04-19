@@ -1,0 +1,10 @@
+ion-slide { 
+    width: unset !important;
+}
+.slideContainer {
+    display:flex;
+    flex-direction: column;
+}
+.slide {
+    flex: 0 1 auto;
+}
