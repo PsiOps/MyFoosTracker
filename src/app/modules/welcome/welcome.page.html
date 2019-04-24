@@ -1,17 +1,58 @@
-<ion-slides pager="true" [options]="slideOpts">
+<ion-slides pager="true" [options]="slideOpts" style="height: 100%">
   <ion-slide>
     <div class="slideContainer">
-        <img class="slide" src="/assets/welcome-slide1.png">  
+      <div class="slideLogo">
+        <img src="/assets/icon/favicon.png" title="MyFoosTracker">
+      </div>
+      <div class="slideHeader">
+        Welcome to FoosTracker
+      </div>
+      <div class="slideSubheader">
+        Let's get you set up.
+      </div>
+      <div class="slideContentContainer landing">
+        To get started, please enter your nickname:
+      </div>
+      <div class="slideNickInputItem">
+        <ion-item>
+          <ion-input required type="text" placeholder="nickname" [(ngModel)]="nickName" name="nickname" #nickname>
+          </ion-input>
+        </ion-item>
+      </div>
     </div>
   </ion-slide>
   <ion-slide>
-      <div class="slideContainer">
-          <img class="slide" src="/assets/welcome-slide2.png">  
+    <div class="slideContainer">
+      <div class="slideLogo">
+        <img src="/assets/icon/favicon.png" title="MyFoosTracker">
       </div>
-    </ion-slide>
+      <div class="slideSubheader">
+        Let's find you a table.
+      </div>
+      <div class="slideContentContainer">
+        Find your table by searching the list.<br>
+        Set your favourites and your default choice.<br>
+        Don't worry, you can come back to this later.
+      </div>
+      <div class="slideTableManage">
+        <app-table-manage></app-table-manage>
+      </div>
+    </div>
+  </ion-slide>
   <ion-slide>
-      <div class="slideContainer">
-          <img class="slide" src="/assets/welcome-slide3.png">  
+    <div class="slideContainer">
+      <div class="slideLogo">
+        <img src="/assets/icon/favicon.png" title="MyFoosTracker">
       </div>
-    </ion-slide>
+      <div class="slideSubheader">
+        Let's get FoosTracking.
+      </div>
+      <div class="slideContentContainer">
+        That's it. You're all set up. Good luck!
+      </div>
+      <div class="slideDismissButton">
+        <ion-button (click)="letsGo()">Let's go!</ion-button>
+      </div>
+    </div>
+  </ion-slide>
 </ion-slides>

@@ -1,10 +1,51 @@
-ion-slide { 
-    width: unset !important;
+ion-slides {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
 }
 .slideContainer {
     display:flex;
     flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-start;
 }
-.slide {
+.slideLogo {
+    margin-top: 20%;
+    img {
+        height: 100%;
+    }
+}
+.slideHeader {
+    margin-top: 10%;
     flex: 0 1 auto;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.1rem;
+}
+.slideSubheader {
+    flex: 0 1 auto;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 10%;
+    font-size: 1.4rem;
+}
+.slideContentContainer{
+    flex: 0 1 auto;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 10%;
+    font-size: 1rem;
+    &.landing {
+        margin-top: 20%;
+    }
+}
+.slideNickInputItem {
+    flex: 0 1 auto;
+    width: 50%;
+    margin-top: 5%;
+}
+.slideTableManage {
+    flex: 2 0 auto;
+    margin-top: 5%;
+    width: 100%;
+}
+.slideDismissButton{
+    margin-top: 10%;
 }

@@ -11,9 +11,9 @@
     </ion-title>
 
     <ion-buttons slot="end" *ngIf="player$ | async as player">
+      {{player.nickname}}
       <ion-button (click)="navigateToProfile()" title="Go to the profile page">
         <img [src]="player.photoUrl" class="profilePic">
-        <!-- <ion-icon name=log-out></ion-icon> -->
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
