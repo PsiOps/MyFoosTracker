@@ -6,11 +6,11 @@ import { AuthenticationService } from '../../auth/authentication.service';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-tab2',
-  templateUrl: 'tab2.page.html',
-  styleUrls: ['tab2.page.scss']
+  selector: 'app-match-history',
+  templateUrl: 'match-history.page.html',
+  styleUrls: ['match-history.page.scss']
 })
-export class Tab2Page {
+export class MatchHistoryPage {
   public matches: AngularFirestoreCollection<Match>;
   public matchesPerDay$: Observable<{ day: Date, matches: Match[] }[]>;
   private showAllValue = false;
