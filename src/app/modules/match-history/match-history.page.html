@@ -1,16 +1,25 @@
 <app-header title="Match History"></app-header>
 
 <ion-content>
-  <div class="options">
-    <ion-item>
-      <ion-label>show all</ion-label>
-        <ion-toggle [(ngModel)]="showAll"></ion-toggle>
-    </ion-item>     
-  </div>
-  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
-      <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
-  <ion-list lines="none">
+  <!-- <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher> -->
+  <ion-card *ngFor="let matchDay of matchesPerDay">
+      <ion-card-header>
+        <ion-card-title text-center>{{matchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="match" *ngFor="let match of matchDay.matches">
+          <app-match [match]="match"></app-match>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+      
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <!-- <ion-list lines="none">
     <ion-card *ngFor="let matchDay of matchesPerDay$ | async">
       <ion-card-header>
         <ion-card-title text-center>{{matchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
@@ -21,5 +30,5 @@
         </div>
       </ion-card-content>
     </ion-card>
-  </ion-list>
+  </ion-list> -->
 </ion-content>

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, CollectionReference, Query } from '@angular/fire/firestore';
 import { Match, MatchStatus } from '../../domain';
-import { Observable, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from '../../auth/authentication.service';
 import { map } from 'rxjs/operators';
 
@@ -11,30 +11,41 @@ import { map } from 'rxjs/operators';
   styleUrls: ['match-history.page.scss']
 })
 export class MatchHistoryPage {
-  public matches: AngularFirestoreCollection<Match>;
-  public matchesPerDay$: Observable<{ day: Date, matches: Match[] }[]>;
-  private showAllValue = false;
-  public get showAll() {
-    return this.showAllValue;
-  }
-  public set showAll(val: boolean) {
-    this.showAllValue = val;
-    this.updateMatches(val);
-  }
+
+  public matchesCollection: AngularFirestoreCollection<Match>;
+
+  public matchesPerDay: { day: Date, matches: Match[] }[] = [];
+  // public matchesPerDay$: Observable<{ day: Date, matches: Match[] }[]>;
+
   constructor(private afs: AngularFirestore, private authService: AuthenticationService) {
-    this.updateMatches(this.showAllValue);
+    this.getMoreMatches();
+  }
+
+  public loadData(event: any) {
+    console.log('loading data');
+    this.getMoreMatches(event);
+  }
+  public getMoreMatches(event?: any) {
+    this.afs.collection<Match>('matches', ref => this.showAllFinished(ref))
+      .valueChanges()
+      .pipe(map(this.groupMatchesByDay))
+      .subscribe(matchesByDay => {
+        console.log('subscription makes good');
+        this.matchesPerDay = this.matchesPerDay.concat(matchesByDay);
+        if (event) { event.target.complete(); }
+      });
   }
   public refresh($event: any) {
-    this.updateMatches(this.showAllValue);
+    // this.updateMatches(this.showAllValue);
     setTimeout(() => $event.target.complete(), 500);
   }
   private updateMatches(showAll: boolean) {
-    this.matches = showAll ?
+    this.matchesCollection = showAll ?
       this.afs.collection<Match>('matches', ref => this.showAllFinished(ref)) :
       this.afs.collection<Match>('matches', ref => this.showFinishedForPlayer(ref));
-    this.matchesPerDay$ = this.matches
-      .valueChanges()
-      .pipe(map(this.groupMatchesByDay));
+    // this.matchesPerDay$ = this.matchesCollection
+    //   .valueChanges()
+    //   .pipe(map(this.groupMatchesByDay));
   }
   private groupMatchesByDay(matches: Match[]): { day: Date, matches: Match[] }[] {
     return matches.reduce((result: any[], match: any) => {
