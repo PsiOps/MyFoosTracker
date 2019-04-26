@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, CollectionReference, Query } from '@angular/fire/firestore';
 import { Match, MatchStatus } from '../../domain';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { AuthenticationService } from '../../auth/authentication.service';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -13,40 +11,43 @@ import { map } from 'rxjs/operators';
 export class MatchHistoryPage {
 
   public matchesCollection: AngularFirestoreCollection<Match>;
-
   public matchesPerDay: { day: Date, matches: Match[] }[] = [];
-  // public matchesPerDay$: Observable<{ day: Date, matches: Match[] }[]>;
+  private matchesAfterKey: Date;
+  private matchesUntillKey: Date;
+  private daysPerBatch = 3;
 
-  constructor(private afs: AngularFirestore, private authService: AuthenticationService) {
+  constructor(private afs: AngularFirestore) {
+    this.setInitialDates();
     this.getMoreMatches();
   }
 
   public loadData(event: any) {
-    console.log('loading data');
     this.getMoreMatches(event);
   }
-  public getMoreMatches(event?: any) {
+  public refresh($event: any) {
+    setTimeout(() => {
+      this.setInitialDates();
+      this.matchesPerDay = [];
+      this.getMoreMatches($event);
+    }, 500);
+  }
+  private getMoreMatches(event?: any) {
     this.afs.collection<Match>('matches', ref => this.showAllFinished(ref))
       .valueChanges()
       .pipe(map(this.groupMatchesByDay))
       .subscribe(matchesByDay => {
-        console.log('subscription makes good');
         this.matchesPerDay = this.matchesPerDay.concat(matchesByDay);
+        this.matchesAfterKey.setDate(this.matchesAfterKey.getDate() - this.daysPerBatch);
+        this.matchesUntillKey.setDate(this.matchesUntillKey.getDate() - this.daysPerBatch);
         if (event) { event.target.complete(); }
       });
   }
-  public refresh($event: any) {
-    // this.updateMatches(this.showAllValue);
-    setTimeout(() => $event.target.complete(), 500);
-  }
-  private updateMatches(showAll: boolean) {
-    this.matchesCollection = showAll ?
-      this.afs.collection<Match>('matches', ref => this.showAllFinished(ref)) :
-      this.afs.collection<Match>('matches', ref => this.showFinishedForPlayer(ref));
-    // this.matchesPerDay$ = this.matchesCollection
-    //   .valueChanges()
-    //   .pipe(map(this.groupMatchesByDay));
-  }
+  private showAllFinished = (ref: CollectionReference): Query => ref
+    .where('status', '==', MatchStatus.over)
+    .orderBy('dateTimeStart', 'desc')
+    .startAfter(this.matchesAfterKey)
+    .endAt(this.matchesUntillKey)
+
   private groupMatchesByDay(matches: Match[]): { day: Date, matches: Match[] }[] {
     return matches.reduce((result: any[], match: any) => {
       const key = match.dateTimeStart.toDate().toISOString().substring(0, 10);
@@ -59,13 +60,10 @@ export class MatchHistoryPage {
       return result;
     }, []);
   }
-  private showAllFinished = (ref: CollectionReference): Query => ref
-    .where('status', '==', MatchStatus.over)
-    .orderBy('dateTimeStart', 'desc')
-    .limit(10)
-  private showFinishedForPlayer = (ref: CollectionReference): Query => ref
-    .where('status', '==', MatchStatus.over)
-    .where('participants', 'array-contains', this.authService.user.uid)
-    .orderBy('dateTimeStart', 'desc')
-    .limit(10)
+  private setInitialDates() {
+    this.matchesAfterKey = new Date();
+    this.matchesUntillKey = new Date();
+    this.matchesAfterKey.setDate(this.matchesAfterKey.getDate() + 1); // Makes start after tomorrow
+    this.matchesUntillKey.setDate(this.matchesAfterKey.getDate() - this.daysPerBatch);
+  }
 }
