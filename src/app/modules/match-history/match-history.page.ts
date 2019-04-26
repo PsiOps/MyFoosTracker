@@ -61,8 +61,8 @@ export class MatchHistoryPage {
     }, []);
   }
   private setInitialDates() {
-    this.matchesAfterKey = new Date();
-    this.matchesUntillKey = new Date();
+    this.matchesAfterKey = new Date(new Date().getFullYear(), new Date().getMonth() , new Date().getDate());
+    this.matchesUntillKey = new Date(new Date().getFullYear(), new Date().getMonth() , new Date().getDate());
     this.matchesAfterKey.setDate(this.matchesAfterKey.getDate() + 1); // Makes start after tomorrow
     this.matchesUntillKey.setDate(this.matchesAfterKey.getDate() - this.daysPerBatch);
   }
