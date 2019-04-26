@@ -19,11 +19,11 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'tab2',
+        path: 'match-history',
         children: [
           {
             path: '',
-            loadChildren: '../tab2/tab2.module#Tab2PageModule'
+            loadChildren: '../match-history/match-history.module#MatchHistoryPageModule'
           }
         ]
       },
