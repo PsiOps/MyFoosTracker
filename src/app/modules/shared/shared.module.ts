@@ -8,6 +8,7 @@ import { TableManageComponent } from './components/table-manage/table-manage.com
 import { TableSearchPipe } from './pipes/table-search.pipe';
 import { AppSelectAllDirective } from 'src/app/directives/app-select-all.directive';
 import { AppAutoClearDirective } from 'src/app/directives/app-auto-clear.directive';
+import { PlayerSearchPipe } from './pipes/player-search.pipe';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { AppAutoClearDirective } from 'src/app/directives/app-auto-clear.directi
     HeaderComponent,
     TableManageComponent,
     TableSearchPipe,
+    PlayerSearchPipe,
     AppSelectAllDirective,
     AppAutoClearDirective
   ],
@@ -27,7 +29,8 @@ import { AppAutoClearDirective } from 'src/app/directives/app-auto-clear.directi
     MatchComponent,
     HeaderComponent,
     TableManageComponent,
-    TableSearchPipe
+    TableSearchPipe,
+    PlayerSearchPipe
   ],
   entryComponents: [TableManageComponent]
 })
