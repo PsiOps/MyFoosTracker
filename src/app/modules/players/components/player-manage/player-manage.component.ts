@@ -5,6 +5,8 @@ import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PlayerSelectModel } from 'src/app/modules/tab1/models/player-select.model';
 import { PlayerService } from 'src/app/services/player.service';
+import { ModalController } from '@ionic/angular';
+import { StatsComponent } from 'src/app/modules/shared/components/stats/stats.component';
 
 @Component({
   selector: 'app-player-manage',
@@ -17,7 +19,8 @@ export class PlayerManageComponent implements OnInit {
 
   constructor(
     private playerService: PlayerService,
-    private afs: AngularFirestore) { }
+    private afs: AngularFirestore,
+    private modalController: ModalController) { }
 
   ngOnInit() {
     const playerChanges = this.afs.collection<Player>('players').snapshotChanges();
@@ -48,10 +51,6 @@ export class PlayerManageComponent implements OnInit {
   }
 
   public playerFavouriteChanged(player: PlayerSelectModel) {
-    if (player.isOrganizer) {
-      return;
-    }
-
     player.isFavourite = !player.isFavourite;
 
     if (player.isFavourite) {
@@ -59,6 +58,14 @@ export class PlayerManageComponent implements OnInit {
     } else {
       this.playerService.removePlayerFromFavourites(player.id);
     }
+  }
+
+  public async gotoStats(player: PlayerSelectModel) {
+    const modal = await this.modalController.create({
+      component: StatsComponent,
+      componentProps: { playerId: player.id, isModal: true }
+    });
+    return await modal.present();
   }
 
   private sortPlayers(a: PlayerSelectModel, b: PlayerSelectModel): number {

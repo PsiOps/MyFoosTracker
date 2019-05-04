@@ -1,0 +1,75 @@
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="playerStats$ | async as playerStats;else noStats">
+    <ion-card>
+      <ion-card-content class="matchCounts">
+        <div class="countContainer">
+          <div class="count good">{{playerStats.matchesWonCount}}</div>
+          <div class="label good">wins</div>
+        </div>
+        <div class="countContainer">
+          <div class="count bad">{{playerStats.matchesLostCount}}</div>
+          <div class="label bad">losses</div>
+        </div>
+        <div *ngIf="playerStats.matchesTiedCount > 0" class="countContainer">
+          <div class="count">2</div>
+          <div class="label">ties</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    <ion-row>
+      <ion-col width-50>
+        <ion-card>
+          <ion-card-content>
+            <ion-list lines="none">
+              <ion-item *ngFor="let item of teamMateStats$ | async">
+                {{item.rank}}. {{item.name$ | async}}
+              </ion-item>
+            </ion-list>
+            <div class="label centered">Top partners</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col width-50>
+        <ion-card>
+          <ion-card-content>
+            <ion-list lines="none">
+              <ion-item>1. tbd</ion-item>
+              <ion-item>2. tbd</ion-item>
+              <ion-item>3. tbd</ion-item>
+            </ion-list>
+            <div class="label centered">Top enemies</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-card>
+      <ion-card-content class="matchCounts">
+        <div class="countContainer">
+          <div class="count">{{playerStats.minutesPlayedCount}}</div>
+          <div class="label">total minutes played</div>
+        </div>
+        <div class="countContainer">
+          <div class="count">{{playerStats.matchDurationMinutesAverage | number : '1.2-2'}}</div>
+          <div class="label">avg match duration</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  <ng-template #noStats>
+    <ion-card>
+      <ion-card-content>
+        <ion-card-header>
+          <ion-card-title>No Statistics Yet</ion-card-title>
+        </ion-card-header>
+        Play matches to generate statistics!
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+  <div id="buttons" *ngIf="isModal">
+      <ion-button expand="block" (click)="dismiss()">Done</ion-button>
+    </div>
+</ion-content>

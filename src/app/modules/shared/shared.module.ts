@@ -9,6 +9,7 @@ import { TableSearchPipe } from './pipes/table-search.pipe';
 import { AppSelectAllDirective } from 'src/app/directives/app-select-all.directive';
 import { AppAutoClearDirective } from 'src/app/directives/app-auto-clear.directive';
 import { PlayerSearchPipe } from './pipes/player-search.pipe';
+import { StatsComponent } from './components/stats/stats.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { PlayerSearchPipe } from './pipes/player-search.pipe';
     TableSearchPipe,
     PlayerSearchPipe,
     AppSelectAllDirective,
-    AppAutoClearDirective
+    AppAutoClearDirective,
+    StatsComponent
   ],
   imports: [
     IonicModule,
@@ -30,8 +32,9 @@ import { PlayerSearchPipe } from './pipes/player-search.pipe';
     HeaderComponent,
     TableManageComponent,
     TableSearchPipe,
-    PlayerSearchPipe
+    PlayerSearchPipe,
+    StatsComponent
   ],
-  entryComponents: [TableManageComponent]
+  entryComponents: [TableManageComponent, StatsComponent]
 })
 export class SharedModule { }
