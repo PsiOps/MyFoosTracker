@@ -7,7 +7,6 @@ import { Tab1Page } from './tab1.page';
 import { SharedModule } from '../shared/shared.module';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { TableSelectComponent } from './components/table-select/table-select.component';
-import { PlayerSearchPipe } from './pipes/player-search.pipe';
 import { TableSelectDialogComponent } from './components/table-select/table-select-dialog/table-select-dialog.component';
 
 @NgModule({
@@ -22,7 +21,6 @@ import { TableSelectDialogComponent } from './components/table-select/table-sele
     Tab1Page,
     PlayerSelectComponent,
     TableSelectComponent,
-    PlayerSearchPipe,
     TableSelectDialogComponent],
   entryComponents: [PlayerSelectComponent, TableSelectDialogComponent]
 })

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { PlayerSelectModel } from '../models/player-select.model';
+import { PlayerSelectModel } from '../../tab1/models/player-select.model';
 
 @Pipe({
   name: 'playerSearch'

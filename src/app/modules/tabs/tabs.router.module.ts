@@ -46,6 +46,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'players',
+        children: [
+          {
+            path: '',
+            loadChildren: '../players/players.module#PlayersPageModule'
+          }
+        ]
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full'
