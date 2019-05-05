@@ -63,7 +63,7 @@ export class PlayerManageComponent implements OnInit {
   public async gotoStats(player: PlayerSelectModel) {
     const modal = await this.modalController.create({
       component: StatsComponent,
-      componentProps: { playerId: player.id, isModal: true }
+      componentProps: { player: player, isModal: true }
     });
     return await modal.present();
   }

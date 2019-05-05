@@ -1,4 +1,4 @@
 <app-header title="Player Statistics"></app-header>
 <ion-content>
-  <app-stats [playerId]="authService.user.uid"></app-stats>
+  <app-stats [player]="player$ | async"></app-stats>
 </ion-content>

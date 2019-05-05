@@ -1,3 +1,13 @@
+.statsId{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.profilePic {
+    height: 32px;
+    width: 32px;
+    margin-right: 12px;
+}
 .matchCounts{
     display:flex;
     flex-direction: row;

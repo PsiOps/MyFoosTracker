@@ -1,8 +1,28 @@
+<ion-header *ngIf="isModal">
+  <ion-toolbar>
+    <ion-title>
+      Player Statistics
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
+  <div *ngIf="player">
+    <ion-card>
+      <ion-card-header>
+        Showing statistics for:
+      </ion-card-header>
+      <ion-card-content>
+        <div class="statsId">
+          <img [src]="player.photoUrl" class="profilePic">
+          <ion-label>{{player.nickname}}</ion-label>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
   <div *ngIf="playerStats$ | async as playerStats;else noStats">
     <ion-card>
       <ion-card-content class="matchCounts">
@@ -70,6 +90,6 @@
     </ion-card>
   </ng-template>
   <div id="buttons" *ngIf="isModal">
-      <ion-button expand="block" (click)="dismiss()">Done</ion-button>
-    </div>
+    <ion-button expand="block" (click)="dismiss()">Done</ion-button>
+  </div>
 </ion-content>
