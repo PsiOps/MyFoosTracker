@@ -26,8 +26,8 @@
             [disabled]="player.isOrganizer || ((isTeamFull$ | async) && !player.isSelected)"></ion-checkbox>
           <img [src]="player.photoUrl" class="profilePic">
           <ion-label>{{player.nickname}}</ion-label>
-          <ion-icon class="favourite" slot="end" [name]="player.isFavourite ? 'star' :'star-outline'"
-            (click)="playerFavouriteChanged(player)">
+          <ion-icon [ngClass]="isCurrentUser(player.id) ? 'no-favourite' : 'favourite'" slot="end"
+            [name]="player.isFavourite ? 'star' :'star-outline'" (click)="playerFavouriteChanged(player)">
           </ion-icon>
         </ion-item>
       </ion-list>

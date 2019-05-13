@@ -10,7 +10,7 @@
         <ion-icon slot="end" name="stats"
           (click)="gotoStats(player)">
         </ion-icon>
-        <ion-icon class="favourite" slot="end" [name]="player.isFavourite ? 'star' :'star-outline'"
+        <ion-icon [ngClass]="isCurrentUser(player.id) ? 'no-favourite' : 'favourite'" slot="end" [name]="player.isFavourite ? 'star' :'star-outline'"
           (click)="playerFavouriteChanged(player)">
         </ion-icon>
       </ion-item>

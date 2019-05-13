@@ -8,9 +8,6 @@
   <div *ngIf="player$ | async as player">
     <div *ngIf="matchService.currentMatch$ | async as currentMatch">
       <ion-card>
-        <ion-card-header *ngIf="currentMatch.status === 0">
-          <ion-card-title text-center> Game PIN: {{currentMatch.pin}}</ion-card-title>
-        </ion-card-header>
         <ion-card-header *ngIf="currentMatch.status === 1 || currentMatch.status === 2">
           <ion-card-title text-center> Match in progress!</ion-card-title>
         </ion-card-header>
@@ -61,6 +58,9 @@
             </ion-button>
           </div>
         </ion-card-content>
+        <ion-card-header *ngIf="currentMatch.status === 0">
+          <ion-card-subtitle  text-center> Game PIN: {{currentMatch.pin}}</ion-card-subtitle>
+        </ion-card-header>
       </ion-card>
     </div>
     <div *ngIf="!(matchService.currentMatch$ | async)" class="buttonContainer">

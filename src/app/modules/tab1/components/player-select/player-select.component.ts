@@ -70,7 +70,7 @@ export class PlayerSelectComponent implements OnInit {
               return playerSelectModel;
             })
             .filter(p => this.isNotInOtherTeam(p, team, match))
-            .sort(this.sortPlayers);
+            .sort(this.playerService.sortPlayers);
         })
       );
   }
@@ -102,6 +102,10 @@ export class PlayerSelectComponent implements OnInit {
     }
   }
 
+  public isCurrentUser(playerId: string): boolean {
+    return this.playerService.isCurrentUser(playerId);
+  }
+
   public dismiss(): void {
     this.modalController.dismiss();
   }
@@ -110,17 +114,6 @@ export class PlayerSelectComponent implements OnInit {
     return team === Team.teamA ? match.teamA.map(p => p.playerRef.id).indexOf(playerId) >= 0
       : match.teamB.map(p => p.playerRef.id).indexOf(playerId) >= 0;
   }
-
-  private sortPlayers(a: PlayerSelectModel, b: PlayerSelectModel): number {
-    const aScore = (a.isOrganizer ? 1 : 0) + (a.isSelected ? 1 : 0) + (a.isFavourite ? 1 : 0);
-    const bScore = (b.isOrganizer ? 1 : 0) + (b.isSelected ? 1 : 0) + (b.isFavourite ? 1 : 0);
-
-    if (aScore < bScore) { return 1; }
-    if (aScore > bScore) { return -1; }
-    if (a.nickname < b.nickname) { return -1; }
-    if (a.nickname > b.nickname) { return 1; }
-    return 0;
-}
 
   private isNotInOtherTeam(player: PlayerSelectModel, team: Team, match: Match): boolean {
     return team === Team.teamA ? match.teamB.map(p => p.playerRef.id).indexOf(player.id) === -1
