@@ -10,6 +10,6 @@ export class StatsService {
 
   public updateStats(matchPath: string) {
     const updateStatsPayload = { matchPath: matchPath, config: {} };
-    this.fns.httpsCallable('updatePlayerStats')(updateStatsPayload);
+    this.fns.httpsCallable('processMatch')(updateStatsPayload);
   }
 }

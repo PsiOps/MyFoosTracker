@@ -1,20 +1,10 @@
-import * as admin from 'firebase-admin';
 export class PlayerStats {
-    public matchesWonCount = 0;
-    public matchesLostCount = 0;
-    public matchesTiedCount = 0;
-    public matchesOrganizedCount = 0;
-    public minutesPlayedCount = 0;
-    public matchDurationMinutesAverage = 0;
-    public teamGoalsScoredCount = 0;
-    public tableMatchStats: { tableRef: admin.firestore.DocumentReference, matchesWonCount: number, matchesLostCount: number }[] = [];
-    public teamMateMatchStats: TeamMateStat[] = [];
-    public opponentTeamMatchStats: { opponentTeamRefs: admin.firestore.DocumentReference[], matchesWonCount: number, matchesLostCount: number }[] = [];
+    public matchesWon = 0;
+    public matchesLost = 0;
+    public matchesTied = 0;
+    public matchesOrganized = 0;
+    public minutesPlayed = 0;
+    public averageMatchDuration = 0;
+    public teamGoalsScored = 0;
+    public teamGoalsAgainst = 0;
 }
-
-export interface TeamMateStat {
-    teamMateRef: admin.firestore.DocumentReference;
-    matchesWonCount: number;
-    matchesLostCount: number;
-}
-

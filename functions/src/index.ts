@@ -2,36 +2,53 @@ import * as admin from 'firebase-admin';
 const firebaseAdmin = admin.initializeApp();
 const firestore = firebaseAdmin.firestore();
 import * as functions from 'firebase-functions';
-import { StatsUpdateService } from './services/stats-update.service';
+import { MatchProcessingService } from './services/match-processing.service';
 import { StatsRecalcService } from './services/stats-recalc.service';
 import { Player } from './domain/player';
 import { NotificationService } from './services/notification.service';
+import { TeamStatsUpdateService } from './services/team-stats.update.service';
+import { TeamService } from './services/team.service';
+import { PlayerStatsUpdateService } from './services/player-stats.update.service';
 
-const statsUpdateService = new StatsUpdateService(firestore);
-
-// const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
-//     docs.forEach(doc => {
-//         doc.ref.update(updateObject).catch(err => console.log(err));
-//     })
-// }
-export const updatePlayerStats = functions.https.onCall(async (data, context) => {
-    return await statsUpdateService.updateStatsForMatch(data.matchPath);
-});
 export const sendMatchInvitations = functions.https.onCall(async (data, context) => {
     const notificationService = new NotificationService(admin.messaging(), firestore);
     return await notificationService.sendMatchInvites(data.matchPath);
 });
-export const recalculatePlayerStats = functions.https.onRequest(async (req, res) => {
-    console.log('Starting recalculation');
-    const statsRecalcService = new StatsRecalcService(statsUpdateService, firestore);
-    const message = await statsRecalcService.recalculateStatistics();
-    res.send(message);
+
+const teamStatsUpdateService = new TeamStatsUpdateService(firestore);
+const playerStatsUpdateService = new PlayerStatsUpdateService(firestore);
+
+const matchProcessingService = 
+    new MatchProcessingService(firestore, new TeamService(firestore), teamStatsUpdateService, playerStatsUpdateService);
+
+export const processMatch = functions.https.onCall(async (data, context) => {
+    return await matchProcessingService.processMatch(data.matchPath);
 });
+
 export const markForRecalculation = functions.https.onRequest(async (req, res) => {
-    const statsRecalcService = new StatsRecalcService(statsUpdateService, firestore);
+    const statsRecalcService = new StatsRecalcService(playerStatsUpdateService, firestore);
     const message = await statsRecalcService.markForRecalculation();
     res.send(message);
 });
+
+export const recalculatePlayerStats = functions.https.onRequest(async (req, res) => {
+    console.log('Starting recalculation');
+    const statsRecalcService = new StatsRecalcService(playerStatsUpdateService, firestore);
+    const message = await statsRecalcService.recalculateStatistics();
+    res.send(message);
+});
+
+
+
+
+
+
+
+
+
+
+
+
 export const removeUser = functions.https.onRequest(async (req, res) => {
     const userId = req.body.userId;
     const playerDoc = await firestore.doc(`/players/${userId}`);
@@ -42,6 +59,11 @@ export const removeUser = functions.https.onRequest(async (req, res) => {
 
     res.send('User removed');
 });
+// const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
+//     docs.forEach(doc => {
+//         doc.ref.update(updateObject).catch(err => console.log(err));
+//     })
+// }
 export const updateData = functions.https.onRequest(async (req, res) => {
     // 1/4/2019
     // const fieldValue = admin.firestore.FieldValue;

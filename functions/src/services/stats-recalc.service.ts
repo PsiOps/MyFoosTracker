@@ -1,9 +1,9 @@
-import { StatsUpdateService } from './stats-update.service';
 import { PlayerStats } from '../domain/player-stats';
 import { Match } from '../domain/match';
+import { PlayerStatsUpdateService } from './player-stats.update.service';
 
 export class StatsRecalcService{
-    constructor(private statsUpdateService: StatsUpdateService, private firestore: FirebaseFirestore.Firestore){}
+    constructor(private playerStatsUpdateService: PlayerStatsUpdateService, private firestore: FirebaseFirestore.Firestore){}
 
     public async recalculateStatistics(): Promise<{ message: string }> {
         const matchDocuments = await this.firestore.collection('matches').get();
@@ -21,7 +21,7 @@ export class StatsRecalcService{
             console.log(`Recalculating for player with id: ${playerDoc.id}`);
             const playerMatches = matches.filter(m => m.participants.indexOf(playerDoc.id) >= 0);
             const newStats = new PlayerStats();
-            playerMatches.forEach(m => this.statsUpdateService.updatePlayerStats(m, playerDoc.id, newStats));
+            playerMatches.forEach(m => this.playerStatsUpdateService.updatePlayerStats(m, playerDoc.id, newStats));
             const playerStatsDoc = this.firestore.doc(`player-stats/${playerDoc.id}`);
             playerStatsDoc.set(Object.assign({}, newStats))
                 .then(() => {
