@@ -1,9 +1,14 @@
 import { PlayerStats } from '../domain/player-stats';
 import { Match } from '../domain/match';
 import { PlayerStatsUpdateService } from './player-stats.update.service';
+import { TeamStatsUpdateService } from './team-stats.update.service';
 
 export class StatsRecalcService{
-    constructor(private playerStatsUpdateService: PlayerStatsUpdateService, private firestore: FirebaseFirestore.Firestore){}
+    constructor(
+        private teamStatsUpdateService: TeamStatsUpdateService, 
+        private playerStatsUpdateService: PlayerStatsUpdateService, 
+        private firestore: FirebaseFirestore.Firestore
+        ){}
 
     public async recalculateStatistics(): Promise<{ message: string }> {
         const matchDocuments = await this.firestore.collection('matches').get();
@@ -20,10 +25,10 @@ export class StatsRecalcService{
         playerDocs.forEach(playerDoc => {
             console.log(`Recalculating for player with id: ${playerDoc.id}`);
             const playerMatches = matches.filter(m => m.participants.indexOf(playerDoc.id) >= 0);
-            const newStats = new PlayerStats();
-            playerMatches.forEach(m => this.playerStatsUpdateService.updatePlayerStats(m, playerDoc.id, newStats));
+            const newPlayerStats = new PlayerStats();
+            playerMatches.forEach(m => this.playerStatsUpdateService.updatePlayerStats(m, playerDoc.id, newPlayerStats));
             const playerStatsDoc = this.firestore.doc(`player-stats/${playerDoc.id}`);
-            playerStatsDoc.set(Object.assign({}, newStats))
+            playerStatsDoc.set(Object.assign({}, newPlayerStats))
                 .then(() => {
                     playerDoc.ref.update({needsStatsRecalc: false})
                         .catch(err => console.log(err));
@@ -41,5 +46,4 @@ export class StatsRecalcService{
         });
         return {message: 'All players marked for recalculation'}
     }
-
 }

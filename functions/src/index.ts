@@ -15,25 +15,26 @@ export const sendMatchInvitations = functions.https.onCall(async (data, context)
     return await notificationService.sendMatchInvites(data.matchPath);
 });
 
-const teamStatsUpdateService = new TeamStatsUpdateService(firestore);
+const teamService = new TeamService(firestore);
+const teamStatsUpdateService = new TeamStatsUpdateService(firestore, teamService);
 const playerStatsUpdateService = new PlayerStatsUpdateService(firestore);
 
 const matchProcessingService = 
-    new MatchProcessingService(firestore, new TeamService(firestore), teamStatsUpdateService, playerStatsUpdateService);
+    new MatchProcessingService(firestore, teamService, teamStatsUpdateService, playerStatsUpdateService);
 
 export const processMatch = functions.https.onCall(async (data, context) => {
     return await matchProcessingService.processMatch(data.matchPath);
 });
 
 export const markForRecalculation = functions.https.onRequest(async (req, res) => {
-    const statsRecalcService = new StatsRecalcService(playerStatsUpdateService, firestore);
+    const statsRecalcService = new StatsRecalcService(teamStatsUpdateService, playerStatsUpdateService, firestore);
     const message = await statsRecalcService.markForRecalculation();
     res.send(message);
 });
 
 export const recalculatePlayerStats = functions.https.onRequest(async (req, res) => {
     console.log('Starting recalculation');
-    const statsRecalcService = new StatsRecalcService(playerStatsUpdateService, firestore);
+    const statsRecalcService = new StatsRecalcService(teamStatsUpdateService, playerStatsUpdateService, firestore);
     const message = await statsRecalcService.recalculateStatistics();
     res.send(message);
 });

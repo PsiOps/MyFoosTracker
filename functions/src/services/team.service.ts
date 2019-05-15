@@ -35,6 +35,10 @@ export class TeamService {
     }
 
     public getTeamId(team: {playerRef: admin.firestore.DocumentReference}[]): string {
-        return team.map(t => t.playerRef.id).sort().join('-');
+        return this.getTeamCombinationId(team.map(t => t.playerRef.id));
+    }
+
+    public getTeamCombinationId(teamIds: string[]): string {
+        return teamIds.sort().join('-');
     }
 }

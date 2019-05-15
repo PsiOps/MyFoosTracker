@@ -1,10 +1,5 @@
-export class PlayerStats {
-    public matchesWon = 0;
-    public matchesLost = 0;
-    public matchesTied = 0;
+import { TeamStats } from './team-stats';
+
+export class PlayerStats extends TeamStats {
     public matchesOrganized = 0;
-    public minutesPlayed = 0;
-    public averageMatchDuration = 0;
-    public teamGoalsScored = 0;
-    public teamGoalsAgainst = 0;
 }

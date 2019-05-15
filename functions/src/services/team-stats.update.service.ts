@@ -42,15 +42,7 @@ export class TeamStatsUpdateService {
         const goalsAgainstIncrement = teamTeam === Team.teamB ? match.goalsTeamA : match.goalsTeamB;
         this.incrementBasicStats(teamStats, matchesWonIncrement, matchesLostIncrement, matchesTiedIncrement,
             goalsScoredIncrement, goalsAgainstIncrement, matchDurationMinutes);
-        let opponentTeamStats = teamStats.OpponentTeamStats[opponentTeamId];
-        if(!opponentTeamStats) { 
-            opponentTeamStats = new TeamStats();
-            teamStats.OpponentTeamStats[opponentTeamId] = opponentTeamStats;
-        }
-        this.incrementBasicStats(opponentTeamStats, matchesWonIncrement, matchesLostIncrement, matchesTiedIncrement,
-            goalsScoredIncrement, goalsAgainstIncrement, matchDurationMinutes);
         this.updateCalculatedStats(teamStats);
-        this.updateCalculatedStats(opponentTeamStats);
     }
 
     private incrementBasicStats(teamStats: TeamStats, matchesWonInc: number, matchesLostInc: number, matchesTiedInc: number,

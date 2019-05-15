@@ -6,5 +6,9 @@ export class TeamStats {
     public averageMatchDuration = 0;
     public goalsScored = 0;
     public goalsAgainst = 0;
-    public OpponentTeamStats: { [opponentTeamId: string]: TeamStats };
+}
+
+export class TeamCombinationStats {
+    constructor(public teamIds: string[]) {}
+    public statsByTeamId: {[teamId: string]: TeamStats}
 }
