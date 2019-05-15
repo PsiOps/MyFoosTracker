@@ -45,7 +45,7 @@ export class PlayerManageComponent implements OnInit {
               playerSelectModel.photoUrl = player.photoUrl;
               return playerSelectModel;
             })
-            .sort(this.sortPlayers);
+            .sort(this.playerService.sortPlayers);
         })
       );
   }
@@ -60,22 +60,15 @@ export class PlayerManageComponent implements OnInit {
     }
   }
 
+  public isCurrentUser(playerId: string): boolean {
+    return this.playerService.isCurrentUser(playerId);
+  }
+
   public async gotoStats(player: PlayerSelectModel) {
     const modal = await this.modalController.create({
       component: StatsComponent,
       componentProps: { player: player, isModal: true }
     });
     return await modal.present();
-  }
-
-  private sortPlayers(a: PlayerSelectModel, b: PlayerSelectModel): number {
-    const aScore = (a.isFavourite ? 1 : 0);
-    const bScore = (b.isFavourite ? 1 : 0);
-
-    if (aScore < bScore) { return 1; }
-    if (aScore > bScore) { return -1; }
-    if (a.nickname < b.nickname) { return -1; }
-    if (a.nickname > b.nickname) { return 1; }
-    return 0;
   }
 }
