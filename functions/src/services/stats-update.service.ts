@@ -38,16 +38,21 @@ export class StatsUpdateService {
         const matchesTiedIncrement = isTie ? 1 : 0;
         const matchesOrganizedIncrement = isOrganizer ? 1 : 0;
         const teamGoalsScoredIncrement = playerTeam === Team.teamA ? match.goalsTeamA : match.goalsTeamB;
-        const teamMateId = playerTeam === Team.teamA ? this.getTeamMateId(playerId, match.teamA) 
-            : this.getTeamMateId(playerId, match.teamB)
-        const teamMateDocRef = this.firestore.doc(`players/${teamMateId}`);
         this.incrementBasicStats(playerStats, matchesWonIncrement, matchesLostIncrement, matchesTiedIncrement,
             matchesOrganizedIncrement, teamGoalsScoredIncrement, matchDurationMinutes);
         this.updateCalculatedStats(playerStats);
-        this.updateTeamMateStatistics(playerStats, teamMateDocRef, matchesWonIncrement, matchesLostIncrement);
+
+        const teamMateId = playerTeam === Team.teamA ?
+            this.getTeamMateId(playerId, match.teamA) :
+            this.getTeamMateId(playerId, match.teamB)
+
+        if (teamMateId) {
+            const teamMateDocRef = this.firestore.doc(`players/${teamMateId}`);
+            this.updateTeamMateStatistics(playerStats, teamMateDocRef, matchesWonIncrement, matchesLostIncrement);
+        }
     }
 
-    private getTeamMateId(playerId: string, team: {playerRef: FirebaseFirestore.DocumentReference}[]): string {
+    private getTeamMateId(playerId: string, team: { playerRef: FirebaseFirestore.DocumentReference }[]): string {
         const teamPlayerIds = team.map(p => p.playerRef.id)
         return teamPlayerIds.find(id => id !== playerId);
     }
@@ -67,16 +72,16 @@ export class StatsUpdateService {
     }
 
     private updateTeamMateStatistics(
-        playerStats: PlayerStats, 
-        teamMateDocRef: FirebaseFirestore.DocumentReference, 
-        matchesWonInc: number, 
-        matchesLostInc: number){
-            let teammateStats = playerStats.teamMateMatchStats.find(st => st.teamMateRef.id === teamMateDocRef.id);
-            if(!teammateStats){
-                teammateStats = { teamMateRef: teamMateDocRef, matchesWonCount: 0, matchesLostCount: 0}
-                playerStats.teamMateMatchStats.push(teammateStats)
-            }
-            teammateStats.matchesWonCount += matchesWonInc;
-            teammateStats.matchesLostCount += matchesLostInc;
+        playerStats: PlayerStats,
+        teamMateDocRef: FirebaseFirestore.DocumentReference,
+        matchesWonInc: number,
+        matchesLostInc: number) {
+        let teammateStats = playerStats.teamMateMatchStats.find(st => st.teamMateRef.id === teamMateDocRef.id);
+        if (!teammateStats) {
+            teammateStats = { teamMateRef: teamMateDocRef, matchesWonCount: 0, matchesLostCount: 0 }
+            playerStats.teamMateMatchStats.push(teammateStats)
+        }
+        teammateStats.matchesWonCount += matchesWonInc;
+        teammateStats.matchesLostCount += matchesLostInc;
     }
 }
