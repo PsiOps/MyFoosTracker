@@ -1,8 +1,9 @@
 <div class="container">
   <div class="teamContainer">
     <div class="teamAPlayer1 player" [ngClass]="teamAPlayer1 ? 'active' : 'inactive'">
-      <div *ngIf="teamAPlayer1">
-        {{teamAPlayer1?.nickname}}
+      <div *ngIf="teamAPlayer1" class="player-row">
+        <span>{{teamAPlayer1?.nickname}}</span>
+        <img [src]="teamAPlayer1.photoUrl" class="profilePic">
       </div>
       <div *ngIf="!teamAPlayer1 && canJoin()">
         <ion-fab-button size="small" color="white" (click)="addTeamAPlayer()">
@@ -11,8 +12,9 @@
       </div>
     </div>
     <div class="teamAPlayer2 player" [ngClass]="teamAPlayer2 ? 'active' : 'inactive'">
-      <div *ngIf="teamAPlayer2">
-        {{teamAPlayer2?.nickname}}
+      <div *ngIf="teamAPlayer2" class="player-row">
+        <span>{{teamAPlayer2?.nickname}}</span>
+        <img [src]="teamAPlayer2.photoUrl" class="profilePic">
       </div>
       <div *ngIf="!teamAPlayer2 && canJoin()">
         <ion-fab-button size="small" color="white" (click)="addTeamAPlayer()">
@@ -28,8 +30,9 @@
   <div class="score scoreTeamB">{{match.goalsTeamB}}</div>
   <div class="teamContainer">
     <div class="teamBPlayer1 player" [ngClass]="teamBPlayer1 ? 'active' : 'inactive'">
-      <div *ngIf="teamBPlayer1">
-        {{teamBPlayer1?.nickname}}
+      <div *ngIf="teamBPlayer1" class="player-row">
+        <img [src]="teamBPlayer1.photoUrl" class="profilePic">
+        <span>{{teamBPlayer1?.nickname}}</span>
       </div>
       <div *ngIf="!teamBPlayer1 && canJoin()">
         <ion-fab-button size="small" color="white" (click)="addTeamBPlayer()">
@@ -38,8 +41,9 @@
       </div>
     </div>
     <div class="teamBPlayer2 player" [ngClass]="teamBPlayer2 ? 'active' : 'inactive'">
-      <div *ngIf="teamBPlayer2">
-        {{teamBPlayer2?.nickname}}
+      <div *ngIf="teamBPlayer2" class="player-row">
+        <img [src]="teamBPlayer2.photoUrl" class="profilePic">
+        <span>{{teamBPlayer2?.nickname}}</span>
       </div>
       <div *ngIf="!teamBPlayer2 && canJoin()">
         <ion-fab-button size="small" color="white" (click)="addTeamBPlayer()">
