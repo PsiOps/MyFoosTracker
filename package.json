@@ -8,6 +8,7 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
+    "scan": "sonar-scanner.bat -D\"sonar.projectKey=PsiOps_MyFoosTracker\" -D\"sonar.organization=psiops-github\" -D\"sonar.sources=.\" -D\"sonar.host.url=https://sonarcloud.io\" -D\"sonar.login=e36d5e15267d445899f1cea3f8c2ab967fd9aa3d\"",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "deploypwa": "ionic build --prod --service-worker && firebase deploy --only hosting"
