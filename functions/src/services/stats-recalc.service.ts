@@ -1,12 +1,14 @@
 import { StatsUpdateService } from './stats-update.service';
 import { PlayerStats } from '../domain/player-stats';
-import { Match } from '../domain/match';
+import { Match, MatchStatus } from '../domain/match';
 
 export class StatsRecalcService{
     constructor(private statsUpdateService: StatsUpdateService, private firestore: FirebaseFirestore.Firestore){}
 
     public async recalculateStatistics(): Promise<{ message: string }> {
-        const matchDocuments = await this.firestore.collection('matches').get();
+        const matchDocuments = await this.firestore.collection('matches')
+            .where('status', '==', MatchStatus.over)
+            .get();
         const matches = matchDocuments.docs.map(ds => ds.data()) as Match[];
         const playersRef = this.firestore.collection('players')
         const playerDocs = await playersRef.where("needsStatsRecalc", "==", true).get();
