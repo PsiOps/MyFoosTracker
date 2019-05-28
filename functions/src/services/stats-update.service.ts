@@ -49,8 +49,8 @@ export class StatsUpdateService {
         playerStats.matchesLost = playerStats.matchesLost + matchesLostInc;
         playerStats.matchesTied = playerStats.matchesTied + matchesTiedInc;
         playerStats.matchesOrganized = playerStats.matchesOrganized + matchesOrgInc;
-        playerStats.teamGoalsScored = playerStats.teamGoalsScored + teamGoalsScoredInc;
-        playerStats.teamGoalsAgainst = playerStats.teamGoalsAgainst + teamGoalsAgainstInc;
+        playerStats.goalsScored = playerStats.goalsScored + teamGoalsScoredInc;
+        playerStats.goalsAgainst = playerStats.goalsAgainst + teamGoalsAgainstInc;
         playerStats.minutesPlayed = playerStats.minutesPlayed + matchDurationInc;
     }
 

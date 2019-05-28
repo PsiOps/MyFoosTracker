@@ -45,6 +45,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .player-row {
+        display: flex;
+        width: 100%;
+
+        .profilePic {
+            margin: 0 16px;
+            height: 32px;
+            width: 32px;
+        }
+
+        span {
+            text-align: right;
+            flex-grow: 1;
+            line-height: 32px;
+        }
+    }
 }
 
 .teamAPlayer1,
@@ -52,6 +69,15 @@
 .teamBPlayer1,
 .teamBPlayer2 {
     background-color: var(--mft-inactive-color);
+}
+
+.teamBPlayer1,
+.teamBPlayer2 {
+    .player-row {
+        span {
+            text-align: left;
+        }
+    }
 }
 
 .scoreTeamA,

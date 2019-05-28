@@ -38,6 +38,9 @@ div[scrolly=true] {
     cursor: pointer;
     z-index: 2;
 }
+.no-favourite {
+    visibility: hidden;
+}
 .playerCheckbox {
     margin-right: 12px;
 }
