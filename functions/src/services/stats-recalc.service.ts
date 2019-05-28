@@ -1,12 +1,12 @@
 import { PlayerStats } from '../domain/player-stats';
 import { Match } from '../domain/match';
-import { PlayerStatsUpdateService } from './player-stats.update.service';
+import { StatsUpdateService } from './stats-update.service';
 import { TeamStatsUpdateService } from './team-stats.update.service';
 
 export class StatsRecalcService{
     constructor(
         private teamStatsUpdateService: TeamStatsUpdateService, 
-        private playerStatsUpdateService: PlayerStatsUpdateService, 
+        private playerStatsUpdateService: StatsUpdateService, 
         private firestore: FirebaseFirestore.Firestore
         ){}
 

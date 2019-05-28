@@ -1,10 +1,11 @@
 import { Match, Team } from '../domain/match';
 import { PlayerStats } from '../domain/player-stats';
+import { StatsIncrements } from '../models/stats-increments';
 
-export class PlayerStatsUpdateService {
+export class StatsUpdateService {
     constructor(private firestore: FirebaseFirestore.Firestore) { }
 
-    public async updatePlayerStatsForMatch(match: Match): Promise<void> {
+    public async updatePlayerStatsForMatch(match: Match, teamAIncrements: StatsIncrements, teamBIncrements: StatsIncrements): Promise<void> {
         match.participants.forEach(async playerId => {
             const playerStatsDocRef = this.firestore.doc(`player-stats/${playerId}`);
             await this.firestore.runTransaction(async transaction => {

@@ -8,7 +8,8 @@ import { Player } from './domain/player';
 import { NotificationService } from './services/notification.service';
 import { TeamStatsUpdateService } from './services/team-stats.update.service';
 import { TeamService } from './services/team.service';
-import { PlayerStatsUpdateService } from './services/player-stats.update.service';
+import { StatsUpdateService } from './services/stats-update.service';
+import { StatsIncrementService } from './services/stats-increment.service';
 
 export const sendMatchInvitations = functions.https.onCall(async (data, context) => {
     const notificationService = new NotificationService(admin.messaging(), firestore);
@@ -17,24 +18,25 @@ export const sendMatchInvitations = functions.https.onCall(async (data, context)
 
 const teamService = new TeamService(firestore);
 const teamStatsUpdateService = new TeamStatsUpdateService(firestore, teamService);
-const playerStatsUpdateService = new PlayerStatsUpdateService(firestore);
+const statsIncrementService = new StatsIncrementService();
+const statsUpdateService = new StatsUpdateService(firestore);
 
 const matchProcessingService = 
-    new MatchProcessingService(firestore, teamService, teamStatsUpdateService, playerStatsUpdateService);
+    new MatchProcessingService(firestore, statsIncrementService, statsUpdateService);
 
 export const processMatch = functions.https.onCall(async (data, context) => {
     return await matchProcessingService.processMatch(data.matchPath);
 });
 
 export const markForRecalculation = functions.https.onRequest(async (req, res) => {
-    const statsRecalcService = new StatsRecalcService(teamStatsUpdateService, playerStatsUpdateService, firestore);
+    const statsRecalcService = new StatsRecalcService(teamStatsUpdateService, statsUpdateService, firestore);
     const message = await statsRecalcService.markForRecalculation();
     res.send(message);
 });
 
 export const recalculatePlayerStats = functions.https.onRequest(async (req, res) => {
     console.log('Starting recalculation');
-    const statsRecalcService = new StatsRecalcService(teamStatsUpdateService, playerStatsUpdateService, firestore);
+    const statsRecalcService = new StatsRecalcService(teamStatsUpdateService, statsUpdateService, firestore);
     const message = await statsRecalcService.recalculateStatistics();
     res.send(message);
 });
