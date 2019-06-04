@@ -1,5 +1,4 @@
 import { Match, Team } from '../domain/match';
-import { PlayerStats } from '../domain/player-stats';
 import { StatsIncrements } from '../models/stats-increments';
 import { StatsIncrementService } from './stats-increment.service';
 import { TeamService } from './team.service';
@@ -22,18 +21,17 @@ export class StatsUpdateService {
     public async updatePlayerStatsForMatch(match: Match, teamAIncrements: StatsIncrements, teamBIncrements: StatsIncrements): Promise<void> {
         match.participants.forEach(async playerId => {
             const playerIncrements = this.teamService.getPlayerTeam(playerId, match) === Team.teamA ? teamAIncrements : teamBIncrements;
-            const playerStatsDocRef = this.firestore.doc(`player-stats/${playerId}`);
-            const isOrganizer = playerId === match.organizer;
+            const playerStatsDocRef = this.firestore.doc(`player-stats-v2/${playerId}`);
             await this.firestore.runTransaction(async transaction => {
                 const doc = await transaction.get(playerStatsDocRef);
-                const currentStats = doc.data() as PlayerStats;
+                const currentStats = doc.data() as Stats;
                 if (!currentStats) {
-                    const newStats = new PlayerStats();
-                    this.updatePlayerStats(newStats, playerIncrements, isOrganizer)
+                    const newStats = new Stats();
+                    this.updateStats(newStats, playerIncrements)
                     transaction.set(playerStatsDocRef, Object.assign({}, newStats))
                     return;
                 }
-                this.updatePlayerStats(currentStats, playerIncrements, isOrganizer)
+                this.updateStats(currentStats, playerIncrements)
                 transaction.update(playerStatsDocRef, Object.assign({}, currentStats))
             });
         });
@@ -97,11 +95,6 @@ export class StatsUpdateService {
             this.updateStats(stats, incrementsByTeamId[teamId]);
             this.updateCalculatedStats(stats);
         })
-    }
-
-    public updatePlayerStats(stats: PlayerStats, increments: StatsIncrements, isOrganizer: boolean) {
-        stats.matchesOrganized += isOrganizer ? 1 : 0;
-        this.updateStats(stats, increments);
     }
 
     public updateStats(stats: Stats, increments: StatsIncrements) {
