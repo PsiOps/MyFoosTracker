@@ -1,44 +1,34 @@
-import { Match } from '../domain/match';
 import * as admin from 'firebase-admin';
-import { TeamModel } from '../domain/team.model';
-import { Player } from '../domain/player';
+import { Team, Match } from '../domain/match';
 
 export class TeamService {
-
-    constructor(private firestore: FirebaseFirestore.Firestore) { }
-
-    public async ensureTeams(match: Match): Promise<string[]> {
-        const teamAId = this.getTeamId(match.teamA);
-        const teamBId = this.getTeamId(match.teamB);
-        const teamA = (await this.firestore.doc(`teams/${teamAId}`).get()).data();
-        if (!teamA) {
-            await this.addTeam(teamAId, match.teamA);
-        }
-        const teamB = (await this.firestore.doc(`teams/${teamBId}`).get()).data();
-        if (!teamB) {
-            await this.addTeam(teamBId, match.teamB);
-        }
-        return [teamAId, teamBId];
+    
+    getPlayerTeam(playerId: string, match: Match): Team {
+        return match.teamA.map(m => m.playerRef.id).includes(playerId) ? Team.teamA : Team.teamB;
     }
 
-    private async addTeam(teamId: string, team: { playerRef: admin.firestore.DocumentReference, goals: number }[]): Promise<void> {
-        const teamMemberNames: string[] = [];
-        const teamPlayerRefs = team.map(t => t.playerRef);
-        teamPlayerRefs.map(p => p.get().then(playerDoc => {
-            const player = playerDoc.data() as Player;
-            teamMemberNames.push(player.nickname);
-        }));
-        const teamModel = new TeamModel();
-        teamModel.name = teamMemberNames.join(' & ');
-        teamModel.members = teamPlayerRefs.map(ref => ref.id);
-        await this.firestore.doc(`teams/${teamId}`).set(teamModel);
+    getWinningTeam(match: Match): Team {
+        return match.goalsTeamA === match.goalsTeamB ? Team.none 
+            : (match.goalsTeamA > match.goalsTeamB ? Team.teamA : Team.teamB);
+    }
+
+    public getTeamIds(match: Match): string[]{
+        return [this.getTeamId(match.teamA), this.getTeamId(match.teamB)];
+    }
+
+    public getTeamComboId(match: Match): string{
+        return this.getCombinedId(this.getTeamIds(match));
     }
 
     public getTeamId(team: {playerRef: admin.firestore.DocumentReference}[]): string {
-        return this.getTeamCombinationId(team.map(t => t.playerRef.id));
+        return this.getCombinedId(team.map(t => t.playerRef.id));
     }
 
-    public getTeamCombinationId(teamIds: string[]): string {
-        return teamIds.sort().join('-');
+    public getMatchTeamId(match: Match, team: Team): string {
+        return team === Team.teamA ? this.getTeamId(match.teamA) : this.getTeamId(match.teamB);
+    }
+
+    private getCombinedId(ids: string[]): string {
+        return ids.sort().join('-');
     }
 }

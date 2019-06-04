@@ -1,4 +1,4 @@
-export class TeamStats {
+export class Stats {
     public matchesWon = 0;
     public matchesLost = 0;
     public matchesTied = 0;
@@ -6,9 +6,4 @@ export class TeamStats {
     public averageMatchDuration = 0;
     public goalsScored = 0;
     public goalsAgainst = 0;
-}
-
-export class TeamCombinationStats {
-    constructor(public teamIds: string[]) {}
-    public statsByTeamId: {[teamId: string]: TeamStats}
 }

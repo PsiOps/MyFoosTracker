@@ -1,5 +1,5 @@
-import { TeamStats } from './team-stats';
+import { Stats } from './stats';
 
-export class PlayerStats extends TeamStats {
+export class PlayerStats extends Stats {
     public matchesOrganized = 0;
 }

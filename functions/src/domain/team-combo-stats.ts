@@ -1,10 +1,11 @@
-import { TeamStats } from './team-stats';
+import { Stats } from './stats';
 
 export class TeamComboStats {
-    constructor(teamComboId: string) {
-        this.members = teamComboId.split('-');
+    constructor(public teamIds: string[], public memberIds: string[]) {
+        teamIds.forEach(teamId => {
+            this.statsByTeamId[teamId] = new Stats();
+        })
      }
 
-     public members: string[];
-     public teams: Map<string, TeamStats>
+     public statsByTeamId: Map<string, Stats>
 }
