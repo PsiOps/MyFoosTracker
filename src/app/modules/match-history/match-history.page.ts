@@ -14,35 +14,46 @@ export class MatchHistoryPage {
   public matchesPerDay: { day: Date, matches: Match[] }[] = [];
   private matchesAfterKey: Date;
   private matchesUntillKey: Date;
+  private minNumberOfMatchesToLoad = 8;
   private daysPerBatch = 3;
 
   constructor(private afs: AngularFirestore) {
     this.setInitialDates();
-    this.getMoreMatches();
+    this.loadMoreData();
   }
 
   public loadData(event: any) {
-    this.getMoreMatches(event);
+    this.loadMoreData(event);
   }
+
   public refresh($event: any) {
     setTimeout(() => {
       this.setInitialDates();
       this.matchesPerDay = [];
-      this.getMoreMatches($event);
+      this.loadMoreData($event);
     }, 500);
   }
-  private getMoreMatches(event?: any) {
-    this.afs.collection<Match>('matches', ref => this.showAllFinished(ref))
+
+  private loadMoreData(event?: any) {
+    this.afs.collection<Match>('matches', ref => this.filterFinishedMatches(ref))
       .valueChanges()
-      .pipe(map(this.groupMatchesByDay))
+      .pipe(
+        map(this.groupMatchesByDay)
+      )
       .subscribe(matchesByDay => {
         this.matchesPerDay = this.matchesPerDay.concat(matchesByDay);
         this.matchesAfterKey.setDate(this.matchesAfterKey.getDate() - this.daysPerBatch);
         this.matchesUntillKey.setDate(this.matchesUntillKey.getDate() - this.daysPerBatch);
-        if (event) { event.target.complete(); }
+
+        if (event) {
+          event.target.complete();
+        } else if (this.matchesPerDay.length < this.minNumberOfMatchesToLoad) {
+          this.loadMoreData();
+        }
       });
   }
-  private showAllFinished = (ref: CollectionReference): Query => ref
+
+  private filterFinishedMatches = (ref: CollectionReference): Query => ref
     .where('status', '==', MatchStatus.over)
     .orderBy('dateTimeStart', 'desc')
     .startAfter(this.matchesAfterKey)
@@ -60,9 +71,10 @@ export class MatchHistoryPage {
       return result;
     }, []);
   }
+
   private setInitialDates() {
-    this.matchesAfterKey = new Date(new Date().getFullYear(), new Date().getMonth() , new Date().getDate());
-    this.matchesUntillKey = new Date(new Date().getFullYear(), new Date().getMonth() , new Date().getDate());
+    this.matchesAfterKey = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    this.matchesUntillKey = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
     this.matchesAfterKey.setDate(this.matchesAfterKey.getDate() + 1); // Makes start after tomorrow
     this.matchesUntillKey.setDate(this.matchesAfterKey.getDate() - this.daysPerBatch);
   }
