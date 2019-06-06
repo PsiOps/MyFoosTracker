@@ -4,6 +4,7 @@ import { TeamService } from './team.service';
 import { StatsIncrements } from '../models/stats-increments';
 import { StatsIncrementService } from './stats-increment.service';
 import { Stats } from '../domain/stats';
+import { TeamComboStatsIncrements } from '../models/team-combo-stats-increments';
 
 export class StatsRecalcService{
     constructor(
@@ -17,6 +18,7 @@ export class StatsRecalcService{
         
         const playerIncrementsById = new Map<string, StatsIncrements>();
         const teamIncrementsById = new Map<string, StatsIncrements>();
+        const teamComboIncrementsById = new Map<string, TeamComboStatsIncrements>();
 
         const matchDocuments = await this.firestore.collection('matches')
             .where('status', '==', MatchStatus.over)
@@ -26,24 +28,37 @@ export class StatsRecalcService{
 
         matches.forEach(match => {
 
-            // Get increments for each team
             const teamAIncrements = this.statsIncrementService.getIncrements(match, Team.teamA)
             const teamBIncrements = this.statsIncrementService.getIncrements(match, Team.teamB)
 
             match.participants.forEach(playerId => {
-                const playerIncrements = this.teamService.getPlayerTeam(playerId, match) === Team.teamA ? teamAIncrements : teamBIncrements;
-                // Apply the increments to the existing increments in the playerIncrementsById
+                const playerMatchIncrements = this.teamService.getPlayerTeam(playerId, match) === Team.teamA ? teamAIncrements : teamBIncrements;
+                const playerIncrements = playerIncrementsById[playerId];
+                if(!playerIncrements) { 
+                    playerIncrementsById[playerId] = playerMatchIncrements; 
+                } else {
+                    this.statsIncrementService.combineIncrements(playerIncrements, playerMatchIncrements);
+                }
             })
 
             const teamIds = this.teamService.getTeamIds(match);
-
-            teamIds.forEach(teamId => {
-                const teamIncrements = this.teamService.getMatchTeamId(match, Team.teamA) === teamId ? teamAIncrements : teamBIncrements;
-                // Apply the increments to the existing increments in the teamIncrementsById
-            })
-
             const teamComboId = this.teamService.getTeamComboId(match);
-            // Apply the increments to the existing increments in the teamIncrementsById            
+
+            let teamComboIncrements: TeamComboStatsIncrements = teamComboIncrementsById[teamComboId];
+            if(!teamComboIncrements) {
+                teamComboIncrements = new TeamComboStatsIncrements(teamIds);
+                teamComboIncrementsById[teamComboId] = teamComboIncrements;
+            }
+            teamIds.forEach(teamId => {
+                const teamMatchIncrements = this.teamService.getMatchTeamId(match, Team.teamA) === teamId ? teamAIncrements : teamBIncrements;
+                const teamIncrements = teamIncrementsById[teamId];
+                if(!teamIncrements) {
+                    teamIncrementsById[teamId] = teamMatchIncrements;
+                } else {
+                    this.statsIncrementService.combineIncrements(teamIncrements, teamMatchIncrements);
+                }
+                this.statsIncrementService.combineIncrements(teamComboIncrements.incrementsByTeamId[teamId], teamMatchIncrements);
+            })
         })
 
         playerIncrementsById.forEach((increments: StatsIncrements, playerId: string) => {
@@ -53,6 +68,8 @@ export class StatsRecalcService{
             playerStatsDoc.set(Object.assign({}, recalculatedPlayerStats))
                 .catch(err => console.log(err));
         });
+
+        // TODO: Team stuff update
 
         return {message: 'Recalculation complete'}
     }

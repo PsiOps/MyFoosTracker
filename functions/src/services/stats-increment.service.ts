@@ -32,4 +32,13 @@ export class StatsIncrementService {
         stats.goalsAgainst += increments.goalsAgainstIncrement;
         stats.minutesPlayed += increments.minutesPlayedIncrement;
     }
+
+    public combineIncrements(increments: StatsIncrements, incrementsToCombine: StatsIncrements) {
+        increments.matchesWonIncrement += incrementsToCombine.matchesWonIncrement;
+        increments.matchesLostIncrement += incrementsToCombine.matchesLostIncrement;
+        increments.matchesTiedIncrement += incrementsToCombine.matchesTiedIncrement;
+        increments.goalsScoredIncrement += incrementsToCombine.goalsScoredIncrement;
+        increments.goalsAgainstIncrement += incrementsToCombine.goalsAgainstIncrement;
+        increments.minutesPlayedIncrement += incrementsToCombine.minutesPlayedIncrement;
+    }
 }
