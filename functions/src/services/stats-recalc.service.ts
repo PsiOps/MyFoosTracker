@@ -5,6 +5,7 @@ import { StatsIncrements } from '../models/stats-increments';
 import { StatsIncrementService } from './stats-increment.service';
 import { Stats } from '../domain/stats';
 import { TeamComboStatsIncrements } from '../models/team-combo-stats-increments';
+import { TeamComboStats } from '../domain/team-combo-stats';
 
 export class StatsRecalcService{
     constructor(
@@ -46,7 +47,7 @@ export class StatsRecalcService{
 
             let teamComboIncrements: TeamComboStatsIncrements = teamComboIncrementsById[teamComboId];
             if(!teamComboIncrements) {
-                teamComboIncrements = new TeamComboStatsIncrements(teamIds);
+                teamComboIncrements = new TeamComboStatsIncrements(teamIds, match.participants);
                 teamComboIncrementsById[teamComboId] = teamComboIncrements;
             }
             teamIds.forEach(teamId => {
@@ -69,8 +70,24 @@ export class StatsRecalcService{
                 .catch(err => console.log(err));
         });
 
-        // TODO: Team stuff update
+        teamIncrementsById.forEach((increments: StatsIncrements, teamId: string) => {
+            const recalculatedTeamStats = new Stats();
+            this.statsUpdateService.updateStats(recalculatedTeamStats, increments);
+            const teamStatsDoc = this.firestore.doc(`team-stats/${teamId}`);
+            teamStatsDoc.set(Object.assign({}, recalculatedTeamStats))
+                .catch(err => console.log(err));
+        });
 
+        teamComboIncrementsById.forEach((increments: TeamComboStatsIncrements, teamComboId: string) => {
+            const recalculatedTeamComboStats = new TeamComboStats(increments.teamIds, increments.memberIds);
+            increments.teamIds.forEach(teamId => {
+                this.statsUpdateService.updateStats(recalculatedTeamComboStats.statsByTeamId[teamId], increments.incrementsByTeamId[teamId]);
+            });
+            const teamComboStatsDoc = this.firestore.doc(`team-combo-stats/${teamComboId}`);
+            teamComboStatsDoc.set(Object.assign({}, recalculatedTeamComboStats))
+                .catch(err => console.log(err));
+        });
+        
         return {message: 'Recalculation complete'}
     }
 }
