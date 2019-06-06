@@ -49,14 +49,31 @@
     .player-row {
         display: flex;
         width: 100%;
+        padding: 0px 2px;
 
         .profilePic {
-            margin: 0 16px;
+            margin: auto;
             height: 32px;
             width: 32px;
+
+            @media (max-width: 400px) {
+                height: 24px;
+                width: 24px;
+            }
+
+            @media (max-width: 359px) {
+                height: 18px;
+                width: 18px;
+            }
         }
 
         span {
+            padding: 0px 4px;
+
+            @media (max-width: 400px) {
+                padding: 0px 2px;
+            }
+
             text-align: right;
             flex-grow: 1;
             line-height: 32px;
