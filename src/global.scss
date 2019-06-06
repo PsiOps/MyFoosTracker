@@ -11,6 +11,11 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 .card-content-md {
+  padding-inline-start: 10px;
+  padding-inline-end: 10px;
+
+  @media (max-width: 400px) {
     padding-inline-start: 4px;
     padding-inline-end: 4px;
+  }
 }
