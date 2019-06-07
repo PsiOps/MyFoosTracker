@@ -4,6 +4,7 @@ import { StatsIncrementService } from './stats-increment.service';
 import { TeamService } from './team.service';
 import { Stats } from '../domain/stats';
 import { TeamComboStats } from '../domain/team-combo-stats';
+import { TeamComboStatsIncrements } from '../models/team-combo-stats-increments';
 
 export class StatsUpdateService {
     constructor(
@@ -71,20 +72,22 @@ export class StatsUpdateService {
     public async updateTeamComboStatsForMatch(match: Match, teamAIncrements: StatsIncrements, teamBIncrements: StatsIncrements): Promise<void> {
         const teamIds = this.teamService.getTeamIds(match);
         const teamComboId = this.teamService.getTeamComboId(match);
-        const incrementsByTeamId = new Map<string, StatsIncrements>(teamIds.map(teamId => {
-            return [teamId, this.teamService.getMatchTeamId(match, Team.teamA) === teamId ? teamAIncrements : teamBIncrements]
-        }));
+        const teamComboIncrements = new TeamComboStatsIncrements(teamIds, match.participants);
+        teamIds.forEach(teamId => {
+            const teamMatchIncrements = this.teamService.getMatchTeamId(match, Team.teamA) === teamId ? teamAIncrements : teamBIncrements;
+            teamComboIncrements.incrementsByTeamId[teamId] = teamMatchIncrements;
+        });
         const TeamComboStatsDocRef = this.firestore.doc(`team-combo-stats/${teamComboId}`);
         await this.firestore.runTransaction(async transaction => {
             const doc = await transaction.get(TeamComboStatsDocRef);
             const currentStats = doc.data() as TeamComboStats;
             if (!currentStats) {
                 const newStats = new TeamComboStats(teamIds, match.participants);
-                this.updateTeamComboStats(newStats, incrementsByTeamId)
+                this.updateTeamComboStats(newStats, teamComboIncrements.incrementsByTeamId)
                 transaction.set(TeamComboStatsDocRef, Object.assign({}, newStats))
                 return;
             }
-            this.updateTeamComboStats(currentStats, incrementsByTeamId)
+            this.updateTeamComboStats(currentStats, teamComboIncrements.incrementsByTeamId)
             transaction.update(TeamComboStatsDocRef, Object.assign({}, currentStats))
         });
     }

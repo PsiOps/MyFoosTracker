@@ -7,16 +7,16 @@ import { Stats } from '../domain/stats';
 import { TeamComboStatsIncrements } from '../models/team-combo-stats-increments';
 import { TeamComboStats } from '../domain/team-combo-stats';
 
-export class StatsRecalcService{
+export class StatsRecalcService {
     constructor(
-        private statsUpdateService: StatsUpdateService, 
+        private statsUpdateService: StatsUpdateService,
         private statsIncrementService: StatsIncrementService,
         private teamService: TeamService,
         private firestore: FirebaseFirestore.Firestore
-        ){}
+    ) { }
 
     public async recalculateStatistics(): Promise<{ message: string }> {
-        
+
         const playerIncrementsById = new Map<string, StatsIncrements>();
         const teamIncrementsById = new Map<string, StatsIncrements>();
         const teamComboIncrementsById = new Map<string, TeamComboStatsIncrements>();
@@ -34,9 +34,9 @@ export class StatsRecalcService{
 
             match.participants.forEach(playerId => {
                 const playerMatchIncrements = this.teamService.getPlayerTeam(playerId, match) === Team.teamA ? teamAIncrements : teamBIncrements;
-                const playerIncrements = playerIncrementsById[playerId];
-                if(!playerIncrements) { 
-                    playerIncrementsById[playerId] = playerMatchIncrements; 
+                const playerIncrements = playerIncrementsById.get(playerId);
+                if (!playerIncrements) {
+                    playerIncrementsById.set(playerId, playerMatchIncrements);
                 } else {
                     this.statsIncrementService.combineIncrements(playerIncrements, playerMatchIncrements);
                 }
@@ -45,49 +45,51 @@ export class StatsRecalcService{
             const teamIds = this.teamService.getTeamIds(match);
             const teamComboId = this.teamService.getTeamComboId(match);
 
-            let teamComboIncrements: TeamComboStatsIncrements = teamComboIncrementsById[teamComboId];
-            if(!teamComboIncrements) {
+            let teamComboIncrements: TeamComboStatsIncrements = teamComboIncrementsById.get(teamComboId);
+            if (!teamComboIncrements) {
                 teamComboIncrements = new TeamComboStatsIncrements(teamIds, match.participants);
-                teamComboIncrementsById[teamComboId] = teamComboIncrements;
+                teamComboIncrementsById.set(teamComboId, teamComboIncrements);
             }
             teamIds.forEach(teamId => {
                 const teamMatchIncrements = this.teamService.getMatchTeamId(match, Team.teamA) === teamId ? teamAIncrements : teamBIncrements;
-                const teamIncrements = teamIncrementsById[teamId];
-                if(!teamIncrements) {
-                    teamIncrementsById[teamId] = teamMatchIncrements;
+                const teamIncrements = teamIncrementsById.get(teamId);
+                if (!teamIncrements) {
+                    teamIncrementsById.set(teamId, teamMatchIncrements);
                 } else {
                     this.statsIncrementService.combineIncrements(teamIncrements, teamMatchIncrements);
                 }
-                this.statsIncrementService.combineIncrements(teamComboIncrements.incrementsByTeamId[teamId], teamMatchIncrements);
+                this.statsIncrementService.combineIncrements(teamComboIncrements.incrementsByTeamId.get(teamId), teamMatchIncrements);
             })
         })
 
-        playerIncrementsById.forEach((increments: StatsIncrements, playerId: string) => {
+        for (const [playerId, increments] of playerIncrementsById) {
             const recalculatedPlayerStats = new Stats();
             this.statsUpdateService.updateStats(recalculatedPlayerStats, increments);
             const playerStatsDoc = this.firestore.doc(`player-stats-v2/${playerId}`);
             playerStatsDoc.set(Object.assign({}, recalculatedPlayerStats))
                 .catch(err => console.log(err));
-        });
+        }
 
-        teamIncrementsById.forEach((increments: StatsIncrements, teamId: string) => {
+        for(const [teamId, increments] of teamIncrementsById) {
             const recalculatedTeamStats = new Stats();
             this.statsUpdateService.updateStats(recalculatedTeamStats, increments);
             const teamStatsDoc = this.firestore.doc(`team-stats/${teamId}`);
             teamStatsDoc.set(Object.assign({}, recalculatedTeamStats))
                 .catch(err => console.log(err));
-        });
+        }
 
-        teamComboIncrementsById.forEach((increments: TeamComboStatsIncrements, teamComboId: string) => {
+        console.log(teamComboIncrementsById);
+        for(const [teamComboId, increments] of teamComboIncrementsById) {
+            console.log(`Saving TeamCombo Stats for ${teamComboId}`, increments);
             const recalculatedTeamComboStats = new TeamComboStats(increments.teamIds, increments.memberIds);
             increments.teamIds.forEach(teamId => {
-                this.statsUpdateService.updateStats(recalculatedTeamComboStats.statsByTeamId[teamId], increments.incrementsByTeamId[teamId]);
+                this.statsUpdateService.updateStats(recalculatedTeamComboStats.statsByTeamId.get(teamId), increments.incrementsByTeamId.get(teamId));
             });
             const teamComboStatsDoc = this.firestore.doc(`team-combo-stats/${teamComboId}`);
-            teamComboStatsDoc.set(Object.assign({}, recalculatedTeamComboStats))
+            teamComboStatsDoc.set(JSON.parse(JSON.stringify(recalculatedTeamComboStats)))
                 .catch(err => console.log(err));
-        });
-        
-        return {message: 'Recalculation complete'}
+        }
+
+        return { message: 'Recalculation complete' }
     }
 }

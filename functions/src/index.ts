@@ -26,19 +26,10 @@ export const processMatch = functions.https.onCall(async (data, context) => {
     return await matchProcessingService.processMatch(data.matchPath);
 });
 
-export const markForRecalculation = functions.https.onRequest(async (req, res) => {
-    //const statsRecalcService = new StatsRecalcService(statsUpdateService, firestore);
-    //const message = await statsRecalcService.markForRecalculation();
-    //res.send(message);
-    res.send({});
-});
-
 export const recalculatePlayerStats = functions.https.onRequest(async (req, res) => {
-    //console.log('Starting recalculation');
-    //const statsRecalcService = new StatsRecalcService(statsUpdateService, firestore);
-    //const message = await statsRecalcService.recalculateStatistics();
-    //res.send(message);
-    res.send({});
+    const statsRecalcService = new StatsRecalcService(statsUpdateService, statsIncrementService, teamService, firestore);
+    const message = await statsRecalcService.recalculateStatistics();
+    res.send(message);
 });
 
 

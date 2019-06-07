@@ -2,8 +2,9 @@ import { Stats } from './stats';
 
 export class TeamComboStats {
     constructor(public teamIds: string[], public memberIds: string[]) {
+        this.statsByTeamId = new Map<string, Stats>();
         teamIds.forEach(teamId => {
-            this.statsByTeamId[teamId] = new Stats();
+            this.statsByTeamId.set(teamId, new Stats());
         })
      }
 

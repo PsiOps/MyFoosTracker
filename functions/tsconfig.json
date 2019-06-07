@@ -5,6 +5,7 @@
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
+    "skipLibCheck": true,
     "strict": false,
     "target": "es2015",
     "lib": ["es2017"],

@@ -13,22 +13,27 @@ export class TeamService {
     }
 
     public getTeamIds(match: Match): string[]{
-        return [this.getTeamId(match.teamA), this.getTeamId(match.teamB)];
+        const teamIds = [];
+        const teamAId = this.getTeamId(match.teamA);
+        if(teamAId) {teamIds.push(teamAId)}
+        const teamBId = this.getTeamId(match.teamB);
+        if(teamBId) {teamIds.push(teamBId)}
+        return teamIds;
     }
 
     public getTeamComboId(match: Match): string{
-        return this.getCombinedId(this.getTeamIds(match));
+        return this.getCombinedId(this.getTeamIds(match), '*');
     }
 
     public getTeamId(team: {playerRef: admin.firestore.DocumentReference}[]): string {
-        return this.getCombinedId(team.map(t => t.playerRef.id));
+        return this.getCombinedId(team.map(t => t.playerRef.id), '-');
     }
 
     public getMatchTeamId(match: Match, team: Team): string {
         return team === Team.teamA ? this.getTeamId(match.teamA) : this.getTeamId(match.teamB);
     }
 
-    private getCombinedId(ids: string[]): string {
-        return ids.sort().join('-');
+    private getCombinedId(ids: string[], separator: string): string {
+        return ids.sort().join(separator);
     }
 }
