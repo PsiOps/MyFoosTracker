@@ -75,7 +75,7 @@ export class StatsUpdateService {
         const teamComboIncrements = new TeamComboStatsIncrements(teamIds, match.participants);
         teamIds.forEach(teamId => {
             const teamMatchIncrements = this.teamService.getMatchTeamId(match, Team.teamA) === teamId ? teamAIncrements : teamBIncrements;
-            teamComboIncrements.incrementsByTeamId[teamId] = teamMatchIncrements;
+            teamComboIncrements.incrementsByTeamId.set(teamId, teamMatchIncrements);
         });
         const TeamComboStatsDocRef = this.firestore.doc(`team-combo-stats/${teamComboId}`);
         await this.firestore.runTransaction(async transaction => {
@@ -83,19 +83,19 @@ export class StatsUpdateService {
             const currentStats = doc.data() as TeamComboStats;
             if (!currentStats) {
                 const newStats = new TeamComboStats(teamIds, match.participants);
-                this.updateTeamComboStats(newStats, teamComboIncrements.incrementsByTeamId)
-                transaction.set(TeamComboStatsDocRef, Object.assign({}, newStats))
+                this.updateTeamComboStats(newStats, teamComboIncrements.incrementsByTeamId);
+                transaction.set(TeamComboStatsDocRef, JSON.parse(JSON.stringify(newStats)));
                 return;
             }
             this.updateTeamComboStats(currentStats, teamComboIncrements.incrementsByTeamId)
-            transaction.update(TeamComboStatsDocRef, Object.assign({}, currentStats))
+            transaction.update(TeamComboStatsDocRef, JSON.parse(JSON.stringify(currentStats)))
         });
     }
 
     updateTeamComboStats(teamComboStats: TeamComboStats, incrementsByTeamId: Map<string, StatsIncrements>) {
         teamComboStats.teamIds.forEach(teamId => {
             const stats = teamComboStats.statsByTeamId[teamId];
-            this.updateStats(stats, incrementsByTeamId[teamId]);
+            this.updateStats(stats, incrementsByTeamId.get(teamId));
             this.updateCalculatedStats(stats);
         })
     }

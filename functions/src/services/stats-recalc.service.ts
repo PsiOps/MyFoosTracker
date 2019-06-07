@@ -78,16 +78,15 @@ export class StatsRecalcService {
                 .catch(err => console.log(err));
         }
 
-        console.log(teamComboIncrementsById);
         for(const [teamComboId, increments] of teamComboIncrementsById) {
             console.log(`Saving TeamCombo Stats for ${teamComboId}`, increments);
             const recalculatedTeamComboStats = new TeamComboStats(increments.teamIds, increments.memberIds);
             increments.teamIds.forEach(teamId => {
-                this.statsUpdateService.updateStats(recalculatedTeamComboStats.statsByTeamId.get(teamId), increments.incrementsByTeamId.get(teamId));
+                this.statsUpdateService.updateStats(recalculatedTeamComboStats.statsByTeamId[teamId], increments.incrementsByTeamId.get(teamId));
             });
             const teamComboStatsDoc = this.firestore.doc(`team-combo-stats/${teamComboId}`);
             teamComboStatsDoc.set(JSON.parse(JSON.stringify(recalculatedTeamComboStats)))
-                .catch(err => console.log(err));
+                 .catch(err => console.log(err));
         }
 
         return { message: 'Recalculation complete' }
