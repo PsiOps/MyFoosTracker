@@ -18,21 +18,23 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  <div *ngIf="player$ | async as player">
-    <ion-card>
-      <ion-card-content>
-        <ion-item>
-          <img slot="start" [src]="player.photoUrl" class="profilePic">
-          <span>{{ player.nickname }}</span>
-          <ion-button (click)="editNickname(player)" slot="end">
-            <ion-icon name="create"></ion-icon>
-          </ion-button>
-        </ion-item>
-      </ion-card-content>
-    </ion-card>
-  </div>
-  <ion-button expand="block" (click)="dismissProfile()">
-    Done 
-  </ion-button>
+<ion-content>
+  <ion-grid fixed>
+    <div *ngIf="player$ | async as player">
+      <ion-card>
+        <ion-card-content>
+          <ion-item>
+            <img slot="start" [src]="player.photoUrl" class="profilePic">
+            <span>{{ player.nickname }}</span>
+            <ion-button (click)="editNickname(player)" slot="end">
+              <ion-icon name="create"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <ion-button expand="block" (click)="dismissProfile()">
+      Done
+    </ion-button>
+  </ion-grid>
 </ion-content>
