@@ -28,11 +28,11 @@
       <ion-card>
         <ion-card-content class="matchCounts">
           <div class="countContainer">
-            <div class="count good">{{playerStats.matchesWonCount}}</div>
+            <div class="count good">{{playerStats.matchesWon}}</div>
             <div class="label good">wins</div>
           </div>
           <div class="countContainer">
-            <div class="count bad">{{playerStats.matchesLostCount}}</div>
+            <div class="count bad">{{playerStats.matchesLost}}</div>
             <div class="label bad">losses</div>
           </div>
           <div *ngIf="playerStats.matchesTiedCount > 0" class="countContainer">
@@ -41,36 +41,22 @@
           </div>
         </ion-card-content>
       </ion-card>
-      <ion-row>
-        <ion-col width-50>
-          <ion-card>
-            <ion-card-content>
-              <ion-list lines="none">
-                <ion-item *ngFor="let item of teamMateStats$ | async">
-                  {{item.rank}}. {{item.name$ | async}}
-                </ion-item>
-              </ion-list>
-              <div class="label centered">Top partners</div>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-        <ion-col width-50>
-          <ion-card>
-            <ion-card-content>
-              <ion-list lines="none">
-                <ion-item>1. tbd</ion-item>
-                <ion-item>2. tbd</ion-item>
-                <ion-item>3. tbd</ion-item>
-              </ion-list>
-              <div class="label centered">Top enemies</div>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
       <ion-card>
         <ion-card-content class="matchCounts">
           <div class="countContainer">
-            <div class="count">{{playerStats.matchDurationMinutesAverage | number : '1.2-2'}}</div>
+            <div class="count good">{{playerStats.goalsScored}}</div>
+            <div class="label good">team-goals scored</div>
+          </div>
+          <div class="countContainer">
+            <div class="count bad">{{playerStats.goalsAgainst}}</div>
+            <div class="label bad">team-goals against</div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-content class="matchCounts">
+          <div class="countContainer">
+            <div class="count">{{playerStats.averageMatchDuration | number : '1.2-2'}}</div>
             <div class="label">average match duration</div>
           </div>
         </ion-card-content>
