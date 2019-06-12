@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Stats, TeamComboStats, Player } from '../../../../domain';
-import { of, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Stats } from '../../../../domain';
+import { Observable } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 
 @Component({

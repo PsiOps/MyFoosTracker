@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Player, Team, Match } from '../../../../domain';
 import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs';
-import { map, withLatestFrom, catchError } from 'rxjs/operators';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { PlayerSelectModel } from 'src/app/modules/tab1/models/player-select.model';
 import { ModalController } from '@ionic/angular';
 import { MatchService } from 'src/app/services/match.service';

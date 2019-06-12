@@ -35,12 +35,15 @@
             <div class="count bad">{{playerStats.matchesLost}}</div>
             <div class="label bad">losses</div>
           </div>
-          <div *ngIf="playerStats.matchesTiedCount > 0" class="countContainer">
-            <div class="count">2</div>
+          <div *ngIf="playerStats.matchesTied > 0" class="countContainer">
+            <div class="count">{{playerStats.matchesTied}}</div>
             <div class="label">ties</div>
           </div>
         </ion-card-content>
       </ion-card>
+
+      <app-team-stats [player]="player"></app-team-stats>
+      
       <ion-card>
         <ion-card-content class="matchCounts">
           <div class="countContainer">
