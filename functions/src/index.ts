@@ -9,6 +9,7 @@ import { NotificationService } from './services/notification.service';
 import { StatsUpdateService } from './services/stats-update.service';
 import { StatsIncrementService } from './services/stats-increment.service';
 import { TeamService } from './services/team.service';
+import { Match } from './domain/match';
 
 export const sendMatchInvitations = functions.https.onCall(async (data, context) => {
     const notificationService = new NotificationService(admin.messaging(), firestore);
@@ -114,4 +115,27 @@ export const testNotifications = functions.https.onRequest(async (req, res) => {
         result.push(await admin.messaging().sendToDevice(token, payload))
     }
     res.send(result);
+});
+
+export const repopulateTeams = functions.https.onRequest(async (req, res) => {
+    const matchDocs = await firestore.collection('matches').get();
+    console.log(`Found ${matchDocs.size} matches`);
+    matchDocs.forEach(doc => {
+        const match = doc.data() as Match;
+        console.log(match);
+        const teamIds = teamService.getTeamIds(match);
+        console.log('Team Ids:', teamIds);
+        
+        teamIds.forEach(async teamId => {
+            const teamDoc = await firestore.doc(`teams/${teamId}`).get();
+            if(!teamDoc.exists) {
+                const playerNames$ = teamId.split('-').map(playerId => firestore.doc(`players/${playerId}`).get());
+                const teamName = await Promise.all(playerNames$)
+                    .then(dss => dss.map(ds => (ds.data() as Player).nickname).join(' & '));
+                console.log(`Setting team with name ${teamName}`);
+                teamDoc.ref.set({name: teamName}).catch(e => console.log(e));
+            }
+        });
+    })
+    res.send("Job's done");
 });
