@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { TeamComboStats, TeamModel, Stats } from '../../../../domain';
 import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
@@ -21,7 +21,9 @@ export enum TeamStatsMode {
 export class TeamStatsComponent implements OnInit {
 
   @Input() player: { id: string, nickname: string, photoUrl: string };
+
   public selectedStatsMode$: BehaviorSubject<TeamStatsMode>  = new BehaviorSubject(0);
+  public selectedMetric$: BehaviorSubject<string>  = new BehaviorSubject('matchesWon');
 
   public teamStats$: Observable<TeamComboStatsModel[]>;
 
@@ -34,8 +36,8 @@ export class TeamStatsComponent implements OnInit {
 
     this.teamStats$ = combineLatest(
         teamComboStatsForPlayer.valueChanges(),
-        this.selectedStatsMode$// ,
-        // this.selectedMetric$
+        this.selectedStatsMode$,
+        this.selectedMetric$
       )
       // .pipe(tap(([teamComboStatsList, mode]) => {
       //   console.log(teamComboStatsList);
@@ -89,8 +91,11 @@ export class TeamStatsComponent implements OnInit {
   }
 
   public selectedModeChanged($event: CustomEvent) {
-    console.log("Selected Mode changed");
     this.selectedStatsMode$.next($event.detail.value as TeamStatsMode);
+  }
+
+  public selectedMetricChanged($event: CustomEvent) {
+    this.selectedMetric$.next($event.detail.value as string);
   }
 }
 

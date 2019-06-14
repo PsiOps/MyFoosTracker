@@ -10,7 +10,13 @@
             <ion-label>Opponent Teams</ion-label>
           </ion-segment-button>
         </ion-segment>
-        <div>Sorted by 'Matches Won' descending</div>
+        <ion-item>
+          <ion-label>Sorting Metric</ion-label>
+          <ion-select value="matchesWon" interface="popover" (ionChange)="selectedMetricChanged($event)">
+            <ion-select-option value="matchesWon">Matches Won</ion-select-option>
+            <ion-select-option value="matchesLost">Matches Lost</ion-select-option>
+          </ion-select>
+        </ion-item>
       </div>
       <div scrollY="true" id="scrollList">
         <ion-list>
