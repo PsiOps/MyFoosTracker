@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { TeamComboStats, TeamModel } from '../../../../domain';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { TeamComboStats, TeamModel, Stats } from '../../../../domain';
+import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 
 export class TeamComboStatsModel {
   public teamName$: Observable<string>;
@@ -32,34 +32,64 @@ export class TeamStatsComponent implements OnInit {
       ref => ref.where('memberIds', 'array-contains', this.player.id)
     );
 
-    this.teamStats$ = teamComboStatsForPlayer.valueChanges()
-      .pipe(tap(s => console.log(s)))
-      .pipe(map(s =>
-        s.map(stats => {
-          const teamComboStatsModel = new TeamComboStatsModel();
+    this.teamStats$ = combineLatest(
+        teamComboStatsForPlayer.valueChanges(),
+        this.selectedStatsMode$// ,
+        // this.selectedMetric$
+      )
+      // .pipe(tap(([teamComboStatsList, mode]) => {
+      //   console.log(teamComboStatsList);
+      //   console.log(mode);
+      // }))
+      .pipe(map(([teamComboStatsList, mode]) =>
+        teamComboStatsList.map(stats => {
+// tslint:disable-next-line: triple-equals
+          const isMyTeams = mode == TeamStatsMode.MyTeams; // Double equals is intentional, otherwise it doesn't work :|
           let teamKey: string;
 
           for (const teamId in stats.statsByTeamId) {
-            if (teamId.includes(this.player.id)) {
+            if (teamId.includes(this.player.id) === isMyTeams) {
               teamKey = teamId;
             }
           }
-
-          teamComboStatsModel.teamName$ = this.afs.doc<TeamModel>(`teams/${teamKey}`).valueChanges()
-            .pipe(map(t => t.name));
-
           const teamStats = stats.statsByTeamId[teamKey];
 
-          teamComboStatsModel.metric = teamStats.matchesWon;
+          return { teamId: teamKey, stats: { ...teamStats} };
+
+        })
+        .reduce((groups: { teamId: string, stats: Stats}[], item: { teamId: string, stats: Stats}) => {
+          const key = item.teamId;
+          const existingItem = groups.find(i => i.teamId === key);
+          if (existingItem) {
+            existingItem.stats.matchesWon += item.stats.matchesWon;
+            existingItem.stats.matchesLost += item.stats.matchesLost;
+            existingItem.stats.matchesTied += item.stats.matchesTied;
+            existingItem.stats.averageMatchDuration += item.stats.averageMatchDuration;
+            existingItem.stats.minutesPlayed += item.stats.minutesPlayed;
+            existingItem.stats.goalsScored += item.stats.goalsScored;
+            existingItem.stats.goalsAgainst += item.stats.goalsAgainst;
+          } else {
+            groups.push(item);
+          }
+          return groups;
+        }, [])
+        .map(item => {
+          const teamComboStatsModel = new TeamComboStatsModel();
+
+          teamComboStatsModel.teamName$ = this.afs.doc<TeamModel>(`teams/${item.teamId}`).valueChanges()
+           .pipe(map(t => t.name))
+           .pipe(catchError(e => of('<team X>')));
+
+          teamComboStatsModel.metric = item.stats.matchesWon; // This can be any metrics, should be selectable duh
 
           return teamComboStatsModel;
         })
-        // TODO: Group by team Key! 
         .sort((a, b) => b.metric - a.metric)
       ));
   }
 
   public selectedModeChanged($event: CustomEvent) {
+    console.log("Selected Mode changed");
     this.selectedStatsMode$.next($event.detail.value as TeamStatsMode);
   }
 }

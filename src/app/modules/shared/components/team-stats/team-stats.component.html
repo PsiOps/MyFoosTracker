@@ -15,7 +15,7 @@
       <div scrollY="true" id="scrollList">
         <ion-list>
           <ion-item *ngFor="let stats of teamStats$ | async">
-            <ion-label>{{stats.teamName$ | async}} - {{stats.metric}}</ion-label>
+            <ion-label>{{stats.teamName$ | async}}: {{stats.metric}}</ion-label>
           </ion-item>
         </ion-list>
       </div>
