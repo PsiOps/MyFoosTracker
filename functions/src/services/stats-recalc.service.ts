@@ -27,12 +27,11 @@ export class StatsRecalcService {
 
         const matches = matchDocuments.docs.map(ds => ds.data()) as Match[];
 
-        matches.forEach(match => {
-
+        for(const match of matches) {
             const teamAIncrements = this.statsIncrementService.getIncrements(match, Team.teamA)
             const teamBIncrements = this.statsIncrementService.getIncrements(match, Team.teamB)
 
-            match.participants.forEach(playerId => {
+            for(const playerId of match.participants){
                 const playerMatchIncrements = this.teamService.getPlayerTeam(playerId, match) === Team.teamA ? teamAIncrements : teamBIncrements;
                 const playerIncrements = playerIncrementsById.get(playerId);
                 if (!playerIncrements) {
@@ -40,7 +39,7 @@ export class StatsRecalcService {
                 } else {
                     this.statsIncrementService.combineIncrements(playerIncrements, playerMatchIncrements);
                 }
-            })
+            }
 
             const teamIds = this.teamService.getTeamIds(match);
             const teamComboId = this.teamService.getTeamComboId(match);
@@ -50,7 +49,8 @@ export class StatsRecalcService {
                 teamComboIncrements = new TeamComboStatsIncrements(teamIds, match.participants);
                 teamComboIncrementsById.set(teamComboId, teamComboIncrements);
             }
-            teamIds.forEach(teamId => {
+
+            for(const teamId of teamIds) {
                 const teamMatchIncrements = this.teamService.getMatchTeamId(match, Team.teamA) === teamId ? teamAIncrements : teamBIncrements;
                 const teamIncrements = teamIncrementsById.get(teamId);
                 if (!teamIncrements) {
@@ -59,8 +59,8 @@ export class StatsRecalcService {
                     this.statsIncrementService.combineIncrements(teamIncrements, teamMatchIncrements);
                 }
                 this.statsIncrementService.combineIncrements(teamComboIncrements.incrementsByTeamId.get(teamId), teamMatchIncrements);
-            })
-        })
+            }
+        }
 
         for (const [playerId, increments] of playerIncrementsById) {
             const recalculatedPlayerStats = new Stats();

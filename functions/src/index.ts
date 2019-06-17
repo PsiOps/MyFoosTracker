@@ -10,6 +10,7 @@ import { StatsUpdateService } from './services/stats-update.service';
 import { StatsIncrementService } from './services/stats-increment.service';
 import { TeamService } from './services/team.service';
 import { Match } from './domain/match';
+import { DocumentSnapshot } from '@google-cloud/firestore';
 
 export const sendMatchInvitations = functions.https.onCall(async (data, context) => {
     const notificationService = new NotificationService(admin.messaging(), firestore);
@@ -20,7 +21,7 @@ const teamService = new TeamService();
 const statsIncrementService = new StatsIncrementService(teamService);
 const statsUpdateService = new StatsUpdateService(firestore, teamService, statsIncrementService);
 
-const matchProcessingService = 
+const matchProcessingService =
     new MatchProcessingService(firestore, statsIncrementService, statsUpdateService);
 
 export const processMatch = functions.https.onCall(async (data, context) => {
@@ -117,25 +118,39 @@ export const testNotifications = functions.https.onRequest(async (req, res) => {
     res.send(result);
 });
 
-export const repopulateTeams = functions.https.onRequest(async (req, res) => {
-    const matchDocs = await firestore.collection('matches').get();
-    console.log(`Found ${matchDocs.size} matches`);
-    matchDocs.forEach(doc => {
+export const populateTeams = functions.https.onRequest(async (req, res) => {
+    const allMatchDocs = await firestore.collection('matches').get();
+    for(const doc of allMatchDocs.docs) {
         const match = doc.data() as Match;
-        console.log(match);
         const teamIds = teamService.getTeamIds(match);
-        console.log('Team Ids:', teamIds);
-        
-        teamIds.forEach(async teamId => {
-            const teamDoc = await firestore.doc(`teams/${teamId}`).get();
-            if(!teamDoc.exists) {
-                const playerNames$ = teamId.split('-').map(playerId => firestore.doc(`players/${playerId}`).get());
-                const teamName = await Promise.all(playerNames$)
-                    .then(dss => dss.map(ds => (ds.data() as Player).nickname).join(' & '));
-                console.log(`Setting team with name ${teamName}`);
-                teamDoc.ref.set({name: teamName}).catch(e => console.log(e));
+        for (const teamId of teamIds) {
+            let teamDoc: DocumentSnapshot;
+            try {
+                teamDoc = await firestore.doc(`teams/${teamId}`).get();
+            } catch (error) {
+                console.log(error);
             }
-        });
-    })
-    res.send("Job's done");
+            if(teamDoc.exists) { 
+                console.log("Team Exists, continuing")
+                continue;
+            };
+            console.log('Creating new Team Name');
+
+            const playerNames = [];
+            
+            for (const playerId of teamId.split('-')) {
+                try {
+                    const playerDoc = await firestore.doc(`players/${playerId}`).get();
+                    const player = playerDoc.data() as Player;
+                    playerNames.push(player.nickname);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            const teamName = playerNames.join(' & ');
+            console.log(`Created team name ${teamName}`);
+            teamDoc.ref.set({ name: teamName }).catch(err => console.log(err));                       
+        }
+    }
+    res.send('Awaited all the things');
 });
