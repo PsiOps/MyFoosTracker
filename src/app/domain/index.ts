@@ -1,4 +1,6 @@
 export * from './match';
 export * from './player';
-export * from './player-stats';
+export * from './stats';
+export * from './team-combo-stats';
 export * from './table';
+export * from './team';

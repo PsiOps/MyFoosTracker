@@ -10,6 +10,7 @@ import { AppSelectAllDirective } from 'src/app/directives/app-select-all.directi
 import { AppAutoClearDirective } from 'src/app/directives/app-auto-clear.directive';
 import { PlayerSearchPipe } from './pipes/player-search.pipe';
 import { StatsComponent } from './components/stats/stats.component';
+import { TeamStatsComponent } from './components/team-stats/team-stats.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { StatsComponent } from './components/stats/stats.component';
     PlayerSearchPipe,
     AppSelectAllDirective,
     AppAutoClearDirective,
-    StatsComponent
+    StatsComponent,
+    TeamStatsComponent
   ],
   imports: [
     IonicModule,
@@ -33,7 +35,8 @@ import { StatsComponent } from './components/stats/stats.component';
     TableManageComponent,
     TableSearchPipe,
     PlayerSearchPipe,
-    StatsComponent
+    StatsComponent,
+    TeamStatsComponent
   ],
   entryComponents: [TableManageComponent, StatsComponent]
 })

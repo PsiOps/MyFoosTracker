@@ -2,36 +2,49 @@ import * as admin from 'firebase-admin';
 const firebaseAdmin = admin.initializeApp();
 const firestore = firebaseAdmin.firestore();
 import * as functions from 'firebase-functions';
-import { StatsUpdateService } from './services/stats-update.service';
+import { MatchProcessingService } from './services/match-processing.service';
 import { StatsRecalcService } from './services/stats-recalc.service';
 import { Player } from './domain/player';
 import { NotificationService } from './services/notification.service';
+import { StatsUpdateService } from './services/stats-update.service';
+import { StatsIncrementService } from './services/stats-increment.service';
+import { TeamService } from './services/team.service';
+import { Match } from './domain/match';
+import { DocumentSnapshot } from '@google-cloud/firestore';
 
-const statsUpdateService = new StatsUpdateService(firestore);
-
-// const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
-//     docs.forEach(doc => {
-//         doc.ref.update(updateObject).catch(err => console.log(err));
-//     })
-// }
-export const updatePlayerStats = functions.https.onCall(async (data, context) => {
-    return await statsUpdateService.updateStatsForMatch(data.matchPath);
-});
 export const sendMatchInvitations = functions.https.onCall(async (data, context) => {
     const notificationService = new NotificationService(admin.messaging(), firestore);
     return await notificationService.sendMatchInvites(data.matchPath);
 });
+
+const teamService = new TeamService();
+const statsIncrementService = new StatsIncrementService(teamService);
+const statsUpdateService = new StatsUpdateService(firestore, teamService, statsIncrementService);
+
+const matchProcessingService =
+    new MatchProcessingService(firestore, statsIncrementService, statsUpdateService);
+
+export const processMatch = functions.https.onCall(async (data, context) => {
+    return await matchProcessingService.processMatch(data.matchPath);
+});
+
 export const recalculatePlayerStats = functions.https.onRequest(async (req, res) => {
-    console.log('Starting recalculation');
-    const statsRecalcService = new StatsRecalcService(statsUpdateService, firestore);
+    const statsRecalcService = new StatsRecalcService(statsUpdateService, statsIncrementService, teamService, firestore);
     const message = await statsRecalcService.recalculateStatistics();
     res.send(message);
 });
-export const markForRecalculation = functions.https.onRequest(async (req, res) => {
-    const statsRecalcService = new StatsRecalcService(statsUpdateService, firestore);
-    const message = await statsRecalcService.markForRecalculation();
-    res.send(message);
-});
+
+
+
+
+
+
+
+
+
+
+
+
 export const removeUser = functions.https.onRequest(async (req, res) => {
     const userId = req.body.userId;
     const playerDoc = await firestore.doc(`/players/${userId}`);
@@ -42,6 +55,11 @@ export const removeUser = functions.https.onRequest(async (req, res) => {
 
     res.send('User removed');
 });
+// const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
+//     docs.forEach(doc => {
+//         doc.ref.update(updateObject).catch(err => console.log(err));
+//     })
+// }
 export const updateData = functions.https.onRequest(async (req, res) => {
     // 1/4/2019
     // const fieldValue = admin.firestore.FieldValue;
@@ -98,4 +116,41 @@ export const testNotifications = functions.https.onRequest(async (req, res) => {
         result.push(await admin.messaging().sendToDevice(token, payload))
     }
     res.send(result);
+});
+
+export const populateTeams = functions.https.onRequest(async (req, res) => {
+    const allMatchDocs = await firestore.collection('matches').get();
+    for(const doc of allMatchDocs.docs) {
+        const match = doc.data() as Match;
+        const teamIds = teamService.getTeamIds(match);
+        for (const teamId of teamIds) {
+            let teamDoc: DocumentSnapshot;
+            try {
+                teamDoc = await firestore.doc(`teams/${teamId}`).get();
+            } catch (error) {
+                console.log(error);
+            }
+            if(teamDoc.exists) { 
+                console.log("Team Exists, continuing")
+                continue;
+            };
+            console.log('Creating new Team Name');
+
+            const playerNames = [];
+            
+            for (const playerId of teamId.split('-')) {
+                try {
+                    const playerDoc = await firestore.doc(`players/${playerId}`).get();
+                    const player = playerDoc.data() as Player;
+                    playerNames.push(player.nickname);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            const teamName = playerNames.join(' & ');
+            console.log(`Created team name ${teamName}`);
+            teamDoc.ref.set({ name: teamName }).catch(err => console.log(err));                       
+        }
+    }
+    res.send('Awaited all the things');
 });
