@@ -2,11 +2,14 @@ import { Component, OnInit, Input } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { TeamComboStats, TeamModel, Stats } from '../../../../domain';
 import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
-import { map, tap, catchError } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 export class TeamComboStatsModel {
   public teamName$: Observable<string>;
   public metric: number;
+  public info: string;
+  public secondarySorter: number;
+  public format: string;
 }
 
 export enum TeamStatsMode {
@@ -23,7 +26,7 @@ export class TeamStatsComponent implements OnInit {
   @Input() player: { id: string, nickname: string, photoUrl: string };
 
   public selectedStatsMode$: BehaviorSubject<TeamStatsMode>  = new BehaviorSubject(0);
-  public selectedMetric$: BehaviorSubject<string>  = new BehaviorSubject('matchesWon');
+  public selectedMetric$: BehaviorSubject<string>  = new BehaviorSubject('winLossRatio');
 
   public teamStats$: Observable<TeamComboStatsModel[]>;
 
@@ -39,11 +42,7 @@ export class TeamStatsComponent implements OnInit {
         this.selectedStatsMode$,
         this.selectedMetric$
       )
-      // .pipe(tap(([teamComboStatsList, mode]) => {
-      //   console.log(teamComboStatsList);
-      //   console.log(mode);
-      // }))
-      .pipe(map(([teamComboStatsList, mode]) =>
+      .pipe(map(([teamComboStatsList, mode, metric]) =>
         teamComboStatsList.map(stats => {
 // tslint:disable-next-line: triple-equals
           const isMyTeams = mode == TeamStatsMode.MyTeams; // Double equals is intentional, otherwise it doesn't work :|
@@ -82,11 +81,25 @@ export class TeamStatsComponent implements OnInit {
            .pipe(map(t => t.name))
            .pipe(catchError(e => of('<team X>')));
 
-          teamComboStatsModel.metric = item.stats.matchesWon; // This can be any metrics, should be selectable duh
+          if (metric === 'winLossRatio') {
+            teamComboStatsModel.metric =  item.stats.matchesWon / item.stats.matchesLost;
+            teamComboStatsModel.info = `W: ${item.stats.matchesWon} L: ${item.stats.matchesLost}`;
+            teamComboStatsModel.secondarySorter = item.stats.matchesWon + item.stats.matchesLost;
+            teamComboStatsModel.format = '1.1-1';
+          } else if (metric === 'matchesPlayed') {
+            teamComboStatsModel.metric =  item.stats.matchesWon + item.stats.matchesLost;
+            teamComboStatsModel.info = `W: ${item.stats.matchesWon} L: ${item.stats.matchesLost}`;
+          } else if (metric === 'averageMatchDuration') {
+            teamComboStatsModel.metric = item.stats[metric];
+            teamComboStatsModel.format = '1.1-1';
+          } else {
+            teamComboStatsModel.metric = item.stats[metric];
+            teamComboStatsModel.format = '1.0';
+          }
 
           return teamComboStatsModel;
         })
-        .sort((a, b) => b.metric - a.metric)
+        .sort((a, b) => this.sortStatsByMetric(a, b))
       ));
   }
 
@@ -96,6 +109,24 @@ export class TeamStatsComponent implements OnInit {
 
   public selectedMetricChanged($event: CustomEvent) {
     this.selectedMetric$.next($event.detail.value as string);
+  }
+
+  private sortStatsByMetric(a: TeamComboStatsModel, b: TeamComboStatsModel): number {
+    const aScore = a.metric;
+    const bScore = b.metric;
+    if (aScore === bScore) {
+      return this.sortStatsBySecundary(a, b);
+    }
+    return bScore > aScore ? 1 : -1;
+  }
+
+  private sortStatsBySecundary(a: TeamComboStatsModel, b: TeamComboStatsModel): number {
+    const aScore = a.secondarySorter;
+    const bScore = b.secondarySorter;
+    if (aScore === bScore) {
+      return 0;
+    }
+    return bScore > aScore ? 1 : -1;
   }
 }
 

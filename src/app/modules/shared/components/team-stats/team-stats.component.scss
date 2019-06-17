@@ -24,3 +24,10 @@ div[scrolly=true] {
     flex-grow: 1;
     flex-shrink: 1;
 }
+.statsMetric {
+    text-overflow: ellipsis;
+}
+.statsDetails {
+    color: lightgray;
+    padding-left: 5px;
+}

@@ -7,21 +7,30 @@
             <ion-label>My Teams</ion-label>
           </ion-segment-button>
           <ion-segment-button value=1>
-            <ion-label>Opponent Teams</ion-label>
+            <ion-label>My Opponents</ion-label>
           </ion-segment-button>
         </ion-segment>
         <ion-item>
           <ion-label>Sorting Metric</ion-label>
-          <ion-select value="matchesWon" interface="popover" (ionChange)="selectedMetricChanged($event)">
+          <ion-select value="winLossRatio" interface="popover" (ionChange)="selectedMetricChanged($event)">
+            <ion-select-option value="winLossRatio">Win - Loss ratio</ion-select-option>
+            <ion-select-option value="matchesPlayed">Matches Played</ion-select-option>
             <ion-select-option value="matchesWon">Matches Won</ion-select-option>
             <ion-select-option value="matchesLost">Matches Lost</ion-select-option>
+            <ion-select-option value="goalsScored">Goals Scored</ion-select-option>
+            <ion-select-option value="goalsAgainst">Goals Against</ion-select-option>
+            <ion-select-option value="minutesPlayed">Minutes Played</ion-select-option>
+            <ion-select-option value="averageMatchDuration">Avg Match Duration</ion-select-option>
           </ion-select>
         </ion-item>
       </div>
       <div scrollY="true" id="scrollList">
         <ion-list>
           <ion-item *ngFor="let stats of teamStats$ | async">
-            <ion-label>{{stats.teamName$ | async}}: {{stats.metric}}</ion-label>
+            <span>{{stats.teamName$ | async}}:</span>
+            <span slot="end" class="statsMetric">{{stats.metric | number : stats.format}}
+              <span class="statsDetails" *ngIf="stats.info">({{stats.info}})</span>
+            </span>
           </ion-item>
         </ion-list>
       </div>
