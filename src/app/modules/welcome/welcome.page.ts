@@ -32,9 +32,9 @@ export class WelcomePage implements OnInit, AfterViewInit {
     }, 500);
   }
 
-  public letsGo() {
-    if (!this.nickName) { this.nickName = 'Anonymous'; }
-    this.authService.setNickname(this.nickName);
-    this.router.navigateByUrl('/');
+  public async letsGo() {
+    if (!this.nickName) { this.nickName = `Player${Math.floor(Math.random() * 1000000)}`; }
+    await this.authService.setNickname(this.nickName);
+    await this.router.navigateByUrl('/');
   }
 }

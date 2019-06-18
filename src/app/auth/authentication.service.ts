@@ -44,9 +44,9 @@ export class AuthenticationService {
     });
   }
 
-  setNickname(nickname: string): void {
+  public async setNickname(nickname: string): Promise<void> {
     if (!this.playerDoc) { return; }
-    this.playerDoc.update({ nickname: nickname });
+    await this.playerDoc.update({ nickname: nickname });
   }
 
   login() {
