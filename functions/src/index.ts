@@ -11,18 +11,20 @@ import { StatsIncrementService } from './services/stats-increment.service';
 import { TeamService } from './services/team.service';
 import { Match } from './domain/match';
 import { DocumentSnapshot } from '@google-cloud/firestore';
+import { MatchService } from './services/match.service';
 
 export const sendMatchInvitations = functions.https.onCall(async (data, context) => {
     const notificationService = new NotificationService(admin.messaging(), firestore);
     return await notificationService.sendMatchInvites(data.matchPath);
 });
 
-const teamService = new TeamService();
+const matchService = new MatchService(firestore);
+const teamService = new TeamService(firestore);
 const statsIncrementService = new StatsIncrementService(teamService);
 const statsUpdateService = new StatsUpdateService(firestore, teamService, statsIncrementService);
 
 const matchProcessingService =
-    new MatchProcessingService(firestore, statsIncrementService, statsUpdateService);
+    new MatchProcessingService(matchService, statsIncrementService, statsUpdateService, teamService);
 
 export const processMatch = functions.https.onCall(async (data, context) => {
     return await matchProcessingService.processMatch(data.matchPath);
@@ -135,19 +137,7 @@ export const populateTeams = functions.https.onRequest(async (req, res) => {
                 continue;
             };
             console.log('Creating new Team Name');
-
-            const playerNames = [];
-            
-            for (const playerId of teamId.split('-')) {
-                try {
-                    const playerDoc = await firestore.doc(`players/${playerId}`).get();
-                    const player = playerDoc.data() as Player;
-                    playerNames.push(player.nickname);
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-            const teamName = playerNames.join(' & ');
+            const teamName = teamService.getTeamName(teamId);
             console.log(`Created team name ${teamName}`);
             teamDoc.ref.set({ name: teamName }).catch(err => console.log(err));                       
         }
