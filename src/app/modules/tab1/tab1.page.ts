@@ -4,10 +4,10 @@ import { AlertController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { MatchService } from '../../services/match.service';
 import { AuthenticationService } from '../../auth/authentication.service';
-import { Team, Player, Match } from '../../domain';
+import { Team, Player, Match, TeamComboStats } from '../../domain';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { NotificationService } from '../../services/notification.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
@@ -17,6 +17,9 @@ import { Observable } from 'rxjs';
 export class Tab1Page {
   public player$: Observable<Player>;
   public matchesOnWatchedTables$: Observable<Match[]>;
+
+  public teamComboStats$: Observable<TeamComboStats> = of(new TeamComboStats());
+
   constructor(
     public authService: AuthenticationService,
     private matchService: MatchService,

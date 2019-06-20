@@ -61,7 +61,10 @@
             <div class="gamePin" *ngIf="currentMatch.status === 0" text-right>
               Game PIN: {{currentMatch.pin}}
             </div>
-  
+            <div>
+              <div text-center>Previous encounters stats:</div>
+              <app-team-combo-stats [match]="currentMatch"></app-team-combo-stats>
+            </div>
           </ion-card-content>
         </ion-card>
       </div>
@@ -88,5 +91,10 @@
   <div class="currentMatches">
     <div text-center>Current Matches</div>
     <div text-center class="noCurrentMatches">You are not currently watching any tables</div>
+  </div>
+</ng-template>
+<ng-template #noStats>
+  <div>
+    There are no stats yo
   </div>
 </ng-template>
