@@ -1,0 +1,35 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid lightgrey;
+    border-radius: 8px;
+}
+.sideBySideStats{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.belowEachOther{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.team{
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.statsNames{
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.label{
+    font-size: 1rem;
+}
+.statsTitle {
+    font-size: 1.25rem;
+  }

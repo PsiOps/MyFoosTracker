@@ -12,7 +12,7 @@
           <ion-card-header *ngIf="currentMatch.status === 1 || currentMatch.status === 2">
             <ion-card-title text-center> Match in progress!</ion-card-title>
           </ion-card-header>
-          <ion-card-content>
+          <ion-card-content class="matchCard">
             <app-match [match]="currentMatch" [currentUser]="authService.user" (scoreConfirmed)="onScored($event)"
               (scoringCancelled)="onScoringCancelled()" (matchJoined)="onMatchJoined($event)"></app-match>
             <div *ngIf="currentMatch.organizer === authService.user.uid">
@@ -58,10 +58,13 @@
                 Dismiss
               </ion-button>
             </div>
+            <div class="gamePin" *ngIf="currentMatch.status === 0" text-right>
+              Game PIN: {{currentMatch.pin}}
+            </div>
+            <div>
+              <app-team-combo-stats [match]="currentMatch"></app-team-combo-stats>
+            </div>
           </ion-card-content>
-          <ion-card-header *ngIf="currentMatch.status === 0">
-            <ion-card-subtitle text-center> Game PIN: {{currentMatch.pin}}</ion-card-subtitle>
-          </ion-card-header>
         </ion-card>
       </div>
       <div *ngIf="!(matchService.currentMatch$ | async)" class="buttonContainer">
@@ -87,5 +90,10 @@
   <div class="currentMatches">
     <div text-center>Current Matches</div>
     <div text-center class="noCurrentMatches">You are not currently watching any tables</div>
+  </div>
+</ng-template>
+<ng-template #noStats>
+  <div>
+    There are no stats yo
   </div>
 </ng-template>

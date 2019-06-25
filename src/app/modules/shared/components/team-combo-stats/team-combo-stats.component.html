@@ -1,0 +1,25 @@
+<div class="container" *ngIf="match && teamComboStats$ | async; else noStats">
+  <div text-center class="statsTitle">Previous Encounters:</div>
+
+  <div class="sideBySideStats label">
+    <div class="team">
+      <div>{{(teamAStats$ | async)?.matchesWon}}</div>
+      <div>{{(teamAStats$ | async)?.goalsScored}}</div>
+    </div>
+    <div class="statsNames">
+      <div>Encounters Won</div>
+      <div>Goals Scored</div>
+    </div>
+    <div class="team">
+      <div>{{(teamBStats$ | async)?.matchesWon}}</div>
+      <div>{{(teamBStats$ | async)?.goalsScored}}</div>
+    </div>
+  </div>
+  <div class="belowEachOther label">
+    <div>Avg Match Duration: {{(teamAStats$ | async)?.averageMatchDuration | number : '1.0-0'}}</div>
+    <div>Minutes Played: {{(teamAStats$ | async)?.minutesPlayed}}</div>
+  </div>
+</div>
+<ng-template #noStats>
+  <p text-center><ion-icon name="happy"></ion-icon> This is the first match tracked with these teams!</p>
+</ng-template>

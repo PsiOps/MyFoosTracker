@@ -11,6 +11,7 @@ import { AppAutoClearDirective } from 'src/app/directives/app-auto-clear.directi
 import { PlayerSearchPipe } from './pipes/player-search.pipe';
 import { StatsComponent } from './components/stats/stats.component';
 import { TeamStatsComponent } from './components/team-stats/team-stats.component';
+import { TeamComboStatsComponent } from './components/team-combo-stats/team-combo-stats.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { TeamStatsComponent } from './components/team-stats/team-stats.component
     AppSelectAllDirective,
     AppAutoClearDirective,
     StatsComponent,
-    TeamStatsComponent
+    TeamStatsComponent,
+    TeamComboStatsComponent
   ],
   imports: [
     IonicModule,
@@ -36,8 +38,9 @@ import { TeamStatsComponent } from './components/team-stats/team-stats.component
     TableSearchPipe,
     PlayerSearchPipe,
     StatsComponent,
-    TeamStatsComponent
+    TeamStatsComponent,
+    TeamComboStatsComponent
   ],
-  entryComponents: [TableManageComponent, StatsComponent]
+  entryComponents: [TableManageComponent, StatsComponent, TeamComboStatsComponent]
 })
 export class SharedModule { }
