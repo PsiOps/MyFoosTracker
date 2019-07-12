@@ -5,6 +5,7 @@ import { Player } from '../domain/player';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class AuthenticationService {
   constructor(
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
-    private router: Router
+    private router: Router,
+    private loadingController: LoadingController
   ) {
 
     this.user$.subscribe(u => {
@@ -49,9 +51,13 @@ export class AuthenticationService {
     await this.playerDoc.update({ nickname: nickname });
   }
 
-  login() {
-    // this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
+  async login() {
     this.afAuth.auth.signInWithRedirect(new auth.GoogleAuthProvider());
+    const loading = await this.loadingController.create({
+      message: 'Logging in...',
+      translucent: true
+    });
+    await loading.present();
   }
 
   logout() {
