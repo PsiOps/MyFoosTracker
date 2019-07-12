@@ -51,7 +51,7 @@ export class AuthenticationService {
 
   login() {
     // this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
-    this.afAuth.auth.signInWithRedirect(new auth.GithubAuthProvider());
+    this.afAuth.auth.signInWithRedirect(new auth.GoogleAuthProvider());
   }
 
   logout() {
