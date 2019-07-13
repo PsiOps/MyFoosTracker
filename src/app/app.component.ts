@@ -6,7 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { UpdateService } from './services/update-service';
 import { MessagingService } from './services/messaging.service';
 import { AuthenticationService } from './auth/authentication.service';
-import { filter, take, switchMap } from 'rxjs/operators';
+import { filter, take, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -37,11 +37,12 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     console.log('AppComponent ngOnInit');
     const loading = await this.loadingController.create({
-      message: 'Logging in...',
+      message: 'Please wait...',
       translucent: true
     });
     await loading.present();
     this.authenticationService.user$
+      .pipe(tap(() => this.loadingController.dismiss()))
       .pipe(filter(user => !!user)) // filter null
       .pipe(switchMap(u => this.authenticationService.playerDoc.valueChanges()))
       .pipe(take(1))
@@ -50,7 +51,6 @@ export class AppComponent implements OnInit {
           this.messagingService.requestPermission(player);
           this.messagingService.monitorTokenRefresh(player);
           this.messagingService.receiveMessages();
-          this.loadingController.dismiss();
         }
       });
   }
