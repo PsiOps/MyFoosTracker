@@ -21,7 +21,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
     allowSlideNext: true
   };
 
-  @ViewChild('nickname') myInput: IonInput;
+  @ViewChild('nickname', {static: false}) myInput: IonInput;
   public nickName: string;
 
   ngOnInit() { }
