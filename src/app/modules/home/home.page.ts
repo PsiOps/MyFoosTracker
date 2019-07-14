@@ -10,11 +10,11 @@ import { NotificationService } from '../../services/notification.service';
 import { Observable, of } from 'rxjs';
 
 @Component({
-  selector: 'app-tab1',
-  templateUrl: 'tab1.page.html',
-  styleUrls: ['tab1.page.scss']
+  selector: 'app-home',
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss']
 })
-export class Tab1Page {
+export class HomePage {
   public player$: Observable<Player>;
   public matchesOnWatchedTables$: Observable<Match[]>;
 

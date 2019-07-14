@@ -11,7 +11,7 @@ export class LoginPage implements OnInit {
   constructor(public authService: AuthenticationService, private router: Router) {
     this.authService.user$.subscribe(u => {
       if (u) {
-        this.router.navigateByUrl('/tabs/tab1');
+        this.router.navigateByUrl('/tabs/home');
       }
     });
   }

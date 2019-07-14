@@ -4,11 +4,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-tab3',
-  templateUrl: 'tab3.page.html',
-  styleUrls: ['tab3.page.scss']
+  selector: 'app-player-stats',
+  templateUrl: 'player-stats.page.html',
+  styleUrls: ['player-stats.page.scss']
 })
-export class Tab3Page {
+export class PlayerStatsPage {
   public player$: Observable<{id: string, nickname: string, photoUrl: string}>;
   constructor(public authService: AuthenticationService) {
     this.player$ = this.authService.playerDoc.valueChanges()

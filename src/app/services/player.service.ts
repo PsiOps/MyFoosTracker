@@ -3,7 +3,7 @@ import { AuthenticationService } from '../auth/authentication.service';
 import { firestore } from 'firebase/app';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { PlayerSelectModel } from '../modules/tab1/models/player-select.model';
+import { PlayerSelectModel } from '../modules/home/models/player-select.model';
 
 @Injectable({
   providedIn: 'root'
