@@ -42,7 +42,7 @@
         </ion-card-content>
       </ion-card>
 
-      <app-team-stats [player]="player"></app-team-stats>
+      <app-team-stats [player]="player" (hasLoaded)="onTeamStatsLoaded()"></app-team-stats>
       
       <ion-card>
         <ion-card-content class="matchCounts">

@@ -1,25 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, CollectionReference, Query } from '@angular/fire/firestore';
 import { Match, MatchStatus } from '../../domain';
 import { map } from 'rxjs/operators';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-match-history',
   templateUrl: 'match-history.page.html',
   styleUrls: ['match-history.page.scss']
 })
-export class MatchHistoryPage {
+export class MatchHistoryPage implements OnInit {
 
   public matchesCollection: AngularFirestoreCollection<Match>;
   public matchesPerDay: { day: Date, matches: Match[] }[] = [];
+
+  private loadingIndicator: HTMLIonLoadingElement;
   private matchesAfterKey: Date;
   private matchesUntillKey: Date;
   private minNumberOfMatchesToLoad = 8;
   private daysPerBatch = 3;
 
-  constructor(private afs: AngularFirestore) {
+  constructor(
+    private afs: AngularFirestore,
+    private loadingController: LoadingController
+  ) {
     this.setInitialDates();
     this.loadMoreData();
+  }
+
+  async ngOnInit() {
+    this.loadingIndicator = await this.loadingController.create({
+      spinner: 'dots',
+      message: 'Loading...',
+      backdropDismiss: true
+    });
+
+    await this.loadingIndicator.present();
   }
 
   public loadData(event: any) {
@@ -50,6 +66,11 @@ export class MatchHistoryPage {
         } else if (this.matchesPerDay.length < this.minNumberOfMatchesToLoad) {
           this.loadMoreData();
         }
+
+        setTimeout(async () => {
+          await this.loadingController.dismiss();
+        }, 500);
+
       });
   }
 
