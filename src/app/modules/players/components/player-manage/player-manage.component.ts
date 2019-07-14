@@ -26,9 +26,10 @@ export class PlayerManageComponent implements OnInit {
     const playerChanges = this.afs.collection<Player>('players').snapshotChanges();
 
     this.players$ =
-      combineLatest(
+      combineLatest([
         playerChanges,
         this.playerService.getFavourites()
+      ]
       ).pipe(
         map(ps => {
           const playerDocs = ps[0];
