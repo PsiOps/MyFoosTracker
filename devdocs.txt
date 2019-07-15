@@ -27,3 +27,7 @@ npm install firebase @angular/fire --save
 * Be able to start a match
 * Be able to join a match
 * Be able to score a match
+
+Useful commands related to Android publishing
+"C:\Program Files\Java\jdk1.8.0_191\bin\jarsigner.exe" -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "C:\Users\Paul.siersma\Google Drive\Sec\foostracker.keystore" C:\Dev\PsiOps\Projects\MyFoosTracker\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk alias_name
+C:\Users\Paul.siersma\AppData\Local\Android\Sdk\build-tools\29.0.1\zipalign.exe -v 4 C:\Dev\PsiOps\Projects\MyFoosTracker\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk C:\Dev\PsiOps\Projects\MyFoosTracker\platforms\android\app\build\outputs\apk\release\foostracker.apk

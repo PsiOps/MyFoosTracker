@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
+import { Platform, LoadingController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { UpdateService } from './services/update-service';
 import { MessagingService } from './services/messaging.service';
 import { AuthenticationService } from './auth/authentication.service';
-import { filter, take, switchMap } from 'rxjs/operators';
+import { filter, take, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +19,8 @@ export class AppComponent implements OnInit {
     private statusBar: StatusBar,
     private updateService: UpdateService,
     private authenticationService: AuthenticationService,
-    private messagingService: MessagingService
+    private messagingService: MessagingService,
+    private loadingController: LoadingController
   ) {
     this.initializeApp();
   }
@@ -33,9 +34,15 @@ export class AppComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     console.log('AppComponent ngOnInit');
+    const loading = await this.loadingController.create({
+      message: 'Please wait...',
+      translucent: true
+    });
+    await loading.present();
     this.authenticationService.user$
+      .pipe(tap(() => this.loadingController.dismiss()))
       .pipe(filter(user => !!user)) // filter null
       .pipe(switchMap(u => this.authenticationService.playerDoc.valueChanges()))
       .pipe(take(1))
