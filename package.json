@@ -1,17 +1,19 @@
 {
   "name": "myfoostracker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "emulate": "ionic cordova emulate android",
     "build": "ng build",
     "test": "ng test",
     "scan": "sonar-scanner.bat -D\"sonar.projectKey=PsiOps_MyFoosTracker\" -D\"sonar.organization=psiops-github\" -D\"sonar.sources=.\" -D\"sonar.host.url=https://sonarcloud.io\" -D\"sonar.login=e36d5e15267d445899f1cea3f8c2ab967fd9aa3d\"",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploypwa": "ionic build --prod --service-worker && firebase deploy --only hosting"
+    "deploypwa": "ionic build --prod --service-worker && firebase deploy --only hosting",
+    "build-release-apk": "ionic cordova build --release android --prod"
   },
   "private": true,
   "dependencies": {
@@ -30,18 +32,24 @@
     "@ionic-native/status-bar": "^5.4.0",
     "@ionic/angular": "^4.2.0",
     "@ionic/pro": "2.0.4",
-    "cordova-android": "8.0.0",
+    "cordova-android": "^8.0.0",
     "cordova-browser": "6.0.0",
-    "cordova-plugin-device": "^2.0.2",
-    "cordova-plugin-ionic-keyboard": "^2.1.3",
-    "cordova-plugin-ionic-webview": "^4.0.1",
-    "cordova-plugin-splashscreen": "^5.0.2",
-    "cordova-plugin-statusbar": "^2.4.2",
-    "cordova-plugin-whitelist": "^1.3.3",
+    "cordova-plugin-browsertab": "0.2.0",
+    "cordova-plugin-buildinfo": "2.0.3",
+    "cordova-plugin-compat": "1.2.0",
+    "cordova-plugin-device": "2.0.3",
+    "cordova-plugin-inappbrowser": "3.1.0",
+    "cordova-plugin-ionic-keyboard": "2.1.3",
+    "cordova-plugin-ionic-webview": "4.1.1",
+    "cordova-plugin-splashscreen": "5.0.3",
+    "cordova-plugin-statusbar": "2.4.3",
+    "cordova-plugin-whitelist": "1.3.4",
+    "cordova-universal-links-plugin-fix": "1.2.1",
     "core-js": "^3.0.1",
     "firebase": "^5.9.4",
     "rxjs": "~6.4.0",
-    "zone.js": "~0.9.0"
+    "zone.js": "~0.9.0",
+    "cordova-universal-links-plugin": "~1.2.1"
   },
   "devDependencies": {
     "@angular-devkit/architect": "^0.13.8",
@@ -72,12 +80,18 @@
   "description": "An Ionic project",
   "cordova": {
     "plugins": {
+      "cordova-plugin-buildinfo": {},
+      "cordova-universal-links-plugin": {},
+      "cordova-plugin-browsertab": {},
+      "cordova-plugin-inappbrowser": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-statusbar": {},
       "cordova-plugin-device": {},
-      "cordova-plugin-splashscreen": {},
-      "cordova-plugin-ionic-webview": {},
-      "cordova-plugin-ionic-keyboard": {}
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-splashscreen": {}
     },
     "platforms": [
       "browser",
