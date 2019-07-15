@@ -3,7 +3,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Player } from '../../../../domain';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { PlayerSelectModel } from 'src/app/modules/tab1/models/player-select.model';
+import { PlayerSelectModel } from 'src/app/modules/home/models/player-select.model';
 import { PlayerService } from 'src/app/services/player.service';
 import { ModalController } from '@ionic/angular';
 import { StatsComponent } from 'src/app/modules/shared/components/stats/stats.component';
@@ -26,9 +26,10 @@ export class PlayerManageComponent implements OnInit {
     const playerChanges = this.afs.collection<Player>('players').snapshotChanges();
 
     this.players$ =
-      combineLatest(
+      combineLatest([
         playerChanges,
         this.playerService.getFavourites()
+      ]
       ).pipe(
         map(ps => {
           const playerDocs = ps[0];
