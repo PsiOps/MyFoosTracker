@@ -57,11 +57,13 @@ export const removeUser = functions.https.onRequest(async (req, res) => {
 
     res.send('User removed');
 });
+
 // const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
 //     docs.forEach(doc => {
 //         doc.ref.update(updateObject).catch(err => console.log(err));
 //     })
 // }
+
 export const updateData = functions.https.onRequest(async (req, res) => {
     // 1/4/2019
     // const fieldValue = admin.firestore.FieldValue;
@@ -85,6 +87,10 @@ export const updateData = functions.https.onRequest(async (req, res) => {
     //         })
     //         .catch(err => console.log(err));
     // })
+
+    // 16/7/2019
+    // const playerDocs = await firestore.collection('players').get();
+    // updateDocs(playerDocs, { defaultGroupId: 'O6jNqHHthL4hzW5Kk52H', groupIds: ['O6jNqHHthL4hzW5Kk52H']});
 
     // Always
     res.send('done');

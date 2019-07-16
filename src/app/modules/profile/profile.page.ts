@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { take, filter } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
 import { Location } from '@angular/common';
+import { GroupService } from 'src/app/services/group.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,16 +20,12 @@ export class ProfilePage implements OnInit {
     private authService: AuthenticationService,
     private router: Router,
     private alertController: AlertController,
-    private location: Location
+    private location: Location,
+    public groupService: GroupService
   ) {  }
 
   ngOnInit() {
-    this.authService.user$
-      .pipe(filter(u => !!u))
-      .pipe(take(1))
-      .subscribe(u => {
-        this.player$ = this.authService.playerDoc.valueChanges();
-      });
+    this.player$ = this.authService.playerDoc.valueChanges();
   }
   public async editNickname(player: Player): Promise<void> {
     const alert = await this.alertController.create({

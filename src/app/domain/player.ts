@@ -4,6 +4,8 @@ export class Player {
     photoUrl: string;
     lastLogin: Date;
     defaultTableId: string;
+    defaultGroupId: string;
+    groupIds: string[] = [];
     playerSince: Date;
     favouritePlayerIds: string[] = [];
     watchingTableIds: string[] = [];

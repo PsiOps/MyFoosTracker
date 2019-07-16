@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, combineLatest } from 'rxjs';
 import { Match, MatchStatus, Team } from '../domain/match';
-import { AngularFirestoreDocument, AngularFirestore, DocumentReference, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestoreDocument, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
 import { AuthenticationService } from '../auth/authentication.service';
 import { StatsService } from './stats.service';
