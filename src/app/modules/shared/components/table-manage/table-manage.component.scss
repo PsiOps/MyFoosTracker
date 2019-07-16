@@ -1,3 +1,9 @@
+#toolbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
 .favourite {
     color: orange;
     cursor: pointer;

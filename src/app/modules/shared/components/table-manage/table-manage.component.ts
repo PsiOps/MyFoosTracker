@@ -46,4 +46,9 @@ export class TableManageComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss();
   }
+
+  public tableClicked(table: TableManageModel) {
+    console.log(table);
+    this.modalController.create({});
+  }
 }
