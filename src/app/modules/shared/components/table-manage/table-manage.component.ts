@@ -18,28 +18,16 @@ export class TableManageComponent implements OnInit {
     private tableService: TableService) { }
 
   ngOnInit() {
-    this.allTables$ = this.tableService.getAllTables$();
     this.isModal$ = this.modalController.getTop().then(m => m ? true : false);
   }
 
-  public tableFavouriteChanged(table: TableManageModel) {
-    if (table.isDefault) { return; }
-    table.isFavourite = !table.isFavourite;
-
-    if (table.isFavourite) {
-      this.tableService.addTableToFavourites(table.id);
-    } else {
-      this.tableService.removeTableFromFavourites(table.id);
-    }
-  }
-
-  public defaultTableChanged(table: TableManageModel) {
+  public async defaultTableChanged(table: TableManageModel) {
     table.isDefault = !table.isDefault;
 
     if (table.isDefault) {
-      this.tableService.setTableAsDefault(table.id);
+      await this.tableService.setTableAsDefault(table);
     } else {
-      this.tableService.clearDefaultTable();
+      await this.tableService.clearDefaultTable(table);
     }
   }
 

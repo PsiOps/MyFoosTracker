@@ -3,12 +3,11 @@ export class Player {
     nickname: string;
     photoUrl: string;
     lastLogin: Date;
-    defaultTableId: string;
+    defaultTableId: string; // Deprecated, should be removed
     defaultGroupId: string;
     groupIds: string[] = [];
     playerSince: Date;
     favouritePlayerIds: string[] = [];
-    watchingTableIds: string[] = [];
-    favouriteTableIds: string[] = [];
+    defaultTableIdByGroup: {[groupId: string]: string };
     fcmTokens?: { [token: string]: boolean };
 }

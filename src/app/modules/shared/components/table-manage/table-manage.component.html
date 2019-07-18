@@ -13,11 +13,8 @@
       </div>
       <div scrollY="true" id="scrollList">
         <ion-list>
-          <ion-item *ngFor="let table of allTables$ | async | tableSearch : terms">
+          <ion-item *ngFor="let table of tableService.groupTables$ | async | tableSearch : terms">
             <ion-label>{{table.name}} @ {{table.location}}</ion-label>
-            <ion-icon class="favourite" slot="end" [name]="table.isFavourite ? 'star' :'star-outline'"
-              (click)="tableFavouriteChanged(table)">
-            </ion-icon>
             <ion-icon class="default" slot="end" [name]="table.isDefault ? 'refresh-circle' :'refresh'"
               (click)="defaultTableChanged(table)">
             </ion-icon>

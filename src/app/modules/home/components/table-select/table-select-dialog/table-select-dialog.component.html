@@ -3,13 +3,10 @@
     <ion-title>
       Choose Table
     </ion-title>
-    <ion-button slot="end" (click)="goToTableManagement()">
-      <ion-icon name="cog"></ion-icon>
-    </ion-button>
   </ion-toolbar>
 </ion-header>
-<ion-content *ngIf="playerTables$ | async as playerTables; else errorMessage">
-  <div id="container" *ngIf="playerTables.length > 0; else cogMessage">
+<ion-content *ngIf="tableService.groupTables$ | async as playerTables; else errorMessage">
+  <div id="container" *ngIf="playerTables.length > 0; else tableMessage">
     <div scrollY="true" id="scrollList">
       <ion-list>
         <ion-item *ngFor="let table of playerTables" (click)="onTableSelected(table)">
@@ -26,8 +23,8 @@
     Something went wrong, please try again.
   </ion-item>
 </ng-template>
-<ng-template #cogMessage>
+<ng-template #tableMessage>
   <ion-item id="container">
-    You have not selected any tables yet. Hit the cog button. 
+    There are no tables added to this group yet. Get your group admin to add some. 
   </ion-item>
 </ng-template>

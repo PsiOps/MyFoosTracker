@@ -33,25 +33,26 @@ export class MatchService {
     });
   }
 
+  // Reimplement as matches on any table in the group, much simpler
   public getMatchesOnWatchedTables(): Observable<Match[]> {
-
-    return this.authService.playerDoc.valueChanges()
-      .pipe(map(p => p.watchingTableIds))
-      .pipe(switchMap(ids => {
-        return combineLatest(ids.map(id => {
-          const tableRef = this.afs.doc(`foosball-tables/${id}`).ref;
-          const currentTableMatchCollection = this.afs.collection<Match>('matches',
-            ref => ref
-              .where('status', '==', MatchStatus.started)
-              .where('tableRef', '==', tableRef)
-              .limit(1)
-          );
-          return currentTableMatchCollection.valueChanges();
-        }))
-          .pipe(map(arraysOfMatches => {
-            return [].concat.apply([], arraysOfMatches) as Match[];
-          }));
-      }));
+    return of([]);
+    // return this.authService.playerDoc.valueChanges()
+    //   .pipe(map(p => p.watchingTableIds))
+    //   .pipe(switchMap(ids => {
+    //     return combineLatest(ids.map(id => {
+    //       const tableRef = this.afs.doc(`foosball-tables/${id}`).ref;
+    //       const currentTableMatchCollection = this.afs.collection<Match>('matches',
+    //         ref => ref
+    //           .where('status', '==', MatchStatus.started)
+    //           .where('tableRef', '==', tableRef)
+    //           .limit(1)
+    //       );
+    //       return currentTableMatchCollection.valueChanges();
+    //     }))
+    //       .pipe(map(arraysOfMatches => {
+    //         return [].concat.apply([], arraysOfMatches) as Match[];
+    //       }));
+    //   }));
   }
 
   public async createMatch(player: Player) {

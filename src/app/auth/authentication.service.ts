@@ -39,8 +39,6 @@ export class AuthenticationService {
         player.playerSince = now;
         player.lastLogin = now;
         player.favouritePlayerIds = [];
-        player.favouriteTableIds = [];
-        player.watchingTableIds = [];
         this.playerDoc.set(Object.assign({}, player));
       });
     });
