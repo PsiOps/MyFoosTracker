@@ -13,7 +13,7 @@ export class NotificationService {
   ) { }
 
   public async sendInvites(): Promise<void> {
-    const matchPath = this.matchService.currentMatchDocument.ref.path;
+    const matchPath = this.matchService.currentMatchDocRef.path;
     const updateStatsPayload = { matchPath: matchPath, config: {} };
     const response = await this.fns.httpsCallable('sendMatchInvitations')(updateStatsPayload).toPromise();
     console.log(response);

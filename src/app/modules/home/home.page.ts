@@ -3,11 +3,11 @@ import { ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { MatchService } from '../../services/match.service';
-import { AuthenticationService } from '../../auth/authentication.service';
 import { Team, Player, Match, TeamComboStats } from '../../domain';
 import { PlayerSelectComponent } from './components/player-select/player-select.component';
 import { NotificationService } from '../../services/notification.service';
 import { Observable, of } from 'rxjs';
+import { PlayerService } from 'src/app/services/player.service';
 
 @Component({
   selector: 'app-home',
@@ -15,20 +15,17 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['home.page.scss']
 })
 export class HomePage {
-  public player$: Observable<Player>;
-  public matchesOnWatchedTables$: Observable<Match[]>;
 
+  public matchesOnWatchedTables$: Observable<Match[]>;
   public teamComboStats$: Observable<TeamComboStats> = of(new TeamComboStats());
 
   constructor(
-    public authService: AuthenticationService,
+    public playerService: PlayerService,
     private matchService: MatchService,
     private toastController: ToastController,
     private modalController: ModalController,
     private alertController: AlertController,
     private notificationService: NotificationService) {
-    this.player$ = this.authService.playerDoc.valueChanges();
-    this.matchService.findCurrentMatch();
     this.matchesOnWatchedTables$ = this.matchService.getMatchesOnWatchedTables();
   }
 
@@ -81,8 +78,6 @@ export class HomePage {
   }
 
   public refresh($event: any) {
-    this.matchService.findCurrentMatch();
-
     setTimeout(() => $event.target.complete(), 500);
   }
 
@@ -95,62 +90,18 @@ export class HomePage {
   }
 
   public async onMatchJoined($event: Team) {
-    await this.matchService.addPlayerToTeam(this.authService.playerDoc.ref, $event);
+    await this.matchService.addPlayerToTeam(this.playerService.playerDocRef, $event);
   }
 
   public async leaveTeam() {
-    await this.matchService.leaveMatch(this.authService.playerDoc.ref);
+    await this.matchService.leaveMatch(this.playerService.playerDocRef);
   }
 
   public async leaveMatch() {
-    await this.matchService.leaveMatch(this.authService.playerDoc.ref);
+    await this.matchService.leaveMatch(this.playerService.playerDocRef);
   }
 
   public async dismissMatch() {
     await this.matchService.dismissMatch();
-  }
-
-  public async findMatchToJoin() {
-    const alert = await this.alertController.create({
-      header: 'Join Match',
-      message: 'Enter the game PIN of the match you want to join',
-      inputs: [
-        {
-          name: 'gamePin',
-          placeholder: 'Enter Game PIN',
-          type: 'number',
-          min: 1,
-          max: 9999
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => { }
-        }, {
-          text: 'Join Match',
-          handler: async (data) => {
-            await this.joinMatch(data.gamePin);
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
-
-  private async joinMatch(gamePin: number) {
-    await this.matchService.findMatchToJoin(gamePin, async () => {
-      const toast = await this.toastController.create({
-        message: 'No open matches found with that PIN.',
-        duration: 2000,
-        color: 'warning',
-        animated: true,
-        translucent: true
-      });
-      toast.present();
-    });
   }
 }

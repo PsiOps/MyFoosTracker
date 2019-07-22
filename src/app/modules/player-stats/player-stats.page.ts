@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '../../auth/authentication.service';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
 import { LoadingController } from '@ionic/angular';
+import { PlayerService } from 'src/app/services/player.service';
 
 @Component({
   selector: 'app-player-stats',
@@ -15,19 +14,9 @@ export class PlayerStatsPage implements OnInit {
   public player$: Observable<{ id: string, nickname: string, photoUrl: string }>;
 
   constructor(
-    public authService: AuthenticationService,
+    public playerService: PlayerService,
     private loadingController: LoadingController
-  ) {
-    this.player$ = this.authService.playerDoc.valueChanges()
-      .pipe(
-        map(player => {
-        return {
-          id: this.authService.user.uid,
-          nickname: player.nickname,
-          photoUrl: player.photoUrl
-        };
-      }));
-  }
+  ) { }
 
   async ngOnInit() {
     this.loadingIndicator = await this.loadingController.create({

@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { Match, Team, Player, Table } from 'src/app/domain';
-import { User } from 'firebase/app';
 
 @Component({
   selector: 'app-match',
@@ -9,7 +8,7 @@ import { User } from 'firebase/app';
 })
 export class MatchComponent implements OnInit, OnChanges {
   @Input() match: Match;
-  @Input() currentUser: User;
+  @Input() currentPlayer: Player;
   @Input() showTable: boolean;
   @Output() scoreConfirmed = new EventEmitter();
   @Output() scoringCancelled = new EventEmitter();
@@ -46,6 +45,6 @@ export class MatchComponent implements OnInit, OnChanges {
     this.matchJoined.emit(Team.teamB);
   }
   public canJoin() {
-    return this.match.status === 0 && this.match.participants.indexOf(this.currentUser.uid) === -1;
+    return this.match.status === 0 && this.match.participants.indexOf(this.currentPlayer.id) === -1;
   }
 }

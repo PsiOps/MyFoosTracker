@@ -1,97 +1,100 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, combineLatest } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Match, MatchStatus, Team } from '../domain/match';
 import { AngularFirestoreDocument, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
-import { AuthenticationService } from '../auth/authentication.service';
 import { StatsService } from './stats.service';
 import { firestore } from 'firebase/app';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, filter, tap } from 'rxjs/operators';
+import { PlayerService } from './player.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchService {
-  public currentMatch$: Observable<Match>;
-  public currentMatchDocument: AngularFirestoreDocument<Match>;
+  public currentMatch$: BehaviorSubject<Match> = new BehaviorSubject(null);
+  private currentMatchDoc: AngularFirestoreDocument<Match>;
+  public currentMatchDocRef: firestore.DocumentReference;
   public matchesOfWatchedTables$: Observable<Match[]>;
 
-  constructor(private authService: AuthenticationService,
+  constructor(private playerService: PlayerService,
     private statsService: StatsService,
-    private afs: AngularFirestore) { }
+    private afs: AngularFirestore) {
 
-  public findCurrentMatch(): void {
-    const currentUserMatches = this.afs.collection<Match>('matches',
-      ref => ref.where('status', '<', MatchStatus.over)
-        .where('participants', 'array-contains', this.authService.user.uid)
-        .limit(1)
-    );
-    currentUserMatches.get().subscribe(qs => {
-      if (qs.docs.length === 0) { return; }
-      this.currentMatchDocument = this.afs.doc<Match>(qs.docs[0].ref.path);
-      this.currentMatch$ = this.currentMatchDocument.valueChanges();
-    });
+    const currentMatchObs$ = this.playerService.player$
+      .pipe(filter(player => player !== null))
+      .pipe(switchMap(player => this.afs.collection<Match>('matches',
+        ref => ref.where('status', '<', MatchStatus.over)
+          .where('participants', 'array-contains', player.id)
+          .limit(1)
+      ).snapshotChanges()
+        .pipe(filter(matchDocChanges => matchDocChanges.length > 0))
+        .pipe(map(matchDocs => this.currentMatchDoc = this.afs.doc<Match>(matchDocs[0].payload.doc.ref.path)))
+        .pipe(tap(doc => this.currentMatchDocRef = doc.ref))
+        .pipe(switchMap(matchDoc => matchDoc.valueChanges())))
+      );
+
+    currentMatchObs$.subscribe(match => this.currentMatch$.next(match));
   }
 
+  // Reimplement as matches on any table in the group, much simpler
   public getMatchesOnWatchedTables(): Observable<Match[]> {
-
-    return this.authService.playerDoc.valueChanges()
-      .pipe(map(p => p.watchingTableIds))
-      .pipe(switchMap(ids => {
-        return combineLatest(ids.map(id => {
-          const tableRef = this.afs.doc(`foosball-tables/${id}`).ref;
-          const currentTableMatchCollection = this.afs.collection<Match>('matches',
-            ref => ref
-              .where('status', '==', MatchStatus.started)
-              .where('tableRef', '==', tableRef)
-              .limit(1)
-          );
-          return currentTableMatchCollection.valueChanges();
-        }))
-          .pipe(map(arraysOfMatches => {
-            return [].concat.apply([], arraysOfMatches) as Match[];
-          }));
-      }));
+    return of([]);
+    // return this.authService.playerDoc.valueChanges()
+    //   .pipe(map(p => p.watchingTableIds))
+    //   .pipe(switchMap(ids => {
+    //     return combineLatest(ids.map(id => {
+    //       const tableRef = this.afs.doc(`foosball-tables/${id}`).ref;
+    //       const currentTableMatchCollection = this.afs.collection<Match>('matches',
+    //         ref => ref
+    //           .where('status', '==', MatchStatus.started)
+    //           .where('tableRef', '==', tableRef)
+    //           .limit(1)
+    //       );
+    //       return currentTableMatchCollection.valueChanges();
+    //     }))
+    //       .pipe(map(arraysOfMatches => {
+    //         return [].concat.apply([], arraysOfMatches) as Match[];
+    //       }));
+    //   }));
   }
 
   public async createMatch(player: Player) {
     const match = new Match();
-    if (player.defaultTableId) {
-      match.tableRef = this.afs.doc(`/foosball-tables/${player.defaultTableId}`).ref;
+    if (player.currentGroupDefaultTableId) {
+      match.tableRef = this.afs.doc(`/groups/${player.currentGroupId}/tables/${player.currentGroupDefaultTableId}`).ref;
     }
-    match.organizer = this.authService.user.uid;
-    match.participants.push(this.authService.user.uid);
-    match.teamA.push({ playerRef: this.authService.playerDoc.ref, goals: 0 });
-    const doc = await this.afs.collection('matches').add(Object.assign({}, match));
-    this.currentMatchDocument = this.afs.doc<Match>(doc.path);
-    this.currentMatch$ = this.currentMatchDocument.valueChanges();
+    match.organizer = player.id;
+    match.participants.push(player.id);
+    match.teamA.push({ playerRef: this.playerService.playerDocRef, goals: 0 });
+    await this.afs.collection('matches').add(Object.assign({}, match));
   }
   public async startMatch() {
-    await this.currentMatchDocument.update({ dateTimeStart: new Date(), status: 1 });
+    await this.currentMatchDoc.update({ dateTimeStart: new Date(), status: 1 });
   }
   public async cancelMatch() {
-    await this.currentMatchDocument.delete();
+    await this.currentMatchDoc.delete();
     this.clearMatch();
   }
   public async finishMatch() {
-    await this.currentMatchDocument.update({ status: 2 });
+    await this.currentMatchDoc.update({ status: 2 });
   }
   public async saveScoreAndUpdateStats($event: { goalsTeamA: number, goalsTeamB: number }) {
-    await this.currentMatchDocument.update({
+    await this.currentMatchDoc.update({
       dateTimeEnd: new Date(),
       status: 3,
       goalsTeamA: $event.goalsTeamA,
       goalsTeamB: $event.goalsTeamB
     });
-    this.statsService.updateStats(this.currentMatchDocument.ref.path);
+    this.statsService.updateStats(this.currentMatchDoc.ref.path);
     this.clearMatch();
   }
   public async reopenMatch() {
-    await this.currentMatchDocument.update({ status: 1 });
+    await this.currentMatchDoc.update({ status: 1 });
   }
   public async setTable(tableId: string) {
     const tableRef = this.afs.collection('foosball-tables').doc(tableId).ref;
-    await this.currentMatchDocument.ref.update({ tableRef: tableRef });
+    await this.currentMatchDoc.ref.update({ tableRef: tableRef });
   }
   public async addTeamPlayerToMatch(playerId: string, team: Team) {
     const playerDocRef = this.afs.doc<Player>(`players/${playerId}`).ref;
@@ -115,7 +118,7 @@ export class MatchService {
         teamB: firestore.FieldValue.arrayUnion(teamPlayer)
       };
     }
-    await this.currentMatchDocument.ref.update(payload);
+    await this.currentMatchDoc.ref.update(payload);
   }
   public async leaveTeam(playerDocRef: DocumentReference) {
     const teamPlayer = { playerRef: playerDocRef, goals: 0 };
@@ -124,7 +127,7 @@ export class MatchService {
       teamA: firestore.FieldValue.arrayRemove(teamPlayer),
       teamB: firestore.FieldValue.arrayRemove(teamPlayer)
     };
-    await this.currentMatchDocument.ref.update(payload);
+    await this.currentMatchDoc.ref.update(payload);
   }
   public async leaveMatch(playerDocRef: DocumentReference) {
     await this.leaveTeam(playerDocRef);
@@ -133,24 +136,8 @@ export class MatchService {
   public async dismissMatch() {
     this.clearMatch();
   }
-  public async findMatchToJoin(gamePin: number, notFoundAction: () => void) {
-    const matchesWithPin = this.afs.collection<Match>('matches',
-      ref => ref
-        .where('pin', '==', Number(gamePin))
-        .where('status', '==', MatchStatus.open)
-        .limit(1)
-    );
-    matchesWithPin.get().subscribe(async qs => {
-      if (qs.docs.length === 0) {
-        notFoundAction();
-        return;
-      }
-      this.currentMatchDocument = this.afs.doc<Match>(qs.docs[0].ref.path);
-      this.currentMatch$ = this.currentMatchDocument.valueChanges();
-    });
-  }
   private clearMatch() {
-    this.currentMatchDocument = null;
-    this.currentMatch$ = of(null);
+    this.currentMatchDoc = null;
+    this.currentMatch$.next(null);
   }
 }

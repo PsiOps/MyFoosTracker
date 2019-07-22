@@ -7,6 +7,7 @@ import { UpdateService } from './services/update-service';
 import { MessagingService } from './services/messaging.service';
 import { AuthenticationService } from './auth/authentication.service';
 import { filter, take, switchMap, tap } from 'rxjs/operators';
+import { PlayerService } from './services/player.service';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit {
     private statusBar: StatusBar,
     private updateService: UpdateService,
     private authenticationService: AuthenticationService,
+    private playerService: PlayerService,
     private messagingService: MessagingService,
     private loadingController: LoadingController
   ) {
@@ -41,11 +43,9 @@ export class AppComponent implements OnInit {
       translucent: true
     });
     await loading.present();
-    this.authenticationService.user$
+    this.playerService.player$
+      .pipe(filter(player => !!player))
       .pipe(tap(() => this.loadingController.dismiss()))
-      .pipe(filter(user => !!user)) // filter null
-      .pipe(switchMap(u => this.authenticationService.playerDoc.valueChanges()))
-      .pipe(take(1))
       .subscribe(player => {
         if (player) {
           this.messagingService.requestPermission(player);
