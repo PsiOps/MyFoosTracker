@@ -17,7 +17,7 @@ export class ProfilePage {
   public player$: Observable<Player>;
   constructor(
     private authService: AuthenticationService,
-    private playerService: PlayerService,
+    public playerService: PlayerService,
     private router: Router,
     private alertController: AlertController,
     private location: Location
