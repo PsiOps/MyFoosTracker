@@ -19,19 +19,16 @@ export class PlayerSelectComponent implements OnInit {
   public selectedTeam$: BehaviorSubject<Team>;
   public isTeamFull$: Observable<boolean>;
   public terms = '';
-  private matchDoc: AngularFirestoreDocument<Match>;
 
   constructor(
     private matchService: MatchService,
     private playerService: PlayerService,
-    private afs: AngularFirestore,
     private modalController: ModalController) { }
 
   ngOnInit() {
-    this.matchDoc = this.matchService.currentMatchDocument;
     this.selectedTeam$ = new BehaviorSubject(0);
     this.isTeamFull$ = combineLatest([
-      this.matchDoc.valueChanges(),
+      this.matchService.currentMatch$,
       this.selectedTeam$
     ])
       .pipe(map(m => {
@@ -40,35 +37,31 @@ export class PlayerSelectComponent implements OnInit {
         return team === Team.teamA ? match.teamA.length === 2 : match.teamB.length === 2;
       }));
 
-    const playerChanges = this.afs.collection<Player>('players').snapshotChanges();
-
     this.players$ =
       combineLatest([
-        playerChanges,
+        this.playerService.currentGroupMembers$,
         this.selectedTeam$,
         this.playerService.getFavourites()
       ]).pipe(
         withLatestFrom(
-          this.matchDoc.valueChanges()
+          this.matchService.currentMatch$
         )
       ).pipe(
         map(ps => {
-          const playerDocs = ps[0][0];
+          const players = ps[0][0];
           const team = ps[0][1];
           const playerFavourites = ps[0][2];
           const match = ps[1];
 
-          return playerDocs
-            .map((p) => {
-              const playerDoc = p.payload.doc;
-              const player = playerDoc.data();
+          return players
+            .map((player) => {
               const playerSelectModel = new PlayerSelectModel();
-              playerSelectModel.id = playerDoc.id;
+              playerSelectModel.id = player.id;
               playerSelectModel.nickname = player.nickname;
-              playerSelectModel.isSelected = this.isInSelectedTeam(playerDoc.id, team, match);
-              playerSelectModel.isOrganizer = playerDoc.id === match.organizer;
+              playerSelectModel.isSelected = this.isInSelectedTeam(player.id, team, match);
+              playerSelectModel.isOrganizer = player.id === match.organizer;
               playerSelectModel.isFavourite = playerFavourites && playerFavourites
-                .some((favouriteId: string) => favouriteId === playerDoc.id);
+                .some((favouriteId: string) => favouriteId === player.id);
               playerSelectModel.photoUrl = player.photoUrl;
               return playerSelectModel;
             })

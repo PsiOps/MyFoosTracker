@@ -1,10 +1,11 @@
 export class Player {
-
+    id: string;
     nickname: string;
     photoUrl: string;
     lastLogin: Date;
-    defaultTableId: string; // Deprecated, should be removed
     defaultGroupId: string;
+    currentGroupId: string;
+    currentGroupDefaultTableId: string;
     groupIds: string[] = [];
     playerSince: Date;
     favouritePlayerIds: string[] = [];

@@ -1,4 +1,4 @@
 <app-header title="Player Statistics"></app-header>
 <ion-content>
-  <app-stats [player]="player$ | async" (hasLoaded)="onStatsLoaded()"></app-stats>
+  <app-stats [player]="playerService.player$ | async" (hasLoaded)="onStatsLoaded()"></app-stats>
 </ion-content>

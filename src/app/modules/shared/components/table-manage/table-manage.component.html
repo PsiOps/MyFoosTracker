@@ -12,8 +12,8 @@
         <ion-searchbar [(ngModel)]="terms"></ion-searchbar>
       </div>
       <div scrollY="true" id="scrollList">
-        <ion-list>
-          <ion-item *ngFor="let table of tableService.groupTables$ | async | tableSearch : terms">
+        <ion-list *ngIf="tableService.groupTables$ | async as playerTables" >
+          <ion-item *ngFor="let table of playerTables | tableSearch : terms">
             <ion-label>{{table.name}} @ {{table.location}}</ion-label>
             <ion-icon class="default" slot="end" [name]="table.isDefault ? 'refresh-circle' :'refresh'"
               (click)="defaultTableChanged(table)">

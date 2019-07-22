@@ -6,16 +6,16 @@
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
 
-    <div *ngIf="player$ | async as player">
+    <div *ngIf="playerService.player$ | async as player">
       <div *ngIf="matchService.currentMatch$ | async as currentMatch">
         <ion-card>
           <ion-card-header *ngIf="currentMatch.status === 1 || currentMatch.status === 2">
             <ion-card-title text-center> Match in progress!</ion-card-title>
           </ion-card-header>
           <ion-card-content class="matchCard">
-            <app-match [match]="currentMatch" [currentUser]="authService.user" (scoreConfirmed)="onScored($event)"
+            <app-match [match]="currentMatch" [currentPlayer]="player" (scoreConfirmed)="onScored($event)"
               (scoringCancelled)="onScoringCancelled()" (matchJoined)="onMatchJoined($event)"></app-match>
-            <div *ngIf="currentMatch.organizer === authService.user.uid">
+            <div *ngIf="currentMatch.organizer === player.id">
               <div *ngIf="currentMatch.status === 0">
                 <div>
                   <app-table-select [match]="currentMatch"></app-table-select>
@@ -41,10 +41,10 @@
                 </ion-button>
               </div>
             </div>
-            <div *ngIf="currentMatch.organizer !== authService.user.uid && currentMatch.status === 0">
+            <div *ngIf="currentMatch.organizer !== player.id && currentMatch.status === 0">
               <div text-center>Waiting for organizer to start the match...</div>
               <div class="buttonContainer">
-                <ion-button *ngIf="currentMatch.participants.indexOf(authService.user.uid) > -1" (click)="leaveTeam()">
+                <ion-button *ngIf="currentMatch.participants.indexOf(player.id) > -1" (click)="leaveTeam()">
                   Leave Team
                 </ion-button>
                 <ion-button color="warning" (click)="leaveMatch()">
@@ -52,7 +52,7 @@
                 </ion-button>
               </div>
             </div>
-            <div *ngIf="currentMatch.organizer !== authService.user.uid && currentMatch.status === 3">
+            <div *ngIf="currentMatch.organizer !== player.id && currentMatch.status === 3">
               <div text-center>Match over!</div>
               <ion-button expand="block" (click)="dismissMatch()">
                 Dismiss

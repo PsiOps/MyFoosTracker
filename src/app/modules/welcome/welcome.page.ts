@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { IonInput } from '@ionic/angular';
-import { AuthenticationService } from 'src/app/auth/authentication.service';
 import { Router } from '@angular/router';
+import { PlayerService } from 'src/app/services/player.service';
 
 @Component({
   selector: 'app-welcome',
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class WelcomePage implements OnInit, AfterViewInit {
   constructor(
-    private authService: AuthenticationService,
+    private playerService: PlayerService,
     private router: Router
     ) {}
   slideOpts = {
@@ -34,7 +34,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
 
   public async letsGo() {
     if (!this.nickName) { this.nickName = `Player${Math.floor(Math.random() * 1000000)}`; }
-    await this.authService.setNickname(this.nickName);
+    await this.playerService.setNickname(this.nickName);
     await this.router.navigateByUrl('/');
   }
 }
