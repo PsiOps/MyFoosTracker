@@ -29,19 +29,20 @@ export class AppComponent implements OnInit {
       if (this.platform.is('ios') || this.platform.is('android')) {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
-        this.playerService.player$
-          .pipe(filter(player => !!player))
-          .pipe(tap(() => this.loadingController.dismiss()))
-          .subscribe(player => {
-            this.messagingService.requestPermission(player);
-            this.messagingService.monitorTokenRefresh(player);
-            this.messagingService.receiveMessages();
-          });
       }
+      this.playerService.player$
+        .pipe(filter(player => !!player))
+        .pipe(tap(() => this.loadingController.dismiss()))
+        .subscribe(player => {
+          this.messagingService.requestPermission(player);
+          this.messagingService.monitorTokenRefresh(player);
+          this.messagingService.receiveMessages();
+        });
     });
   }
 
   async ngOnInit() {
+    console.log('ngOnInit');
     const loading = await this.loadingController.create({
       message: 'Please wait...',
       translucent: true
