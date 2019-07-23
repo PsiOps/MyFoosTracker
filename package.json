@@ -1,6 +1,6 @@
 {
   "name": "foostracker",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "PsiOps Software",
   "scripts": {
     "ng": "ng",

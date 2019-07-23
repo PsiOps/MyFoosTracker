@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
 import { firestore } from 'firebase/app';
-import { Observable, BehaviorSubject, zip } from 'rxjs';
-import { map, switchMap, tap, filter } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, switchMap, filter, skip } from 'rxjs/operators';
 import { PlayerSelectModel } from '../modules/home/models/player-select.model';
 import { Player, Group, Table } from '../domain';
 import { AngularFirestoreDocument, AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
@@ -34,10 +34,11 @@ export class PlayerService {
     private afs: AngularFirestore
   ) {
 
-    this.authService.user$.subscribe(user => {
+    this.authService.user$
+      .pipe(skip(1))
+      .subscribe(user => {
       if (!user) {
         console.log('no user');
-        // this.playerDoc = null;
         return;
       }
       this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
