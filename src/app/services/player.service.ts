@@ -47,9 +47,11 @@ export class PlayerService {
 
             player.id = user.uid;
             player.currentGroupId = player.defaultGroupId;
-            const currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
-            if (currentGroupDefaultTableId) {
-              player.currentGroupDefaultTableId = currentGroupDefaultTableId;
+            if (player.defaultTableIdByGroup) {
+              const currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
+              if (currentGroupDefaultTableId) {
+                player.currentGroupDefaultTableId = currentGroupDefaultTableId;
+              }
             }
 
             this.currentGroupDoc = this.afs.doc<Group>(`groups/${player.currentGroupId}`);
