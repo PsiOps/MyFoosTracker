@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-
 import { Platform, LoadingController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { UpdateService } from './services/update-service';
 import { MessagingService } from './services/messaging.service';
-import { AuthenticationService } from './auth/authentication.service';
-import { filter, take, switchMap, tap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { PlayerService } from './services/player.service';
 
 @Component({
@@ -19,7 +17,6 @@ export class AppComponent implements OnInit {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private updateService: UpdateService,
-    private authenticationService: AuthenticationService,
     private playerService: PlayerService,
     private messagingService: MessagingService,
     private loadingController: LoadingController
@@ -32,26 +29,23 @@ export class AppComponent implements OnInit {
       if (this.platform.is('ios') || this.platform.is('android')) {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
+        this.playerService.player$
+          .pipe(filter(player => !!player))
+          .pipe(tap(() => this.loadingController.dismiss()))
+          .subscribe(player => {
+            this.messagingService.requestPermission(player);
+            this.messagingService.monitorTokenRefresh(player);
+            this.messagingService.receiveMessages();
+          });
       }
     });
   }
 
   async ngOnInit() {
-    console.log('AppComponent ngOnInit');
     const loading = await this.loadingController.create({
       message: 'Please wait...',
       translucent: true
     });
     await loading.present();
-    this.playerService.player$
-      .pipe(filter(player => !!player))
-      .pipe(tap(() => this.loadingController.dismiss()))
-      .subscribe(player => {
-        if (player) {
-          this.messagingService.requestPermission(player);
-          this.messagingService.monitorTokenRefresh(player);
-          this.messagingService.receiveMessages();
-        }
-      });
   }
 }
