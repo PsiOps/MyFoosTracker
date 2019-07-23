@@ -35,48 +35,47 @@ export class PlayerService {
   ) {
 
     this.authService.user$
-      .pipe(skip(1))
       .subscribe(user => {
-      if (!user) {
-        console.log('no user');
-        return;
-      }
-      this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
-      this.playerDocRef = this.playerDoc.ref;
-      this.playerObs$ = this.playerDoc.valueChanges()
-        .pipe(map(player => {
+        if (!user) {
+          console.log('no user');
+          return;
+        }
+        this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
+        this.playerDocRef = this.playerDoc.ref;
+        this.playerObs$ = this.playerDoc.valueChanges()
+          .pipe(map(player => {
 
-          player.id = user.uid;
-          player.currentGroupId = player.defaultGroupId;
-          const currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
-          if (currentGroupDefaultTableId) {
-            player.currentGroupDefaultTableId = currentGroupDefaultTableId;
-          }
+            player.id = user.uid;
+            player.currentGroupId = player.defaultGroupId;
+            const currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
+            if (currentGroupDefaultTableId) {
+              player.currentGroupDefaultTableId = currentGroupDefaultTableId;
+            }
 
-          this.currentGroupDoc = this.afs.doc<Group>(`groups/${player.currentGroupId}`);
-          const currentGroupObs$ = this.currentGroupDoc.valueChanges()
-            .pipe(map(group => {
-              group.id = this.currentGroupDoc.ref.id;
-              return group;
-            }));
-          currentGroupObs$.subscribe(group => this.currentGroup$.next(group));
+            this.currentGroupDoc = this.afs.doc<Group>(`groups/${player.currentGroupId}`);
+            const currentGroupObs$ = this.currentGroupDoc.valueChanges()
+              .pipe(map(group => {
+                group.id = this.currentGroupDoc.ref.id;
+                return group;
+              }));
+            currentGroupObs$.subscribe(group => this.currentGroup$.next(group));
 
-          return player;
-        }));
-      this.playerObs$.subscribe(player => this.player$.next(player));
+            return player;
+          }));
+        this.playerObs$.subscribe(player => this.player$.next(player));
 
-      const now = new Date();
-      this.playerDoc.update({ lastLogin: now }).catch((error) => {
-        this.router.navigateByUrl('/welcome');
-        // Error means player does not exist yet, so we create a new one:
-        const player = new Player();
-        player.photoUrl = user.photoURL;
-        player.playerSince = now;
-        player.lastLogin = now;
-        player.favouritePlayerIds = [];
-        this.playerDoc.set(Object.assign({}, player));
+        const now = new Date();
+        this.playerDoc.update({ lastLogin: now }).catch((error) => {
+          this.router.navigateByUrl('/welcome');
+          // Error means player does not exist yet, so we create a new one:
+          const player = new Player();
+          player.photoUrl = user.photoURL;
+          player.playerSince = now;
+          player.lastLogin = now;
+          player.favouritePlayerIds = [];
+          this.playerDoc.set(Object.assign({}, player));
+        });
       });
-    });
 
     const currentGroupMembersObs$ = this.currentGroup$
       .pipe(filter(group => group !== null))
