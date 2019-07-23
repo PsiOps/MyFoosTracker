@@ -8,6 +8,7 @@ export enum Team {
 export class Match {
     status: MatchStatus = MatchStatus.open;
     tableRef: admin.firestore.DocumentReference;
+    groupId: string;
     goalsTeamA = 0;
     goalsTeamB = 0;
     organizer: string;

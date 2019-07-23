@@ -10,6 +10,7 @@ export class Match {
     pin: number = Math.floor(Math.random() * 10000);
     status: MatchStatus = MatchStatus.open;
     tableRef: DocumentReference;
+    groupId: string;
     goalsTeamA = 0;
     goalsTeamB = 0;
     organizer: string;
