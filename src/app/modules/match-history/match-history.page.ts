@@ -44,14 +44,6 @@ export class MatchHistoryPage implements OnInit {
     this.loadMoreData(event);
   }
 
-  public refresh($event: any) {
-    setTimeout(() => {
-      this.setInitialDates();
-      this.matchesPerDay = [];
-      this.loadMoreData($event);
-    }, 500);
-  }
-
   private loadMoreData(event?: any) {
     this.playerService.player$
       .pipe(switchMap(player => this.afs.collection<Match>('matches', ref => this.filterMatches(ref, player))
@@ -73,30 +65,7 @@ export class MatchHistoryPage implements OnInit {
         setTimeout(async () => {
           await this.loadingController.dismiss();
         }, 500);
-
       });
-
-    // this.afs.collection<Match>('matches', ref => this.filterFinishedMatches(ref))
-    //   .valueChanges()
-    //   .pipe(
-    //     map(this.groupMatchesByDay)
-    //   )
-    //   .subscribe(matchesByDay => {
-    //     this.matchesPerDay = this.matchesPerDay.concat(matchesByDay);
-    //     this.matchesAfterKey.setDate(this.matchesAfterKey.getDate() - this.daysPerBatch);
-    //     this.matchesUntillKey.setDate(this.matchesUntillKey.getDate() - this.daysPerBatch);
-
-    //     if (event) {
-    //       event.target.complete();
-    //     } else if (this.matchesPerDay.length < this.minNumberOfMatchesToLoad) {
-    //       this.loadMoreData();
-    //     }
-
-    //     setTimeout(async () => {
-    //       await this.loadingController.dismiss();
-    //     }, 500);
-
-    //   });
   }
 
   private filterMatches = (ref: CollectionReference, player: Player): Query => ref
