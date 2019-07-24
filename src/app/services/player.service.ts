@@ -68,14 +68,16 @@ export class PlayerService {
 
         const now = new Date();
         this.playerDoc.update({ lastLogin: now }).catch((error) => {
-          this.router.navigateByUrl('/welcome');
+
           // Error means player does not exist yet, so we create a new one:
           const player = new Player();
           player.photoUrl = user.photoURL;
           player.playerSince = now;
           player.lastLogin = now;
           player.favouritePlayerIds = [];
-          this.playerDoc.set(Object.assign({}, player));
+
+          this.playerDoc.set(Object.assign({}, player))
+            .then(() => this.router.navigateByUrl('/welcome'));
         });
       });
 
