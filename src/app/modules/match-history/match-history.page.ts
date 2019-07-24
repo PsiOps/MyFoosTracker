@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, CollectionReference, Query } from '@angular/fire/firestore';
-import { Match, MatchStatus } from '../../domain';
-import { map } from 'rxjs/operators';
+import { Match, MatchStatus, Player } from '../../domain';
+import { map, switchMap } from 'rxjs/operators';
 import { LoadingController } from '@ionic/angular';
+import { PlayerService } from 'src/app/services/player.service';
 
 @Component({
   selector: 'app-match-history',
@@ -22,7 +23,8 @@ export class MatchHistoryPage implements OnInit {
 
   constructor(
     private afs: AngularFirestore,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private playerService: PlayerService
   ) {
     this.setInitialDates();
     this.loadMoreData();
@@ -42,17 +44,10 @@ export class MatchHistoryPage implements OnInit {
     this.loadMoreData(event);
   }
 
-  public refresh($event: any) {
-    setTimeout(() => {
-      this.setInitialDates();
-      this.matchesPerDay = [];
-      this.loadMoreData($event);
-    }, 500);
-  }
-
   private loadMoreData(event?: any) {
-    this.afs.collection<Match>('matches', ref => this.filterFinishedMatches(ref))
-      .valueChanges()
+    this.playerService.player$
+      .pipe(switchMap(player => this.afs.collection<Match>('matches', ref => this.filterMatches(ref, player))
+        .valueChanges()))
       .pipe(
         map(this.groupMatchesByDay)
       )
@@ -70,12 +65,12 @@ export class MatchHistoryPage implements OnInit {
         setTimeout(async () => {
           await this.loadingController.dismiss();
         }, 500);
-
       });
   }
 
-  private filterFinishedMatches = (ref: CollectionReference): Query => ref
+  private filterMatches = (ref: CollectionReference, player: Player): Query => ref
     .where('status', '==', MatchStatus.over)
+    .where('groupId', '==', player.currentGroupId)
     .orderBy('dateTimeStart', 'desc')
     .startAfter(this.matchesAfterKey)
     .endAt(this.matchesUntillKey)

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
 import { firestore } from 'firebase/app';
-import { Observable, BehaviorSubject, zip } from 'rxjs';
-import { map, switchMap, tap, filter } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, switchMap, filter, skip } from 'rxjs/operators';
 import { PlayerSelectModel } from '../modules/home/models/player-select.model';
 import { Player, Group, Table } from '../domain';
 import { AngularFirestoreDocument, AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
@@ -34,48 +34,50 @@ export class PlayerService {
     private afs: AngularFirestore
   ) {
 
-    this.authService.user$.subscribe(user => {
-      if (!user) {
-        console.log('no user');
-        // this.playerDoc = null;
-        return;
-      }
-      this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
-      this.playerDocRef = this.playerDoc.ref;
-      this.playerObs$ = this.playerDoc.valueChanges()
-        .pipe(map(player => {
+    this.authService.user$
+      .subscribe(user => {
+        if (!user) {
+          console.log('no user');
+          return;
+        }
+        this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
+        this.playerDocRef = this.playerDoc.ref;
+        this.playerObs$ = this.playerDoc.valueChanges()
+          .pipe(map(player => {
 
-          player.id = user.uid;
-          player.currentGroupId = player.defaultGroupId;
-          const currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
-          if (currentGroupDefaultTableId) {
-            player.currentGroupDefaultTableId = currentGroupDefaultTableId;
-          }
+            player.id = user.uid;
+            player.currentGroupId = player.defaultGroupId;
+            if (player.defaultTableIdByGroup) {
+              const currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
+              if (currentGroupDefaultTableId) {
+                player.currentGroupDefaultTableId = currentGroupDefaultTableId;
+              }
+            }
 
-          this.currentGroupDoc = this.afs.doc<Group>(`groups/${player.currentGroupId}`);
-          const currentGroupObs$ = this.currentGroupDoc.valueChanges()
-            .pipe(map(group => {
-              group.id = this.currentGroupDoc.ref.id;
-              return group;
-            }));
-          currentGroupObs$.subscribe(group => this.currentGroup$.next(group));
+            this.currentGroupDoc = this.afs.doc<Group>(`groups/${player.currentGroupId}`);
+            const currentGroupObs$ = this.currentGroupDoc.valueChanges()
+              .pipe(map(group => {
+                group.id = this.currentGroupDoc.ref.id;
+                return group;
+              }));
+            currentGroupObs$.subscribe(group => this.currentGroup$.next(group));
 
-          return player;
-        }));
-      this.playerObs$.subscribe(player => this.player$.next(player));
+            return player;
+          }));
+        this.playerObs$.subscribe(player => this.player$.next(player));
 
-      const now = new Date();
-      this.playerDoc.update({ lastLogin: now }).catch((error) => {
-        this.router.navigateByUrl('/welcome');
-        // Error means player does not exist yet, so we create a new one:
-        const player = new Player();
-        player.photoUrl = user.photoURL;
-        player.playerSince = now;
-        player.lastLogin = now;
-        player.favouritePlayerIds = [];
-        this.playerDoc.set(Object.assign({}, player));
+        const now = new Date();
+        this.playerDoc.update({ lastLogin: now }).catch((error) => {
+          this.router.navigateByUrl('/welcome');
+          // Error means player does not exist yet, so we create a new one:
+          const player = new Player();
+          player.photoUrl = user.photoURL;
+          player.playerSince = now;
+          player.lastLogin = now;
+          player.favouritePlayerIds = [];
+          this.playerDoc.set(Object.assign({}, player));
+        });
       });
-    });
 
     const currentGroupMembersObs$ = this.currentGroup$
       .pipe(filter(group => group !== null))

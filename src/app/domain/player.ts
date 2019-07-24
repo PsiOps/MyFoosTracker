@@ -9,6 +9,6 @@ export class Player {
     groupIds: string[] = [];
     playerSince: Date;
     favouritePlayerIds: string[] = [];
-    defaultTableIdByGroup: {[groupId: string]: string };
+    defaultTableIdByGroup?: {[groupId: string]: string };
     fcmTokens?: { [token: string]: boolean };
 }

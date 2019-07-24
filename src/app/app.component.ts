@@ -4,8 +4,9 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { UpdateService } from './services/update-service';
 import { MessagingService } from './services/messaging.service';
-import { filter, tap } from 'rxjs/operators';
+import { filter, skip } from 'rxjs/operators';
 import { PlayerService } from './services/player.service';
+import { AuthenticationService } from './auth/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private updateService: UpdateService,
+    private authService: AuthenticationService,
     private playerService: PlayerService,
     private messagingService: MessagingService,
     private loadingController: LoadingController
@@ -32,7 +34,6 @@ export class AppComponent implements OnInit {
       }
       this.playerService.player$
         .pipe(filter(player => !!player))
-        .pipe(tap(() => this.loadingController.dismiss()))
         .subscribe(player => {
           this.messagingService.requestPermission(player);
           this.messagingService.monitorTokenRefresh(player);
@@ -42,11 +43,16 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    console.log('ngOnInit');
     const loading = await this.loadingController.create({
       message: 'Please wait...',
       translucent: true
     });
     await loading.present();
+
+    this.authService.user$
+      .pipe(skip(1))
+      .subscribe(async user => {
+        await this.loadingController.dismiss();
+      });
   }
 }

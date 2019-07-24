@@ -26,6 +26,7 @@ export class MatchService {
       .pipe(switchMap(player => this.afs.collection<Match>('matches',
         ref => ref.where('status', '<', MatchStatus.over)
           .where('participants', 'array-contains', player.id)
+          .where('groupId', '==', player.currentGroupId)
           .limit(1)
       ).snapshotChanges()
         .pipe(filter(matchDocChanges => matchDocChanges.length > 0))
@@ -61,6 +62,7 @@ export class MatchService {
 
   public async createMatch(player: Player) {
     const match = new Match();
+    match.groupId = player.currentGroupId;
     if (player.currentGroupDefaultTableId) {
       match.tableRef = this.afs.doc(`/groups/${player.currentGroupId}/tables/${player.currentGroupDefaultTableId}`).ref;
     }
