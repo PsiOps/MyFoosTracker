@@ -58,17 +58,17 @@ export const removeUser = functions.https.onRequest(async (req, res) => {
     res.send('User removed');
 });
 
-// const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
-//     docs.forEach(doc => {
-//         doc.ref.update(updateObject).catch(err => console.log(err));
-//     })
-// }
+const updateDocs = (docs: FirebaseFirestore.QuerySnapshot, updateObject: any) => {
+    docs.forEach(doc => {
+        doc.ref.update(updateObject).catch(err => console.log(err));
+    })
+}
 
 export const updateData = functions.https.onRequest(async (req, res) => {
 
     // 22/07/2019
-    // const matchDocs = await firestore.collection('matches').get();
-    // updateDocs(matchDocs, { groupId: 'O6jNqHHthL4hzW5Kk52H'});
+    const matchDocs = await firestore.collection('matches').get();
+    updateDocs(matchDocs, { groupId: 'O6jNqHHthL4hzW5Kk52H'});
 
     // 19/7/2019
     // const fieldValue = admin.firestore.FieldValue;
