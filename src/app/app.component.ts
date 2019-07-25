@@ -27,6 +27,11 @@ export class AppComponent implements OnInit {
   }
 
   initializeApp() {
+    this.loadingController.create({
+      message: 'Please wait...',
+      translucent: true
+    }).then(loading => loading.present());
+
     this.platform.ready().then(() => {
       if (this.platform.is('ios') || this.platform.is('android')) {
         this.statusBar.styleDefault();
@@ -38,21 +43,11 @@ export class AppComponent implements OnInit {
           this.messagingService.requestPermission(player);
           this.messagingService.monitorTokenRefresh(player);
           this.messagingService.receiveMessages();
+          this.loadingController.dismiss();
         });
     });
   }
 
   async ngOnInit() {
-    const loading = await this.loadingController.create({
-      message: 'Please wait...',
-      translucent: true
-    });
-    await loading.present();
-
-    this.authService.user$
-      .pipe(skip(1))
-      .subscribe(async user => {
-        await this.loadingController.dismiss();
-      });
   }
 }

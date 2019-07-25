@@ -31,10 +31,11 @@ export class PlayerService {
   constructor(
     private authService: AuthenticationService,
     private router: Router,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
   ) {
 
     this.authService.user$
+      .pipe(skip(1))
       .subscribe(user => {
         if (!user) {
           console.log('no user');
