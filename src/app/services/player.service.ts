@@ -37,7 +37,6 @@ export class PlayerService {
     this.authService.user$
       .pipe(skip(1))
       .subscribe(user => {
-        console.log(user);
         if (!user) {
           console.log('no user');
           return;
