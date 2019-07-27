@@ -32,15 +32,6 @@
           </ion-item>
         </ion-card-content>
       </ion-card>
-      <ion-card *ngIf="playerService.currentGroup$ | async as group">
-        <ion-card-header>
-          <ion-card-subtitle>Current group:</ion-card-subtitle>
-          <ion-card-title>{{group.name}}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content *ngIf="playerService.currentGroupMembers$ | async as members">
-          <ion-item *ngFor="let member of members">{{member.nickname}}</ion-item>
-        </ion-card-content>
-      </ion-card>
     </div>
     <ion-button expand="block" (click)="dismissProfile()">
       Done

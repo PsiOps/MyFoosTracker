@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { auth } from 'firebase/app';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { LoadingController } from '@ionic/angular';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class AuthenticationService {
     private afAuth: AngularFireAuth,
     private loadingController: LoadingController
   ) {
-    this.afAuth.authState.subscribe(user => this.user$.next(user));
+    this.afAuth.authState
+      .subscribe(user => this.user$.next(user));
   }
 
   async login() {

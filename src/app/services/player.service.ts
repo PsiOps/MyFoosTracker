@@ -44,8 +44,8 @@ export class PlayerService {
         this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
         this.playerDocRef = this.playerDoc.ref;
         this.playerObs$ = this.playerDoc.valueChanges()
+          .pipe(filter(player => !!player))
           .pipe(map(player => {
-
             player.id = user.uid;
             player.currentGroupId = player.defaultGroupId;
             if (player.defaultTableIdByGroup) {
@@ -68,17 +68,16 @@ export class PlayerService {
         this.playerObs$.subscribe(player => this.player$.next(player));
 
         const now = new Date();
-        this.playerDoc.update({ lastLogin: now }).catch((error) => {
-
+        this.playerDoc.update({ lastLogin: now }).catch(async (error) => {
           // Error means player does not exist yet, so we create a new one:
           const player = new Player();
+          player.defaultGroupId = 'O6jNqHHthL4hzW5Kk52H';
           player.photoUrl = user.photoURL;
           player.playerSince = now;
           player.lastLogin = now;
           player.favouritePlayerIds = [];
-
-          this.playerDoc.set(Object.assign({}, player))
-            .then(() => this.router.navigateByUrl('/welcome'));
+          await this.playerDoc.set(Object.assign({}, player));
+          await this.router.navigateByUrl('/welcome');
         });
       });
 

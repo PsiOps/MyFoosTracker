@@ -37,12 +37,19 @@ export class AppComponent implements OnInit {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
       }
+      this.authService.user$
+        .pipe(skip(1))
+        .subscribe(user => {
+          // Dismiss the loader if it's a new user
+          if (!user) {this.loadingController.dismiss(); }
+        });
       this.playerService.player$
         .pipe(filter(player => !!player))
         .subscribe(player => {
           this.messagingService.requestPermission(player);
           this.messagingService.monitorTokenRefresh(player);
           this.messagingService.receiveMessages();
+          // Dismiss the loader when the player has finished loading
           this.loadingController.dismiss();
         });
     });
