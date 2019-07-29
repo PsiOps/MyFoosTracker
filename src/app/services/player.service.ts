@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
 import { firestore } from 'firebase/app';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, switchMap, filter, skip } from 'rxjs/operators';
+import { Observable, BehaviorSubject, merge, combineLatest, forkJoin } from 'rxjs';
+import { map, switchMap, filter, skip, mergeMap, tap, toArray } from 'rxjs/operators';
 import { PlayerSelectModel } from '../modules/home/models/player-select.model';
 import { Player, Group, Table } from '../domain';
 import { AngularFirestoreDocument, AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
@@ -15,7 +15,7 @@ import { TableManageModel } from '../modules/shared/models/table-manage.model';
 export class PlayerService {
 
   public player$: BehaviorSubject<Player> = new BehaviorSubject(null);
-  private playerObs$: Observable<Player>;
+  public playerGroups$: BehaviorSubject<Group[]> = new BehaviorSubject([]);
 
   private playerDoc: AngularFirestoreDocument<Player>;
   public playerDocRef: firestore.DocumentReference;
@@ -43,7 +43,7 @@ export class PlayerService {
         }
         this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
         this.playerDocRef = this.playerDoc.ref;
-        this.playerObs$ = this.playerDoc.valueChanges()
+        const playerObs$ = this.playerDoc.valueChanges()
           .pipe(filter(player => !!player))
           .pipe(map(player => {
             player.id = user.uid;
@@ -65,13 +65,14 @@ export class PlayerService {
 
             return player;
           }));
-        this.playerObs$.subscribe(player => this.player$.next(player));
+        playerObs$.subscribe(player => this.player$.next(player));
 
         const now = new Date();
         this.playerDoc.update({ lastLogin: now }).catch(async (error) => {
           // Error means player does not exist yet, so we create a new one:
           const player = new Player();
           player.defaultGroupId = 'O6jNqHHthL4hzW5Kk52H';
+          player.groupIds = ['O6jNqHHthL4hzW5Kk52H'];
           player.photoUrl = user.photoURL;
           player.playerSince = now;
           player.lastLogin = now;
@@ -105,6 +106,17 @@ export class PlayerService {
           return table;
         })))));
     currentGroupTablesObs$.subscribe(tables => this.currentGroupTables$.next(tables));
+
+    const playerGroupsObs$ = this.player$
+      .pipe(filter(player => !!player))
+      .pipe(tap(player => console.log(player)))
+      .pipe(map(player => player.groupIds))
+      .pipe(switchMap(groupIds => {
+        return combineLatest(groupIds.map(groupId => {
+          return this.afs.doc<Group>(`groups/${groupId}`).valueChanges();
+        }));
+      }));
+    playerGroupsObs$.subscribe(groups => this.playerGroups$.next(groups));
   }
 
   public async setNickname(nickname: string): Promise<void> {

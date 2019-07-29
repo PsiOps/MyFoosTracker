@@ -12,6 +12,7 @@ import { PlayerSearchPipe } from './pipes/player-search.pipe';
 import { StatsComponent } from './components/stats/stats.component';
 import { TeamStatsComponent } from './components/team-stats/team-stats.component';
 import { TeamComboStatsComponent } from './components/team-combo-stats/team-combo-stats.component';
+import { GroupModalComponent } from './components/group-modal/group-modal.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { TeamComboStatsComponent } from './components/team-combo-stats/team-comb
     AppAutoClearDirective,
     StatsComponent,
     TeamStatsComponent,
-    TeamComboStatsComponent
+    TeamComboStatsComponent,
+    GroupModalComponent
   ],
   imports: [
     IonicModule,
@@ -39,8 +41,9 @@ import { TeamComboStatsComponent } from './components/team-combo-stats/team-comb
     PlayerSearchPipe,
     StatsComponent,
     TeamStatsComponent,
-    TeamComboStatsComponent
+    TeamComboStatsComponent,
+    GroupModalComponent
   ],
-  entryComponents: [TableManageComponent, StatsComponent, TeamComboStatsComponent]
+  entryComponents: [TableManageComponent, StatsComponent, TeamComboStatsComponent, GroupModalComponent]
 })
 export class SharedModule { }

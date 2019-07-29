@@ -8,11 +8,7 @@ import { ModalController } from '@ionic/angular';
 })
 export class GroupModalComponent implements OnInit {
 
-  constructor(public modalController: ModalController) { }
+  constructor() { }
 
   ngOnInit() {}
-
-  public dismiss(): void {
-    this.modalController.dismiss();
-  }
 }

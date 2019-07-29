@@ -33,6 +33,25 @@
         </ion-card-content>
       </ion-card>
     </div>
+    <div *ngIf="playerService.playerGroups$ | async as groups">
+      <ion-card>
+        <ion-list>
+          <ion-list-header>
+            <ion-label>Groups</ion-label>
+            <ion-item lines="none">
+              <ion-button (click)="createGroup()" slot="end">
+                <ion-icon name="add"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list-header>
+          <ion-item *ngFor="let group of groups">
+            <ion-label>
+              <h1>{{group.name}}</h1>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card>
+    </div>
     <ion-button expand="block" (click)="dismissProfile()">
       Done
     </ion-button>
