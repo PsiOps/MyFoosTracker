@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { LoadingController } from '@ionic/angular';
-import { PlayerService } from 'src/app/services/player.service';
+import { SharedState } from 'src/app/state/shared.state';
 
 @Component({
   selector: 'app-player-stats',
@@ -11,10 +10,8 @@ import { PlayerService } from 'src/app/services/player.service';
 export class PlayerStatsPage implements OnInit {
   private loadingIndicator: HTMLIonLoadingElement;
 
-  public player$: Observable<{ id: string, nickname: string, photoUrl: string }>;
-
   constructor(
-    public playerService: PlayerService,
+    public state: SharedState,
     private loadingController: LoadingController
   ) { }
 
@@ -29,6 +26,7 @@ export class PlayerStatsPage implements OnInit {
 
   onStatsLoaded() {
     setTimeout(async () => {
+      console.log('dismissing loader');
       await this.loadingController.dismiss();
     }, 500);
   }

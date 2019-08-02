@@ -1,3 +1,61 @@
-<p>
-  group-modal works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title *ngIf="isCreate; else editGroupTitle">
+      Create a Group
+    </ion-title>
+    <ng-template #editGroupTitle>
+      <ion-title>
+        Edit Group
+      </ion-title>
+    </ng-template>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid fixed>
+    <div *ngIf="groupService.editGroup$ | async as group">
+      <ion-card>
+        <ion-card-content>
+          <ion-item>
+            <span>{{ group.name }}</span>
+            <ion-button (click)="editGroupName(group)" slot="end">
+              <ion-icon name="create"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-item>
+            <span>https://this.dynamic.link/placeholder</span>
+            <ion-button (click)="copyToClipboard()" slot="end">
+              <ion-icon name="copy"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+      <ion-card *ngIf="groupService.editGroupMembers$ | async as members">
+        <ion-card-content>
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Members</ion-label>
+            </ion-list-header>
+            <ion-item *ngFor="let member of members">
+              <span>{{ member.nickname }}</span>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+      <ion-card *ngIf="groupService.editGroupTables$ | async as tables">
+        <ion-card-content>
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Tables</ion-label>
+            </ion-list-header>
+            <ion-item *ngFor="let table of tables">
+              <span>{{ table.name }}</span>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div id="buttons">
+      <ion-button expand="block" (click)="dismiss()">Done</ion-button>
+    </div>
+  </ion-grid>
+</ion-content>

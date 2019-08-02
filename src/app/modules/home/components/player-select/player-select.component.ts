@@ -7,6 +7,7 @@ import { PlayerSelectModel } from 'src/app/modules/home/models/player-select.mod
 import { ModalController } from '@ionic/angular';
 import { MatchService } from 'src/app/services/match.service';
 import { PlayerService } from 'src/app/services/player.service';
+import { GroupService } from 'src/app/services/group.service';
 
 @Component({
   selector: 'app-player-select',
@@ -23,6 +24,7 @@ export class PlayerSelectComponent implements OnInit {
   constructor(
     private matchService: MatchService,
     private playerService: PlayerService,
+    private groupService: GroupService,
     private modalController: ModalController) { }
 
   ngOnInit() {
@@ -39,7 +41,7 @@ export class PlayerSelectComponent implements OnInit {
 
     this.players$ =
       combineLatest([
-        this.playerService.currentGroupMembers$,
+        this.groupService.currentGroupMembers$,
         this.selectedTeam$,
         this.playerService.getFavourites()
       ]).pipe(

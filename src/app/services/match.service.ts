@@ -7,6 +7,7 @@ import { StatsService } from './stats.service';
 import { firestore } from 'firebase/app';
 import { map, switchMap, filter, tap } from 'rxjs/operators';
 import { PlayerService } from './player.service';
+import { SharedState } from '../state/shared.state';
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,12 @@ export class MatchService {
   public currentMatchDocRef: firestore.DocumentReference;
   public matchesOfWatchedTables$: Observable<Match[]>;
 
-  constructor(private playerService: PlayerService,
+  constructor(private state: SharedState,
+    private playerService: PlayerService,
     private statsService: StatsService,
     private afs: AngularFirestore) {
 
-    const currentMatchObs$ = this.playerService.player$
+    const currentMatchObs$ = this.state.player$
       .pipe(filter(player => player !== null))
       .pipe(switchMap(player => this.afs.collection<Match>('matches',
         ref => ref.where('status', '<', MatchStatus.over)

@@ -3,19 +3,21 @@ import { combineLatest, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Table, Player, Group } from '../domain';
 import { TableManageModel } from '../modules/shared/models/table-manage.model';
-import { PlayerService } from './player.service';
+import { SharedState } from '../state/shared.state';
+import { GroupService } from './group.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TableService {
   constructor(
-    public playerService: PlayerService,
+    private groupService: GroupService,
+    private state: SharedState
   ) {
     const groupTablesObs$ = combineLatest([
-      this.playerService.currentGroupTables$,
-      this.playerService.player$,
-      this.playerService.currentGroup$
+      this.groupService.currentGroupTables$,
+      this.state.player$,
+      this.groupService.currentGroup$
     ]).pipe(map(([tables, player, group]) => tables
       .map(table => this.toTableManageModel(table, player, group))
       .sort((a, b) => this.sortTablesByIsDefault(a, b)

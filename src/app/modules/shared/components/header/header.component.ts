@@ -1,8 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { Player } from 'src/app/domain';
-import { PlayerService } from 'src/app/services/player.service';
+import { SharedState } from 'src/app/state/shared.state';
 
 @Component({
   selector: 'app-header',
@@ -12,10 +10,9 @@ import { PlayerService } from 'src/app/services/player.service';
 export class HeaderComponent {
 
   @Input() title: string;
-  public player$: Observable<Player>;
 
   constructor(
-    public playerService: PlayerService,
+    public state: SharedState,
     private router: Router) { }
 
   public home() {

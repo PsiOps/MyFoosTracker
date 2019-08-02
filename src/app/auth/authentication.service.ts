@@ -16,6 +16,7 @@ export class AuthenticationService {
     private loadingController: LoadingController
   ) {
     this.afAuth.authState
+      .pipe(tap(user => console.log(user))) // TEMP, remove when done testing new user flow
       .subscribe(user => this.user$.next(user));
   }
 
