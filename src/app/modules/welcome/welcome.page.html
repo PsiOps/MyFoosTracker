@@ -1,4 +1,4 @@
-<ion-slides pager="true" [options]="slideOpts" style="height: 100%">
+<ion-slides pager="true" [options]="slideOpts" style="height: 100%" name="mySlider" #mySlider>
   <ion-slide>
     <div class="slideContainer">
       <div class="slideLogo">
@@ -32,10 +32,10 @@
       <div class="slideContentContainer">
         Create a group to start tracking matches.<br>
         You can invite people to join your group.<br>
-        Groups can be managed from your Profile.
+        Groups can be managed from your Profile. <br>
       </div>
       <div>
-        <ion-button>Create Group</ion-button>
+        <ion-button (click)="createGroup()">Create Group</ion-button>
       </div>
     </div>
   </ion-slide>

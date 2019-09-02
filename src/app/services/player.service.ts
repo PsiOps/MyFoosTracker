@@ -5,7 +5,7 @@ import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, filter, skip, tap } from 'rxjs/operators';
 import { PlayerSelectModel } from '../modules/home/models/player-select.model';
 import { Player, Group } from '../domain';
-import { AngularFirestoreDocument, AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { TableManageModel } from '../modules/shared/models/table-manage.model';
 import { GroupService } from './group.service';
@@ -42,7 +42,8 @@ export class PlayerService {
             player.id = user.uid;
             if (groupId) {
               player.currentGroupId = groupId;
-            } else {
+            } else if (player.defaultGroupId) {
+              console.log('Setting current group id with default Group id');
               this.groupService.setCurrentGroupId(player.defaultGroupId);
             }
             if (player.defaultTableIdByGroup && player.currentGroupId) {

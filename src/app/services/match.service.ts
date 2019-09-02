@@ -24,7 +24,8 @@ export class MatchService {
     private afs: AngularFirestore) {
 
     const currentMatchObs$ = this.state.player$
-      .pipe(filter(player => player !== null))
+      .pipe(filter(player => !!player))
+      .pipe(filter(player => !!player.currentGroupId))
       .pipe(switchMap(player => this.afs.collection<Match>('matches',
         ref => ref.where('status', '<', MatchStatus.over)
           .where('participants', 'array-contains', player.id)

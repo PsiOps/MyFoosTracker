@@ -1,7 +1,9 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { IonInput } from '@ionic/angular';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { IonInput, ModalController, IonSlides } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { PlayerService } from 'src/app/services/player.service';
+import { GroupService } from 'src/app/services/group.service';
+import { GroupModalComponent } from '../shared/components/group-modal/group-modal.component';
 
 @Component({
   selector: 'app-welcome',
@@ -11,7 +13,9 @@ import { PlayerService } from 'src/app/services/player.service';
 export class WelcomePage implements OnInit, AfterViewInit {
   constructor(
     private playerService: PlayerService,
-    private router: Router
+    private groupService: GroupService,
+    private router: Router,
+    private modalController: ModalController
     ) {}
   slideOpts = {
     zoom: false,
@@ -24,12 +28,26 @@ export class WelcomePage implements OnInit, AfterViewInit {
   @ViewChild('nickname', {static: false}) myInput: IonInput;
   public nickName: string;
 
+  @ViewChild('mySlider', {static: false}) private slides: IonSlides;
+
   ngOnInit() { }
 
   ngAfterViewInit() {
     setTimeout(() => {
       this.myInput.setFocus();
     }, 500);
+  }
+
+  public async createGroup() {
+    await this.groupService.addGroupToPlayer(this.playerService.playerDocRef.id);
+    const modal = await this.modalController.create({
+      component: GroupModalComponent,
+      componentProps: {
+        isCreate: true,
+      }
+    });
+    modal.onDidDismiss().then(() => this.slides.slideNext());
+    return await modal.present();
   }
 
   public async letsGo() {

@@ -4,6 +4,7 @@ import { Group, Player, Table } from '../domain';
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { map, filter, switchMap, tap } from 'rxjs/operators';
 import { SharedState } from '../state/shared.state';
+import { firestore } from 'firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,7 @@ export class GroupService {
     currentGroupObs$.subscribe(group => this.currentGroup$.next(group));
 
     const currentGroupMembersObs$ = this.currentGroup$
-      .pipe(filter(group => group !== null))
+      .pipe(filter(group => !!group))
       .pipe(switchMap(group =>
         this.afs.collection<Player>('players',
           ref => ref.where('groupIds', 'array-contains', group.id)).snapshotChanges()
@@ -101,9 +102,14 @@ export class GroupService {
     editGroupTablesObs$.subscribe(tables => this.editGroupTables$.next(tables));
   }
 
-  public async addGroupToPlayer(player: Player): Promise<void> {
-    const groupDocRef = await this.afs.collection('groups').add({ name: 'My Group', admins: [player.id] });
+  public async addGroupToPlayer(playerId: string): Promise<void> {
+    const groupDocRef = await this.afs.collection('groups').add({ name: 'My Group', admins: [playerId] });
     await this.afs.collection(`groups/${groupDocRef.id}/tables`).add({ name: 'Table1' });
+    const payload: firestore.UpdateData = {
+      groupIds: firestore.FieldValue.arrayUnion(groupDocRef.id),
+    };
+
+    await this.afs.doc(`players/${playerId}`).update(payload);
     this.setEditGroupId(groupDocRef.id);
   }
 

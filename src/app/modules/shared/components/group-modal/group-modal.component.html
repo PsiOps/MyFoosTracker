@@ -29,7 +29,7 @@
           </ion-item>
         </ion-card-content>
       </ion-card>
-      <ion-card *ngIf="groupService.editGroupMembers$ | async as members">
+      <ion-card *ngIf="!isCreate && groupService.editGroupMembers$ | async as members">
         <ion-card-content>
           <ion-list>
             <ion-list-header>

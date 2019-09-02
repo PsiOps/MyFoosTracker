@@ -75,9 +75,8 @@
         <div class="currentMatches"
           *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (matchesOnWatchedTables$ | async) as matchesOnWatchedTables; else selectTables">
           <div text-center>Current Matches</div>
-          <div text-center class="noCurrentMatches" *ngIf="matchesOnWatchedTables.length===0">no matches in progress on
-            watched
-            tables</div>
+          <div text-center class="noCurrentMatches" *ngIf="matchesOnWatchedTables.length===0">no matches in progress
+          </div>
           <ion-list lines="none">
             <div class="match" *ngFor="let match of matchesOnWatchedTables">
               <app-match [match]="match" [showTable]="true"></app-match>
@@ -85,12 +84,12 @@
           </ion-list>
         </div>
       </div>
+      <ng-template #noGroup>
+        <app-no-group [player]="player"></app-no-group>
+      </ng-template>
     </div>
   </ion-grid>
 </ion-content>
-<ng-template #noGroup>
-  <app-no-group></app-no-group>
-</ng-template>
 <ng-template #noStats>
   <div>
     There are no stats yo

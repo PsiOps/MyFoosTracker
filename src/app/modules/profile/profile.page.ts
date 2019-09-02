@@ -59,7 +59,7 @@ export class ProfilePage {
   }
 
   public async createGroup(player: Player) {
-    await this.groupService.addGroupToPlayer(player);
+    await this.groupService.addGroupToPlayer(player.id);
     const modal = await this.modalController.create({
       component: GroupModalComponent,
       componentProps: {
