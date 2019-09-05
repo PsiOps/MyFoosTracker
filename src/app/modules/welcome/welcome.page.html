@@ -15,9 +15,12 @@
       </div>
       <div class="slideNickInputItem">
         <ion-item>
-          <ion-input required type="text" placeholder="nickname" [(ngModel)]="nickName" name="nickname" #nickname>
+          <ion-input required type="text" placeholder="nickname" name="nickname" #nickname>
           </ion-input>
         </ion-item>
+      </div>
+      <div>
+        <ion-button (click)="submitName()" [disabled]="!nicknameInput || !nicknameInput.value">Next step</ion-button>
       </div>
     </div>
   </ion-slide>

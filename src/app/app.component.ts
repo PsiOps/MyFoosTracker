@@ -38,7 +38,6 @@ export class AppComponent implements OnInit {
         this.splashScreen.hide();
       }
       this.authService.user$
-        .pipe(skip(1))
         .subscribe(user => {
           // Dismiss the loader if it's a new user
           if (!user) {this.loadingController.dismiss(); }

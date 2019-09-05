@@ -8,15 +8,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  constructor(public authService: AuthenticationService, private router: Router) {
-    this.authService.user$.subscribe(u => {
-      if (u) {
-        this.router.navigateByUrl('/tabs/home');
-      }
-    });
-  }
 
-  ngOnInit() { }
+  constructor(
+    private router: Router,
+    private authService: AuthenticationService
+  ) { }
+
+  ngOnInit() {
+    const returnUrl = localStorage.getItem('returnUrl') || '/';
+    console.log('Login: found returnUrl', returnUrl);
+    this.router.navigateByUrl(returnUrl);
+  }
 
   public async proceedWithGoogle() {
     console.log('Proceed with Google Login');

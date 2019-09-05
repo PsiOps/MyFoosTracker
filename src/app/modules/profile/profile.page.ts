@@ -84,9 +84,9 @@ export class ProfilePage {
   public home() {
     this.router.navigateByUrl('/');
   }
-  public logout() {
-    this.authService.logout();
-    this.router.navigateByUrl('/login');
+  public async logout() {
+    await this.authService.logout();
+    setTimeout(() => this.router.navigateByUrl('/'), 500);
   }
 
   public dismissProfile() {

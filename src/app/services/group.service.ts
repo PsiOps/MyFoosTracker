@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Group, Player, Table } from '../domain';
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { map, filter, switchMap, tap } from 'rxjs/operators';
+import { map, filter, switchMap } from 'rxjs/operators';
 import { SharedState } from '../state/shared.state';
 import { firestore } from 'firebase';
 
@@ -107,6 +107,7 @@ export class GroupService {
     await this.afs.collection(`groups/${groupDocRef.id}/tables`).add({ name: 'Table1' });
     const payload: firestore.UpdateData = {
       groupIds: firestore.FieldValue.arrayUnion(groupDocRef.id),
+      defaultGroupId: groupDocRef.id
     };
 
     await this.afs.doc(`players/${playerId}`).update(payload);

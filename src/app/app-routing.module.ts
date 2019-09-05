@@ -6,8 +6,7 @@ const routes: Routes = [
   { path: '', loadChildren: './modules/tabs/tabs.module#TabsPageModule' },
   { path: 'login', loadChildren: './modules/login/login.module#LoginPageModule' },
   { path: 'profile', loadChildren: './modules/profile/profile.module#ProfilePageModule', canActivate: [AuthGuard] },
-  { path: 'welcome', loadChildren: './modules/welcome/welcome.module#WelcomePageModule', canActivate: [AuthGuard] },  { path: 'players', loadChildren: './modules/players/players.module#PlayersPageModule' }
-
+  { path: 'welcome', loadChildren: './modules/welcome/welcome.module#WelcomePageModule', canActivate: [AuthGuard] }
 
 
 ];

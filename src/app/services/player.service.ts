@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
 import { firestore } from 'firebase/app';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, switchMap, filter, skip, tap } from 'rxjs/operators';
+import { map, switchMap, filter } from 'rxjs/operators';
 import { PlayerSelectModel } from '../modules/home/models/player-select.model';
 import { Player, Group } from '../domain';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
@@ -30,7 +30,6 @@ export class PlayerService {
   ) {
 
     this.authService.user$
-      .pipe(skip(1))
       .pipe(filter(user => !!user))
       .subscribe(user => {
         this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
@@ -43,7 +42,6 @@ export class PlayerService {
             if (groupId) {
               player.currentGroupId = groupId;
             } else if (player.defaultGroupId) {
-              console.log('Setting current group id with default Group id');
               this.groupService.setCurrentGroupId(player.defaultGroupId);
             }
             if (player.defaultTableIdByGroup && player.currentGroupId) {
@@ -70,7 +68,6 @@ export class PlayerService {
 
     const playerGroupsObs$ = this.state.player$
       .pipe(filter(player => !!player))
-      .pipe(tap(player => console.log(player)))
       .pipe(map(player => player.groupIds))
       .pipe(switchMap(groupIds => {
         return combineLatest(groupIds.map(groupId => {
@@ -111,9 +108,11 @@ export class PlayerService {
   }
 
   public getFavourites(): Observable<string[]> {
-    return this.state.player$.pipe(
-      map(player => player.favouritePlayerIds)
-    );
+    return this.state.player$
+      .pipe(map(player => {
+        if (!player) { return []; }
+        return player.favouritePlayerIds;
+      }));
   }
 
   public sortPlayers(a: PlayerSelectModel, b: PlayerSelectModel): number {

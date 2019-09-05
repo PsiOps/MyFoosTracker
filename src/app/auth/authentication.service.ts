@@ -1,36 +1,43 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { auth } from 'firebase/app';
-import { BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { LoadingController } from '@ionic/angular';
-import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  public user$: BehaviorSubject<firebase.User> = new BehaviorSubject(null);
-
+  public user$: ReplaySubject<firebase.User> = new ReplaySubject();
+  private _isLoggedIn$: ReplaySubject<boolean> = new ReplaySubject(1);
+  public get isLoggedIn$() { return this._isLoggedIn$.asObservable(); }
   constructor(
     private afAuth: AngularFireAuth,
     private loadingController: LoadingController
   ) {
     this.afAuth.authState
-      .pipe(tap(user => console.log(user))) // TEMP, remove when done testing new user flow
-      .subscribe(user => this.user$.next(user));
+      .subscribe(user => {
+        this.user$.next(user);
+        const isLoggedIn: boolean = user !== null;
+        this._isLoggedIn$.next(isLoggedIn);
+      });
   }
 
-  async login() {
-    this.afAuth.auth.signInWithRedirect(new auth.GoogleAuthProvider());
+  public async login() {
     const loading = await this.loadingController.create({
       message: 'Logging in...',
       translucent: true
     });
-    await loading.present();
+    loading.present()
+      .then(() => this.afAuth.auth.signInWithRedirect(new auth.GoogleAuthProvider()));
   }
 
-  logout() {
-    this.user$.next(null);
-    this.afAuth.auth.signOut();
+  public async logout() {
+    const loading = await this.loadingController.create({
+      message: 'Logging you out...',
+      translucent: true
+    });
+    loading.present()
+      .then(() => this.afAuth.auth.signOut());
   }
 }

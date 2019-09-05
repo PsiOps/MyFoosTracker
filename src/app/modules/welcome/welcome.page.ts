@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { IonInput, ModalController, IonSlides } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { PlayerService } from 'src/app/services/player.service';
@@ -22,20 +22,23 @@ export class WelcomePage implements OnInit, AfterViewInit {
     centeredSlides: true,
     spaceBetween: 0,
     slidesPerView: 1,
-    allowSlideNext: true
+    allowTouchMove: false
   };
 
-  @ViewChild('nickname', {static: false}) myInput: IonInput;
-  public nickName: string;
-
+  @ViewChild('nickname', {static: false}) nicknameInput: IonInput;
   @ViewChild('mySlider', {static: false}) private slides: IonSlides;
 
   ngOnInit() { }
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this.myInput.setFocus();
+      this.nicknameInput.setFocus();
     }, 500);
+  }
+
+  public async submitName() {
+    this.playerService.setNickname(this.nicknameInput.value)
+      .then(() => this.slides.slideNext());
   }
 
   public async createGroup() {
@@ -51,8 +54,6 @@ export class WelcomePage implements OnInit, AfterViewInit {
   }
 
   public async letsGo() {
-    if (!this.nickName) { this.nickName = `Player${Math.floor(Math.random() * 1000000)}`; }
-    await this.playerService.setNickname(this.nickName);
     await this.router.navigateByUrl('/');
   }
 }
