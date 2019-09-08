@@ -28,7 +28,7 @@
             <path url="/__/auth/callback" />
         </host>
     </universal-links>
-    <preference name="AndroidLaunchMode" value="singleInstance" />
+    <preference name="AndroidLaunchMode" value="singleTask" />
     <platform name="browser">
         <preference name="SplashScreen" value="/resources/splash.png" />
         <preference name="SplashScreenWidth" value="800" />
@@ -106,4 +106,8 @@
     <plugin name="cordova-plugin-splashscreen" spec="5.0.3" />
     <engine name="browser" spec="6.0.0" />
     <engine name="android" spec="^8.0.0" />
+    <plugin name="cordova-plugin-firebase-dynamiclinks" spec="^3.0.0">
+        <variable name="APP_DOMAIN" value="myfoostracker.firebaseapp.com" />
+        <variable name="PAGE_LINK_DOMAIN" value="foostracker.page.link" />
+    </plugin>
 </widget>

@@ -4,9 +4,10 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { UpdateService } from './services/update-service';
 import { MessagingService } from './services/messaging.service';
-import { filter, skip } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { AuthenticationService } from './auth/authentication.service';
 import { SharedState } from './state/shared.state';
+import { FirebaseDynamicLinks } from '@ionic-native/firebase-dynamic-links/ngx';
 
 @Component({
   selector: 'app-root',
@@ -21,9 +22,11 @@ export class AppComponent implements OnInit {
     private authService: AuthenticationService,
     private state: SharedState,
     private messagingService: MessagingService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private firebaseDynamicLinks: FirebaseDynamicLinks
   ) {
     this.initializeApp();
+
   }
 
   initializeApp() {
@@ -36,11 +39,13 @@ export class AppComponent implements OnInit {
       if (this.platform.is('ios') || this.platform.is('android')) {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
+        this.firebaseDynamicLinks.onDynamicLink()
+          .subscribe((res: any) => console.log('Link:', res), (error: any) => console.log('Error:', error));
       }
       this.authService.user$
         .subscribe(user => {
           // Dismiss the loader if it's a new user
-          if (!user) {this.loadingController.dismiss(); }
+          if (!user) { this.loadingController.dismiss(); }
         });
       this.state.player$
         .pipe(filter(player => !!player))
