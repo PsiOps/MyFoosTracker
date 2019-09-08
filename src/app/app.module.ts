@@ -16,6 +16,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { UpdateService } from './services/update-service';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
+import { FirebaseDynamicLinks } from '@ionic-native/firebase-dynamic-links/ngx';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { AngularFireMessagingModule } from '@angular/fire/messaging';
     StatusBar,
     SplashScreen,
     UpdateService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    FirebaseDynamicLinks
   ],
   bootstrap: [AppComponent]
 })
