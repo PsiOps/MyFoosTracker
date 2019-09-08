@@ -1,4 +1,4 @@
-<ion-slides pager="true" [options]="slideOpts" style="height: 100%">
+<ion-slides pager="true" [options]="slideOpts" style="height: 100%" name="mySlider" #mySlider>
   <ion-slide>
     <div class="slideContainer">
       <div class="slideLogo">
@@ -11,13 +11,35 @@
         Let's get you set up.
       </div>
       <div class="slideContentContainer landing">
-        To get started, please enter your nickname:
+        To get started, please enter a nickname:
       </div>
       <div class="slideNickInputItem">
         <ion-item>
-          <ion-input required type="text" placeholder="nickname" [(ngModel)]="nickName" name="nickname" #nickname>
+          <ion-input required type="text" placeholder="nickname" name="nickname" #nickname>
           </ion-input>
         </ion-item>
+      </div>
+      <div>
+        <!-- <ion-button (click)="submitName()" [disabled]="!nicknameInput || !nicknameInput.value">Next step</ion-button> -->
+        <ion-button (click)="joinSnappetGroup()" [disabled]="!nicknameInput || !nicknameInput.value">Join Snappet Group</ion-button>
+      </div>
+    </div>
+  </ion-slide>
+  <ion-slide>
+    <div class="slideContainer">
+      <div class="slideLogo">
+        <img src="/assets/icon/favicon.png" title="MyFoosTracker">
+      </div>
+      <div class="slideSubheader">
+        Create your group!
+      </div>
+      <div class="slideContentContainer">
+        Create a group to start tracking matches.<br>
+        You can invite people to join your group.<br>
+        Groups can be managed from your Profile. <br>
+      </div>
+      <div>
+        <ion-button (click)="createGroup()">Create Group</ion-button>
       </div>
     </div>
   </ion-slide>

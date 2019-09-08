@@ -5,8 +5,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { UpdateService } from './services/update-service';
 import { MessagingService } from './services/messaging.service';
 import { filter, skip } from 'rxjs/operators';
-import { PlayerService } from './services/player.service';
 import { AuthenticationService } from './auth/authentication.service';
+import { SharedState } from './state/shared.state';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     private statusBar: StatusBar,
     private updateService: UpdateService,
     private authService: AuthenticationService,
-    private playerService: PlayerService,
+    private state: SharedState,
     private messagingService: MessagingService,
     private loadingController: LoadingController
   ) {
@@ -38,12 +38,11 @@ export class AppComponent implements OnInit {
         this.splashScreen.hide();
       }
       this.authService.user$
-        .pipe(skip(1))
         .subscribe(user => {
           // Dismiss the loader if it's a new user
           if (!user) {this.loadingController.dismiss(); }
         });
-      this.playerService.player$
+      this.state.player$
         .pipe(filter(player => !!player))
         .subscribe(player => {
           this.messagingService.requestPermission(player);

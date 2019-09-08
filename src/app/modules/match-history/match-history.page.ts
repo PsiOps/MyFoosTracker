@@ -3,7 +3,7 @@ import { AngularFirestore, AngularFirestoreCollection, CollectionReference, Quer
 import { Match, MatchStatus, Player } from '../../domain';
 import { map, switchMap } from 'rxjs/operators';
 import { LoadingController } from '@ionic/angular';
-import { PlayerService } from 'src/app/services/player.service';
+import { SharedState } from 'src/app/state/shared.state';
 
 @Component({
   selector: 'app-match-history',
@@ -24,7 +24,7 @@ export class MatchHistoryPage implements OnInit {
   constructor(
     private afs: AngularFirestore,
     private loadingController: LoadingController,
-    private playerService: PlayerService
+    private state: SharedState
   ) {
     this.setInitialDates();
     this.loadMoreData();
@@ -45,7 +45,7 @@ export class MatchHistoryPage implements OnInit {
   }
 
   private loadMoreData(event?: any) {
-    this.playerService.player$
+    this.state.player$
       .pipe(switchMap(player => this.afs.collection<Match>('matches', ref => this.filterMatches(ref, player))
         .valueChanges()))
       .pipe(

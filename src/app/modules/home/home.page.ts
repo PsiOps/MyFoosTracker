@@ -8,6 +8,8 @@ import { PlayerSelectComponent } from './components/player-select/player-select.
 import { NotificationService } from '../../services/notification.service';
 import { Observable, of } from 'rxjs';
 import { PlayerService } from 'src/app/services/player.service';
+import { SharedState } from 'src/app/state/shared.state';
+import { GroupService } from 'src/app/services/group.service';
 
 @Component({
   selector: 'app-home',
@@ -20,9 +22,10 @@ export class HomePage {
   public teamComboStats$: Observable<TeamComboStats> = of(new TeamComboStats());
 
   constructor(
+    public state: SharedState,
     public playerService: PlayerService,
+    public groupService: GroupService,
     private matchService: MatchService,
-    private toastController: ToastController,
     private modalController: ModalController,
     private alertController: AlertController,
     private notificationService: NotificationService) {

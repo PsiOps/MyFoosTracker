@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Player } from '../../../../domain';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PlayerSelectModel } from 'src/app/modules/home/models/player-select.model';
 import { PlayerService } from 'src/app/services/player.service';
 import { ModalController } from '@ionic/angular';
 import { StatsComponent } from 'src/app/modules/shared/components/stats/stats.component';
+import { GroupService } from 'src/app/services/group.service';
 
 @Component({
   selector: 'app-player-manage',
@@ -19,15 +18,14 @@ export class PlayerManageComponent implements OnInit {
 
   constructor(
     private playerService: PlayerService,
-    private afs: AngularFirestore,
+    private groupService: GroupService,
     private modalController: ModalController) { }
 
   ngOnInit() {
-    const playerChanges = this.afs.collection<Player>('players').snapshotChanges();
 
     this.players$ =
       combineLatest([
-        playerChanges,
+        this.groupService.currentGroupMembers$,
         this.playerService.getFavourites()
       ]
       ).pipe(
@@ -35,14 +33,12 @@ export class PlayerManageComponent implements OnInit {
           const playerDocs = ps[0];
           const playerFavourites = ps[1];
           return playerDocs
-            .map((p) => {
-              const playerDoc = p.payload.doc;
-              const player = playerDoc.data();
+            .map((player) => {
               const playerSelectModel = new PlayerSelectModel();
-              playerSelectModel.id = playerDoc.id;
+              playerSelectModel.id = player.id;
               playerSelectModel.nickname = player.nickname;
               playerSelectModel.isFavourite = playerFavourites && playerFavourites
-                .some((favouriteId: string) => favouriteId === playerDoc.id);
+                .some((favouriteId: string) => favouriteId === player.id);
               playerSelectModel.photoUrl = player.photoUrl;
               return playerSelectModel;
             })

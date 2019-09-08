@@ -1,77 +1,61 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
 import { firestore } from 'firebase/app';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, switchMap, filter, skip } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, switchMap, filter } from 'rxjs/operators';
 import { PlayerSelectModel } from '../modules/home/models/player-select.model';
-import { Player, Group, Table } from '../domain';
-import { AngularFirestoreDocument, AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { Player, Group } from '../domain';
+import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { TableManageModel } from '../modules/shared/models/table-manage.model';
+import { GroupService } from './group.service';
+import { SharedState } from '../state/shared.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlayerService {
 
-  public player$: BehaviorSubject<Player> = new BehaviorSubject(null);
-  private playerObs$: Observable<Player>;
+  public playerGroups$: BehaviorSubject<Group[]> = new BehaviorSubject([]);
 
   private playerDoc: AngularFirestoreDocument<Player>;
   public playerDocRef: firestore.DocumentReference;
 
-  public currentGroup$: BehaviorSubject<Group> = new BehaviorSubject(null);
-  private currentGroupDoc: AngularFirestoreDocument<Group>;
-
-  public currentGroupMembers$: BehaviorSubject<Player[]> = new BehaviorSubject([]);
-
-  public currentGroupTables$: BehaviorSubject<Table[]> = new BehaviorSubject([]);
-  private currentGroupTablesCollection: AngularFirestoreCollection<Table>;
-
   constructor(
-    private authService: AuthenticationService,
     private router: Router,
     private afs: AngularFirestore,
+    private state: SharedState,
+    private authService: AuthenticationService,
+    private groupService: GroupService
   ) {
 
     this.authService.user$
-      .pipe(skip(1))
+      .pipe(filter(user => !!user))
       .subscribe(user => {
-        if (!user) {
-          console.log('no user');
-          return;
-        }
         this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
         this.playerDocRef = this.playerDoc.ref;
-        this.playerObs$ = this.playerDoc.valueChanges()
-          .pipe(filter(player => !!player))
-          .pipe(map(player => {
+
+        const playerObs$ = combineLatest([this.playerDoc.valueChanges(), this.state.currentGroupId$])
+          .pipe(filter(([player]) => !!player))
+          .pipe(map(([player, groupId]) => {
             player.id = user.uid;
-            player.currentGroupId = player.defaultGroupId;
-            if (player.defaultTableIdByGroup) {
-              const currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
-              if (currentGroupDefaultTableId) {
-                player.currentGroupDefaultTableId = currentGroupDefaultTableId;
-              }
+            if (groupId) {
+              player.currentGroupId = groupId;
+            } else if (player.defaultGroupId) {
+              this.groupService.setCurrentGroupId(player.defaultGroupId);
             }
-
-            this.currentGroupDoc = this.afs.doc<Group>(`groups/${player.currentGroupId}`);
-            const currentGroupObs$ = this.currentGroupDoc.valueChanges()
-              .pipe(map(group => {
-                group.id = this.currentGroupDoc.ref.id;
-                return group;
-              }));
-            currentGroupObs$.subscribe(group => this.currentGroup$.next(group));
-
+            if (player.defaultTableIdByGroup && player.currentGroupId) {
+              player.currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
+            }
             return player;
           }));
-        this.playerObs$.subscribe(player => this.player$.next(player));
+
+        playerObs$.subscribe(player => this.state.player$.next(player));
 
         const now = new Date();
         this.playerDoc.update({ lastLogin: now }).catch(async (error) => {
           // Error means player does not exist yet, so we create a new one:
           const player = new Player();
-          player.defaultGroupId = 'O6jNqHHthL4hzW5Kk52H';
           player.photoUrl = user.photoURL;
           player.playerSince = now;
           player.lastLogin = now;
@@ -81,30 +65,20 @@ export class PlayerService {
         });
       });
 
-    const currentGroupMembersObs$ = this.currentGroup$
-      .pipe(filter(group => group !== null))
-      .pipe(switchMap(group =>
-        this.afs.collection<Player>('players',
-          ref => ref.where('groupIds', 'array-contains', group.id)).snapshotChanges()
-          .pipe(map(docs => docs.map(doc => {
-            const player = doc.payload.doc.data();
-            player.id = doc.payload.doc.ref.id;
-            return player;
-          })))
-      ));
 
-    currentGroupMembersObs$.subscribe(players => this.currentGroupMembers$.next(players));
-
-    const currentGroupTablesObs$ = this.currentGroup$
-      .pipe(filter(group => group !== null))
-      .pipe(map(group => this.currentGroupTablesCollection = this.currentGroupDoc.collection<Table>('tables')))
-      .pipe(switchMap(collection => collection.snapshotChanges()
-        .pipe(map(docs => docs.map(doc => {
-          const table = doc.payload.doc.data();
-          table.id = doc.payload.doc.ref.id;
-          return table;
-        })))));
-    currentGroupTablesObs$.subscribe(tables => this.currentGroupTables$.next(tables));
+    const playerGroupsObs$ = this.state.player$
+      .pipe(filter(player => !!player))
+      .pipe(map(player => player.groupIds))
+      .pipe(switchMap(groupIds => {
+        return combineLatest(groupIds.map(groupId => {
+          return this.afs.doc<Group>(`groups/${groupId}`).valueChanges()
+            .pipe(map(group => {
+              group.id = groupId;
+              return group;
+            }));
+        }));
+      }));
+    playerGroupsObs$.subscribe(groups => this.playerGroups$.next(groups));
   }
 
   public async setNickname(nickname: string): Promise<void> {
@@ -134,9 +108,11 @@ export class PlayerService {
   }
 
   public getFavourites(): Observable<string[]> {
-    return this.player$.pipe(
-      map(player => player.favouritePlayerIds)
-    );
+    return this.state.player$
+      .pipe(map(player => {
+        if (!player) { return []; }
+        return player.favouritePlayerIds;
+      }));
   }
 
   public sortPlayers(a: PlayerSelectModel, b: PlayerSelectModel): number {

@@ -20,7 +20,7 @@
 
 <ion-content>
   <ion-grid fixed>
-    <div *ngIf="playerService.player$ | async as player">
+    <div *ngIf="state.player$ | async as player">
       <ion-card>
         <ion-card-content>
           <ion-item>
@@ -31,6 +31,23 @@
             </ion-button>
           </ion-item>
         </ion-card-content>
+      </ion-card>
+      <ion-card *ngIf="playerService.playerGroups$ | async as groups">
+        <ion-list>
+          <ion-list-header>
+            <ion-label>Groups</ion-label>
+            <ion-item lines="none">
+              <ion-button (click)="createGroup(player)" slot="end">
+                <ion-icon name="add"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list-header>
+          <ion-item *ngFor="let group of groups" (click)="editGroup(group)">
+            <ion-label>
+              <h1>{{group.name}}</h1>
+            </ion-label>
+          </ion-item>
+        </ion-list>
       </ion-card>
     </div>
     <ion-button expand="block" (click)="dismissProfile()">
