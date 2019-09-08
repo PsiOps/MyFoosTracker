@@ -41,6 +41,13 @@ export class WelcomePage implements OnInit, AfterViewInit {
       .then(() => this.slides.slideNext());
   }
 
+  // Temp for Snappet FoosTracker
+  public async joinSnappetGroup() {
+    this.playerService.setNickname(this.nicknameInput.value)
+      .then(() => this.groupService.joinPlayerToGroup(this.playerService.playerDocRef.id, 'O6jNqHHthL4hzW5Kk52H'))
+      .then(() => this.letsGo());
+  }
+
   public async createGroup() {
     await this.groupService.addGroupToPlayer(this.playerService.playerDocRef.id);
     const modal = await this.modalController.create({

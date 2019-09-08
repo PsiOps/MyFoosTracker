@@ -114,6 +114,17 @@ export class GroupService {
     this.setEditGroupId(groupDocRef.id);
   }
 
+  public async joinPlayerToGroup(playerId: string, groupId: string): Promise<void> {
+    const payload: firestore.UpdateData = {
+      groupIds: firestore.FieldValue.arrayUnion(groupId),
+      defaultGroupId: groupId
+    };
+
+    await this.afs.doc(`players/${playerId}`).update(payload);
+    this.setCurrentGroupId(groupId);
+  }
+
+
   public setEditGroupId(groupId: string) {
     this.state.editGroupId$.next(groupId);
   }
