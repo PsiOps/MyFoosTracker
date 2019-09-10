@@ -24,6 +24,9 @@ export class GroupService {
   public editGroupTables$: BehaviorSubject<Table[]> = new BehaviorSubject([]);
   public editGroupTablesCollection: AngularFirestoreCollection<Table>;
 
+  public joinGroup$: BehaviorSubject<Group> = new BehaviorSubject(null);
+  private joinGroupDoc: AngularFirestoreDocument<Group>;
+
   constructor(
     private afs: AngularFirestore,
     private state: SharedState
@@ -77,6 +80,18 @@ export class GroupService {
       ));
     editGroupObs$.subscribe(editGroup => this.editGroup$.next(editGroup));
 
+    const joinGroupObs$ = this.state.joinGroupId$
+      .pipe(filter(groupId => !!groupId))
+      .pipe(map(groupId => this.joinGroupDoc = this.afs.doc<Group>(`groups/${groupId}`)))
+      .pipe(switchMap(doc => doc
+        .valueChanges()
+        .pipe(map(group => {
+          group.id = doc.ref.id;
+          return group;
+        }))
+      ));
+    joinGroupObs$.subscribe(joinGroup => this.joinGroup$.next(joinGroup));
+
     const editGroupMembersObs$ = this.state.editGroupId$
       .pipe(filter(groupId => !!groupId))
       .pipe(switchMap(groupId =>
@@ -124,13 +139,16 @@ export class GroupService {
     this.setCurrentGroupId(groupId);
   }
 
-
   public setEditGroupId(groupId: string) {
     this.state.editGroupId$.next(groupId);
   }
 
   public setCurrentGroupId(groupId: string) {
     this.state.currentGroupId$.next(groupId);
+  }
+
+  public setJoinGroupId(groupId: string) {
+    this.state.joinGroupId$.next(groupId);
   }
 
   public isGroupAdmin(player: Player, group: Group): boolean {

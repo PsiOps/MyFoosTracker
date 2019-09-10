@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button>
+        <img src="/assets/icon/favicon.png" title="MyFoosTracker" height="40">
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Join Group
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="state.player$ | async as player">
+  <ion-grid fixed>
+    <div *ngIf="groupService.joinGroup$ | async as group">
+      <ion-card>
+        <ion-card-content>
+          <ion-item>
+            <span>Do you want to join group {{ group.name }}?</span>
+          </ion-item>
+          <ion-button (click)="joinPlayerToGroup(player.id, group.id)">
+            Join Group
+          </ion-button>
+          <ion-button (click)="dismiss()">
+            No thanks
+          </ion-button>       
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-grid>
+</ion-content>

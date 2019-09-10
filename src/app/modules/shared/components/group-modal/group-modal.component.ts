@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, AlertController } from '@ionic/angular';
 import { Group } from 'src/app/domain';
 import { GroupService } from 'src/app/services/group.service';
+import { DynamicLinkService } from 'src/app/services/dynamic-link.service';
 
 @Component({
   selector: 'app-group-modal',
@@ -16,11 +17,12 @@ export class GroupModalComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private alertController: AlertController,
-    public groupService: GroupService) { }
+    public groupService: GroupService,
+    public dynamicLinkService: DynamicLinkService) { }
 
   ngOnInit() {}
 
-  public async archiveGroup(){
+  public async archiveGroup() {
     const alert = await this.alertController.create({
       header: 'Confirm Archive Group',
       message: 'Are you sure you want to archive this group?',

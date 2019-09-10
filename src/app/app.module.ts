@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -27,7 +28,7 @@ import { FirebaseDynamicLinks } from '@ionic-native/firebase-dynamic-links/ngx';
     BrowserModule, IonicModule.forRoot(), AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     AngularFireModule.initializeApp({
-      apiKey: 'AIzaSyCw7oNQZj17ABRMiG925TOl5TOsHnrx3XE',
+      apiKey: environment.apiKey,
       authDomain: 'myfoostracker.firebaseapp.com',
       databaseURL: 'https://myfoostracker.firebaseio.com',
       projectId: 'myfoostracker',
@@ -37,7 +38,8 @@ import { FirebaseDynamicLinks } from '@ionic-native/firebase-dynamic-links/ngx';
     AngularFireAuthModule,
     AngularFireFunctionsModule,
     AngularFirestoreModule,
-    AngularFireMessagingModule
+    AngularFireMessagingModule,
+    HttpClientModule
   ],
   providers: [
     StatusBar,

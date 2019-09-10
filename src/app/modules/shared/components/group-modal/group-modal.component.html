@@ -22,7 +22,7 @@
             </ion-button>
           </ion-item>
           <ion-item>
-            <span>https://this.dynamic.link/placeholder</span>
+            <span>{{ dynamicLinkService.editGroupJoinLink$ | async }}</span>
             <ion-button (click)="copyToClipboard()" slot="end">
               <ion-icon name="copy"></ion-icon>
             </ion-button>
