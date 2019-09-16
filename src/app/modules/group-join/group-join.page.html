@@ -16,15 +16,17 @@
     <div *ngIf="groupService.joinGroup$ | async as group">
       <ion-card>
         <ion-card-content>
-          <ion-item>
-            <span>Do you want to join group {{ group.name }}?</span>
+          <ion-item text-center>
+            <ion-label>Do you want to join group {{ group.name }}?</ion-label>
           </ion-item>
-          <ion-button (click)="joinPlayerToGroup(player.id, group.id)">
-            Join Group
-          </ion-button>
-          <ion-button (click)="dismiss()">
-            No thanks
-          </ion-button>       
+          <div text-center>
+            <ion-button strong color="primary" (click)="joinPlayerToGroup(player.id, group.id)">
+              Join Group
+            </ion-button>
+            <ion-button color="light" (click)="dismiss()">
+              No thanks
+            </ion-button>
+          </div>
         </ion-card-content>
       </ion-card>
     </div>

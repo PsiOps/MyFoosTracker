@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupService } from 'src/app/services/group.service';
 import { SharedState } from 'src/app/state/shared.state';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-group-join',
@@ -14,7 +15,8 @@ export class GroupJoinPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public groupService: GroupService,
-    public state: SharedState
+    public state: SharedState,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -26,7 +28,18 @@ export class GroupJoinPage implements OnInit {
 
   public async joinPlayerToGroup(playerId: string, groupId: string) {
     await this.groupService.joinPlayerToGroup(playerId, groupId);
-    this.router.navigateByUrl('/');
+    const toast = await this.toastController.create(
+      {
+        message: 'Group joined!',
+        animated: true,
+        duration: 650,
+        position: 'bottom',
+        color: 'success'
+
+      });
+    toast.onDidDismiss()
+      .then(() => this.router.navigateByUrl('/'));
+    toast.present();
   }
   public dismiss() {
     this.router.navigateByUrl('/');
