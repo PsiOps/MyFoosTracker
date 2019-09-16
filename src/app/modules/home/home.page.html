@@ -5,7 +5,6 @@
     <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
-
     <div *ngIf="state.player$ | async as player">
       <div *ngIf="groupService.currentGroup$ | async as group; else noGroup">
         <div *ngIf="matchService.currentMatch$ | async as currentMatch">
