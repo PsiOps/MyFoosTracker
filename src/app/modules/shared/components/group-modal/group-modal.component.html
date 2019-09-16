@@ -21,10 +21,10 @@
               <ion-icon name="create"></ion-icon>
             </ion-button>
           </ion-item>
-          <ion-item>
-            <span>{{ dynamicLinkService.editGroupJoinLink$ | async }}</span>
-            <ion-button (click)="copyToClipboard()" slot="end">
-              <ion-icon name="copy"></ion-icon>
+          <ion-item *ngIf="dynamicLinkService.editGroupJoinLink$ | async as link">
+            <span>{{ link }}</span>
+            <ion-button (click)="shareJoinGroupLink(group.name, link)" slot="end">
+              <ion-icon name="share"></ion-icon>
             </ion-button>
           </ion-item>
         </ion-card-content>

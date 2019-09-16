@@ -18,6 +18,7 @@ import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { UpdateService } from './services/update-service';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { FirebaseDynamicLinks } from '@ionic-native/firebase-dynamic-links/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { FirebaseDynamicLinks } from '@ionic-native/firebase-dynamic-links/ngx';
   ],
   entryComponents: [],
   imports: [
-    BrowserModule, IonicModule.forRoot(), AppRoutingModule,
+    BrowserModule, HttpClientModule, IonicModule.forRoot(), AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     AngularFireModule.initializeApp({
       apiKey: environment.apiKey,
@@ -38,15 +39,15 @@ import { FirebaseDynamicLinks } from '@ionic-native/firebase-dynamic-links/ngx';
     AngularFireAuthModule,
     AngularFireFunctionsModule,
     AngularFirestoreModule,
-    AngularFireMessagingModule,
-    HttpClientModule
+    AngularFireMessagingModule
   ],
   providers: [
     StatusBar,
     SplashScreen,
     UpdateService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    FirebaseDynamicLinks
+    FirebaseDynamicLinks,
+    SocialSharing
   ],
   bootstrap: [AppComponent]
 })

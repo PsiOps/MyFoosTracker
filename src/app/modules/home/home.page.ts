@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { MatchService } from '../../services/match.service';
