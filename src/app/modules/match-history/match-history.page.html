@@ -2,21 +2,28 @@
 
 <ion-content>
   <ion-grid fixed>
-    <ion-list lines="none">
-      <ion-card *ngFor="let matchDay of matchesPerDay">
-        <ion-card-header>
-          <ion-card-title text-center>{{matchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="match" *ngFor="let match of matchDay.matches">
-            <app-match [match]="match"></app-match>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </ion-list>
-    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+    <div *ngIf="state.player$ | async as player">
+      <div *ngIf="groupService.currentGroup$ | async as group; else noGroup">
+        <ion-list lines="none">
+          <ion-card *ngFor="let matchDay of matchesPerDay">
+            <ion-card-header>
+              <ion-card-title text-center>{{matchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="match" *ngFor="let match of matchDay.matches">
+                <app-match [match]="match"></app-match>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-list>
+        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+          <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+          </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      </div>
+      <ng-template #noGroup>
+        <app-no-group [player]="player"></app-no-group>
+      </ng-template>
+    </div>
   </ion-grid>
 </ion-content>

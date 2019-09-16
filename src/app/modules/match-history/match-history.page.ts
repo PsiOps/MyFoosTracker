@@ -3,6 +3,7 @@ import { AngularFirestore, AngularFirestoreCollection, CollectionReference, Quer
 import { Match, MatchStatus, Player } from '../../domain';
 import { map, switchMap, filter } from 'rxjs/operators';
 import { SharedState } from 'src/app/state/shared.state';
+import { GroupService } from 'src/app/services/group.service';
 
 @Component({
   selector: 'app-match-history',
@@ -21,7 +22,8 @@ export class MatchHistoryPage {
 
   constructor(
     private afs: AngularFirestore,
-    private state: SharedState
+    public state: SharedState,
+    public groupService: GroupService
   ) {
     this.setInitialDates();
     this.loadMoreData();

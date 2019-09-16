@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Stats } from '../../../../domain';
 import { Observable } from 'rxjs';
@@ -15,8 +15,6 @@ export class StatsComponent implements OnInit, OnChanges {
 
   @Input() player: { id: string, nickname: string, photoUrl: string };
   @Input() isModal: boolean;
-
-  @Output() hasLoaded = new EventEmitter();
 
   constructor(
     private afs: AngularFirestore,
@@ -46,9 +44,5 @@ export class StatsComponent implements OnInit, OnChanges {
 
     this.playerStatsDoc = this.afs.doc(`player-stats-v2/${this.player.id}`);
     this.playerStats$ = this.playerStatsDoc.valueChanges();
-  }
-
-  async onTeamStatsLoaded() {
-    this.hasLoaded.emit();
   }
 }

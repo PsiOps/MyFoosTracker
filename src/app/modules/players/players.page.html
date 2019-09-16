@@ -1,6 +1,10 @@
 <app-header title="Players"></app-header>
 <ion-content>
     <ion-grid fixed>
-        <app-player-manage></app-player-manage>
+        <div *ngIf="state.player$ | async as player">
+            <div *ngIf="groupService.currentGroup$ | async as group; else noGroup">
+                <app-player-manage></app-player-manage>
+            </div>
+        </div>
     </ion-grid>
 </ion-content>
