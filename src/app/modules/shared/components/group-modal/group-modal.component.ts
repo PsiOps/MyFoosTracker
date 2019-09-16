@@ -56,7 +56,8 @@ ${link}`);
             message: 'Group Join Message copied to clipboard!',
             animated: true,
             duration: 1200,
-            position: 'middle'
+            position: 'middle',
+            color: 'success'
           });
         toast.present();
       }
