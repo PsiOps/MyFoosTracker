@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AuthenticationService } from '../auth/authentication.service';
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { BehaviorSubject } from 'rxjs';
 import { Player } from '../domain';

@@ -8,5 +8,6 @@ import { Player } from '../domain';
 export class SharedState {
     public currentGroupId$: BehaviorSubject<string> = new BehaviorSubject(null);
     public editGroupId$: BehaviorSubject<string> = new BehaviorSubject(null);
+    public joinGroupId$: BehaviorSubject<string> = new BehaviorSubject(null);
     public player$: BehaviorSubject<Player> = new BehaviorSubject(null);
 }

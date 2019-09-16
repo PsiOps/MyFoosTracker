@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -16,6 +17,8 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { UpdateService } from './services/update-service';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
+import { FirebaseDynamicLinks } from '@ionic-native/firebase-dynamic-links/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @NgModule({
   declarations: [
@@ -23,10 +26,10 @@ import { AngularFireMessagingModule } from '@angular/fire/messaging';
   ],
   entryComponents: [],
   imports: [
-    BrowserModule, IonicModule.forRoot(), AppRoutingModule,
+    BrowserModule, HttpClientModule, IonicModule.forRoot(), AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     AngularFireModule.initializeApp({
-      apiKey: 'AIzaSyCw7oNQZj17ABRMiG925TOl5TOsHnrx3XE',
+      apiKey: environment.apiKey,
       authDomain: 'myfoostracker.firebaseapp.com',
       databaseURL: 'https://myfoostracker.firebaseio.com',
       projectId: 'myfoostracker',
@@ -42,7 +45,9 @@ import { AngularFireMessagingModule } from '@angular/fire/messaging';
     StatusBar,
     SplashScreen,
     UpdateService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    FirebaseDynamicLinks,
+    SocialSharing
   ],
   bootstrap: [AppComponent]
 })
