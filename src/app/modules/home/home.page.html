@@ -5,7 +5,6 @@
     <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
-
     <div *ngIf="state.player$ | async as player">
       <div *ngIf="groupService.currentGroup$ | async as group; else noGroup">
         <div *ngIf="matchService.currentMatch$ | async as currentMatch">
@@ -70,7 +69,6 @@
         </div>
         <div *ngIf="!(matchService.currentMatch$ | async)" class="buttonContainer">
           <ion-button class="button-create" margin (click)="createMatch(player)">Create a Match!</ion-button>
-          <ion-button margin (click)="findMatchToJoin()">Join a match</ion-button>
         </div>
         <div class="currentMatches"
           *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (matchesOnWatchedTables$ | async) as matchesOnWatchedTables; else selectTables">

@@ -36,15 +36,15 @@ const routes: Routes = [
           }
         ]
       },
-      {
-        path: 'tables',
-        children: [
-          {
-            path: '',
-            loadChildren: '../tables/tables.module#TablesPageModule'
-          }
-        ]
-      },
+      // {
+      //   path: 'tables',
+      //   children: [
+      //     {
+      //       path: '',
+      //       loadChildren: '../tables/tables.module#TablesPageModule'
+      //     }
+      //   ]
+      // },
       {
         path: 'players',
         children: [

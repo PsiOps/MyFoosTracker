@@ -1,21 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, CollectionReference, Query } from '@angular/fire/firestore';
 import { Match, MatchStatus, Player } from '../../domain';
-import { map, switchMap } from 'rxjs/operators';
-import { LoadingController } from '@ionic/angular';
+import { map, switchMap, filter } from 'rxjs/operators';
 import { SharedState } from 'src/app/state/shared.state';
+import { GroupService } from 'src/app/services/group.service';
 
 @Component({
   selector: 'app-match-history',
   templateUrl: 'match-history.page.html',
   styleUrls: ['match-history.page.scss']
 })
-export class MatchHistoryPage implements OnInit {
+export class MatchHistoryPage {
 
   public matchesCollection: AngularFirestoreCollection<Match>;
   public matchesPerDay: { day: Date, matches: Match[] }[] = [];
 
-  private loadingIndicator: HTMLIonLoadingElement;
   private matchesAfterKey: Date;
   private matchesUntillKey: Date;
   private minNumberOfMatchesToLoad = 8;
@@ -23,21 +22,11 @@ export class MatchHistoryPage implements OnInit {
 
   constructor(
     private afs: AngularFirestore,
-    private loadingController: LoadingController,
-    private state: SharedState
+    public state: SharedState,
+    public groupService: GroupService
   ) {
     this.setInitialDates();
     this.loadMoreData();
-  }
-
-  async ngOnInit() {
-    this.loadingIndicator = await this.loadingController.create({
-      spinner: 'dots',
-      message: 'Loading...',
-      backdropDismiss: true
-    });
-
-    await this.loadingIndicator.present();
   }
 
   public loadData(event: any) {
@@ -46,6 +35,7 @@ export class MatchHistoryPage implements OnInit {
 
   private loadMoreData(event?: any) {
     this.state.player$
+      .pipe(filter(player => !!player && !!player.currentGroupId))
       .pipe(switchMap(player => this.afs.collection<Match>('matches', ref => this.filterMatches(ref, player))
         .valueChanges()))
       .pipe(
@@ -61,10 +51,6 @@ export class MatchHistoryPage implements OnInit {
         } else if (this.matchesPerDay.length < this.minNumberOfMatchesToLoad) {
           this.loadMoreData();
         }
-
-        setTimeout(async () => {
-          await this.loadingController.dismiss();
-        }, 500);
       });
   }
 

@@ -10,53 +10,53 @@
     <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
+    <div *ngIf="!isLoading; else loader">
+      <div *ngIf="player">
+        <ion-card>
+          <ion-card-header>
+            Showing statistics for:
+          </ion-card-header>
+          <ion-card-content>
+            <div class="statsId">
+              <img [src]="player.photoUrl" class="profilePic">
+              <ion-label>{{player.nickname}}</ion-label>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <div *ngIf="playerStats$ | async as playerStats;else noStats">
+        <ion-card>
+          <ion-card-content class="matchCounts">
+            <div class="countContainer">
+              <div class="count good">{{playerStats.matchesWon}}</div>
+              <div class="label good">wins</div>
+            </div>
+            <div class="countContainer">
+              <div class="count bad">{{playerStats.matchesLost}}</div>
+              <div class="label bad">losses</div>
+            </div>
+            <div *ngIf="playerStats.matchesTied > 0" class="countContainer">
+              <div class="count">{{playerStats.matchesTied}}</div>
+              <div class="label">ties</div>
+            </div>
+          </ion-card-content>
+        </ion-card>
 
-    <div *ngIf="player">
-      <ion-card>
-        <ion-card-header>
-          Showing statistics for:
-        </ion-card-header>
-        <ion-card-content>
-          <div class="statsId">
-            <img [src]="player.photoUrl" class="profilePic">
-            <ion-label>{{player.nickname}}</ion-label>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div>
-    <div *ngIf="playerStats$ | async as playerStats;else noStats">
-      <ion-card>
-        <ion-card-content class="matchCounts">
-          <div class="countContainer">
-            <div class="count good">{{playerStats.matchesWon}}</div>
-            <div class="label good">wins</div>
-          </div>
-          <div class="countContainer">
-            <div class="count bad">{{playerStats.matchesLost}}</div>
-            <div class="label bad">losses</div>
-          </div>
-          <div *ngIf="playerStats.matchesTied > 0" class="countContainer">
-            <div class="count">{{playerStats.matchesTied}}</div>
-            <div class="label">ties</div>
-          </div>
-        </ion-card-content>
-      </ion-card>
+        <app-team-stats [player]="player"></app-team-stats>
 
-      <app-team-stats [player]="player" (hasLoaded)="onTeamStatsLoaded()"></app-team-stats>
-      
-      <ion-card>
-        <ion-card-content class="matchCounts">
-          <div class="countContainer">
-            <div class="count good">{{playerStats.goalsScored}}</div>
-            <div class="label good">team-goals scored</div>
-          </div>
-          <div class="countContainer">
-            <div class="count bad">{{playerStats.goalsAgainst}}</div>
-            <div class="label bad">team-goals against</div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-      <!-- <ion-card>
+        <ion-card>
+          <ion-card-content class="matchCounts">
+            <div class="countContainer">
+              <div class="count good">{{playerStats.goalsScored}}</div>
+              <div class="label good">team-goals scored</div>
+            </div>
+            <div class="countContainer">
+              <div class="count bad">{{playerStats.goalsAgainst}}</div>
+              <div class="label bad">team-goals against</div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+        <!-- <ion-card>
         <ion-card-content class="matchCounts">
           <div class="countContainer">
             <div class="count">{{playerStats.averageMatchDuration | number : '1.2-2'}}</div>
@@ -64,19 +64,23 @@
           </div>
         </ion-card-content>
       </ion-card> -->
+      </div>
+      <ng-template #noStats>
+        <ion-card>
+          <ion-card-content>
+            <ion-card-header>
+              <ion-card-title>No Statistics Yet</ion-card-title>
+            </ion-card-header>
+            Play matches to generate statistics!
+          </ion-card-content>
+        </ion-card>
+      </ng-template>
+      <div id="buttons" *ngIf="isModal">
+        <ion-button expand="block" (click)="dismiss()">Done</ion-button>
+      </div>
     </div>
-    <ng-template #noStats>
-      <ion-card>
-        <ion-card-content>
-          <ion-card-header>
-            <ion-card-title>No Statistics Yet</ion-card-title>
-          </ion-card-header>
-          Play matches to generate statistics!
-        </ion-card-content>
-      </ion-card>
+    <ng-template #loader>
+      <app-loading></app-loading>
     </ng-template>
-    <div id="buttons" *ngIf="isModal">
-      <ion-button expand="block" (click)="dismiss()">Done</ion-button>
-    </div>
   </ion-grid>
 </ion-content>

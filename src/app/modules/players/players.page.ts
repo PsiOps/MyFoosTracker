@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SharedState } from '../../state/shared.state';
+import { GroupService } from '../../services/group.service';
 
 @Component({
   selector: 'app-players',
@@ -7,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PlayersPage implements OnInit {
 
-  constructor() { }
+  constructor(public state: SharedState, public groupService: GroupService) { }
 
   ngOnInit() {
   }
