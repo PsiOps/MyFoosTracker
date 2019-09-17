@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { SharedState } from 'src/app/state/shared.state';
-import { GroupService } from 'src/app/services/group.service';
+import { SharedState } from '../../state/shared.state';
+import { GroupService } from '../../services/group.service';
 
 @Component({
   selector: 'app-players',

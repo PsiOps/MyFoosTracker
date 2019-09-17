@@ -5,6 +5,9 @@
             <div *ngIf="groupService.currentGroup$ | async as group; else noGroup">
                 <app-player-manage></app-player-manage>
             </div>
+            <ng-template #noGroup>
+                <app-no-group [player]="player"></app-no-group>
+            </ng-template>
         </div>
     </ion-grid>
 </ion-content>

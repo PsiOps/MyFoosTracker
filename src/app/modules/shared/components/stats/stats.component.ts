@@ -16,6 +16,8 @@ export class StatsComponent implements OnInit, OnChanges {
   @Input() player: { id: string, nickname: string, photoUrl: string };
   @Input() isModal: boolean;
 
+  public isLoading = true;
+
   constructor(
     private afs: AngularFirestore,
     private modalController: ModalController
@@ -39,10 +41,11 @@ export class StatsComponent implements OnInit, OnChanges {
 
   private getStats(): void {
     if (!this.player) {
+      this.isLoading = false;
       return;
     }
-
     this.playerStatsDoc = this.afs.doc(`player-stats-v2/${this.player.id}`);
     this.playerStats$ = this.playerStatsDoc.valueChanges();
+    this.isLoading = false;
   }
 }

@@ -14,6 +14,7 @@ import { TeamStatsComponent } from './components/team-stats/team-stats.component
 import { TeamComboStatsComponent } from './components/team-combo-stats/team-combo-stats.component';
 import { GroupModalComponent } from './components/group-modal/group-modal.component';
 import { NoGroupComponent } from './components/no-group/no-group.component';
+import { LoadingComponent } from './components/loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { NoGroupComponent } from './components/no-group/no-group.component';
     TeamStatsComponent,
     TeamComboStatsComponent,
     GroupModalComponent,
-    NoGroupComponent
+    NoGroupComponent,
+    LoadingComponent
   ],
   imports: [
     IonicModule,
@@ -45,7 +47,7 @@ import { NoGroupComponent } from './components/no-group/no-group.component';
     TeamStatsComponent,
     TeamComboStatsComponent,
     GroupModalComponent,
-    NoGroupComponent
+    NoGroupComponent, LoadingComponent
   ],
   entryComponents: [TableManageComponent, StatsComponent, TeamComboStatsComponent, GroupModalComponent]
 })

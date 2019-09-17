@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { SharedState } from 'src/app/state/shared.state';
+import { Component } from '@angular/core';
+import { SharedState } from '../../state/shared.state';
 
 @Component({
   selector: 'app-player-stats',
@@ -9,7 +9,7 @@ import { SharedState } from 'src/app/state/shared.state';
 export class PlayerStatsPage {
   constructor(
     public state: SharedState
-  ) { }
+  ) {  }
 }
 
 
