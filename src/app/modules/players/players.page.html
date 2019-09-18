@@ -6,7 +6,7 @@
                 <app-player-manage></app-player-manage>
             </div>
             <ng-template #noGroup>
-                <app-no-group [player]="player"></app-no-group>
+                <app-no-group [groupId]="state.currentGroupId$ | async" [player]="player"></app-no-group>
             </ng-template>
         </div>
     </ion-grid>
