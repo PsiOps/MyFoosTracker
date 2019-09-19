@@ -65,6 +65,37 @@ ${link}`);
 
   }
 
+  public async editGroupName(group: Group) {
+    const alert = await this.alertController.create({
+      header: 'Edit Group Name',
+      backdropDismiss: false,
+      inputs: [
+        {
+          name: 'name',
+          value: group.name,
+          type: 'text',
+          placeholder: 'enter a group name'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => { }
+        }, {
+          text: 'OK',
+          handler: async (data) => {
+            if (!data.name || data.name === '') { return; }
+            await this.groupService.setGroupName(data.name);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
   public async archiveGroup() {
     const alert = await this.alertController.create({
       header: 'Confirm Archive Group',

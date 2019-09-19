@@ -155,6 +155,9 @@ export class GroupService {
     return group.admins && group.admins.includes(player.id);
   }
 
+  public setGroupName(name: string) {
+    this.editGroupDoc.update({ name: name });
+  }
   // To be called from three dots menu in the group-modal component
   public async archiveEditGroup() {
     this.editGroupDoc.update({ isArchived: true });
