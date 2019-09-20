@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../auth/authentication.service';
-import { firestore } from 'firebase/app';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, filter } from 'rxjs/operators';
 import { PlayerSelectModel } from '../modules/home/models/player-select.model';
@@ -19,7 +20,7 @@ export class PlayerService {
   public playerGroups$: BehaviorSubject<Group[]> = new BehaviorSubject([]);
 
   private playerDoc: AngularFirestoreDocument<Player>;
-  public playerDocRef: firestore.DocumentReference;
+  public playerDocRef: firebase.firestore.DocumentReference;
 
   constructor(
     private router: Router,
@@ -92,16 +93,16 @@ export class PlayerService {
 
   public async addPlayerToFavourites(playerId: string): Promise<void> {
 
-    const payload: firestore.UpdateData = {
-      favouritePlayerIds: firestore.FieldValue.arrayUnion(playerId),
+    const payload: firebase.firestore.UpdateData = {
+      favouritePlayerIds: firebase.firestore.FieldValue.arrayUnion(playerId),
     };
 
     await this.playerDocRef.update(payload);
   }
 
   public async removePlayerFromFavourites(playerId: string): Promise<void> {
-    const payload: firestore.UpdateData = {
-      favouritePlayerIds: firestore.FieldValue.arrayRemove(playerId),
+    const payload: firebase.firestore.UpdateData = {
+      favouritePlayerIds: firebase.firestore.FieldValue.arrayRemove(playerId),
     };
 
     await this.playerDocRef.update(payload);
@@ -129,7 +130,7 @@ export class PlayerService {
 
   public async setTableAsDefault(table: TableManageModel): Promise<void> {
 
-    const payload: firestore.UpdateData = {};
+    const payload: firebase.firestore.UpdateData = {};
     payload[`defaultTableIdByGroup.${table.groupId}`] = table.id;
     console.log(payload);
     try {
@@ -141,8 +142,8 @@ export class PlayerService {
 
   public async clearDefaultTable(table: TableManageModel): Promise<void> {
 
-    const payload: firestore.UpdateData = {};
-    payload[`defaultTableIdByGroup.${table.groupId}`] = firestore.FieldValue.delete();
+    const payload: firebase.firestore.UpdateData = {};
+    payload[`defaultTableIdByGroup.${table.groupId}`] = firebase.firestore.FieldValue.delete();
 
     try {
       await this.playerDocRef.update(payload);

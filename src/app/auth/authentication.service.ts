@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { auth } from 'firebase/app';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 import { ReplaySubject } from 'rxjs';
 import { LoadingController } from '@ionic/angular';
 
@@ -29,7 +30,7 @@ export class AuthenticationService {
       translucent: true
     });
     loading.present()
-      .then(() => this.afAuth.auth.signInWithRedirect(new auth.GoogleAuthProvider()));
+      .then(() => this.afAuth.auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()));
   }
 
   public async logout() {
