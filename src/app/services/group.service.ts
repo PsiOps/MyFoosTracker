@@ -4,7 +4,8 @@ import { Group, Player, Table } from '../domain';
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { map, filter, switchMap } from 'rxjs/operators';
 import { SharedState } from '../state/shared.state';
-import { firestore } from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -120,8 +121,8 @@ export class GroupService {
   public async addGroupToPlayer(playerId: string): Promise<void> {
     const groupDocRef = await this.afs.collection('groups').add({ name: 'My Group', admins: [playerId] });
     await this.afs.collection(`groups/${groupDocRef.id}/tables`).add({ name: 'Table1' });
-    const payload: firestore.UpdateData = {
-      groupIds: firestore.FieldValue.arrayUnion(groupDocRef.id),
+    const payload: firebase.firestore.UpdateData = {
+      groupIds: firebase.firestore.FieldValue.arrayUnion(groupDocRef.id),
       defaultGroupId: groupDocRef.id
     };
 
@@ -130,8 +131,8 @@ export class GroupService {
   }
 
   public async joinPlayerToGroup(playerId: string, groupId: string): Promise<void> {
-    const payload: firestore.UpdateData = {
-      groupIds: firestore.FieldValue.arrayUnion(groupId),
+    const payload: firebase.firestore.UpdateData = {
+      groupIds: firebase.firestore.FieldValue.arrayUnion(groupId),
       defaultGroupId: groupId
     };
 
@@ -155,6 +156,9 @@ export class GroupService {
     return group.admins && group.admins.includes(player.id);
   }
 
+  public setGroupName(name: string) {
+    this.editGroupDoc.update({ name: name });
+  }
   // To be called from three dots menu in the group-modal component
   public async archiveEditGroup() {
     this.editGroupDoc.update({ isArchived: true });

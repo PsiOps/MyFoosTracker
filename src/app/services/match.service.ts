@@ -4,7 +4,8 @@ import { Match, MatchStatus, Team } from '../domain/match';
 import { AngularFirestoreDocument, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
 import { StatsService } from './stats.service';
-import { firestore } from 'firebase/app';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
 import { map, switchMap, filter, tap } from 'rxjs/operators';
 import { PlayerService } from './player.service';
 import { SharedState } from '../state/shared.state';
@@ -15,7 +16,7 @@ import { SharedState } from '../state/shared.state';
 export class MatchService {
   public currentMatch$: BehaviorSubject<Match> = new BehaviorSubject(null);
   private currentMatchDoc: AngularFirestoreDocument<Match>;
-  public currentMatchDocRef: firestore.DocumentReference;
+  public currentMatchDocRef: firebase.firestore.DocumentReference;
   public matchesOfWatchedTables$: Observable<Match[]>;
 
   constructor(private state: SharedState,
@@ -111,16 +112,16 @@ export class MatchService {
   }
   public async addPlayerToTeam(playerDocRef: DocumentReference, team: Team) {
     const teamPlayer = { playerRef: playerDocRef, goals: 0 };
-    let payload: firestore.UpdateData;
+    let payload: firebase.firestore.UpdateData;
     if (team === Team.teamA) {
       payload = {
-        participants: firestore.FieldValue.arrayUnion(playerDocRef.id),
-        teamA: firestore.FieldValue.arrayUnion(teamPlayer)
+        participants: firebase.firestore.FieldValue.arrayUnion(playerDocRef.id),
+        teamA: firebase.firestore.FieldValue.arrayUnion(teamPlayer)
       };
     } else {
       payload = {
-        participants: firestore.FieldValue.arrayUnion(playerDocRef.id),
-        teamB: firestore.FieldValue.arrayUnion(teamPlayer)
+        participants: firebase.firestore.FieldValue.arrayUnion(playerDocRef.id),
+        teamB: firebase.firestore.FieldValue.arrayUnion(teamPlayer)
       };
     }
     await this.currentMatchDoc.ref.update(payload);
@@ -128,9 +129,9 @@ export class MatchService {
   public async leaveTeam(playerDocRef: DocumentReference) {
     const teamPlayer = { playerRef: playerDocRef, goals: 0 };
     const payload = {
-      participants: firestore.FieldValue.arrayRemove(playerDocRef.id),
-      teamA: firestore.FieldValue.arrayRemove(teamPlayer),
-      teamB: firestore.FieldValue.arrayRemove(teamPlayer)
+      participants: firebase.firestore.FieldValue.arrayRemove(playerDocRef.id),
+      teamA: firebase.firestore.FieldValue.arrayRemove(teamPlayer),
+      teamB: firebase.firestore.FieldValue.arrayRemove(teamPlayer)
     };
     await this.currentMatchDoc.ref.update(payload);
   }
