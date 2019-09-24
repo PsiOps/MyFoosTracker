@@ -116,6 +116,15 @@ export class GroupService {
           return table;
         })))));
     editGroupTablesObs$.subscribe(tables => this.editGroupTables$.next(tables));
+
+    const canCreateGroupObs$ = this.state.player$
+      .pipe(filter(player => !!player))
+      .pipe(switchMap(player => {
+        const adminGroups = this.afs.collection<Group>('groups', ref => ref.where('admins', 'array-contains', player.id));
+        return adminGroups.valueChanges()
+          .pipe(map(groups => groups.length < 1));
+      }));
+    canCreateGroupObs$.subscribe(canCreate => this.state.canCreateGroup$.next(canCreate));
   }
 
   public async addGroupToPlayer(playerId: string): Promise<void> {
