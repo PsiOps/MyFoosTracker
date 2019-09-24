@@ -10,7 +10,10 @@ export class PlayerStatsPage {
   constructor(
     public state: SharedState
   ) {  }
-
+  
+  public refresh($event: any) {
+    setTimeout(() => $event.target.complete(), 500);
+  }
 }
 
 
