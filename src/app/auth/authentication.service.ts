@@ -24,13 +24,33 @@ export class AuthenticationService {
       });
   }
 
-  public async login() {
+  public async loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    return await this.login(provider);
+  }
+
+  public async loginWithGithub() {
+    const provider = new firebase.auth.GithubAuthProvider();
+    return await this.login(provider);
+  }
+
+  public async loginWithTwitter() {
+    const provider = new firebase.auth.TwitterAuthProvider();
+    return await this.login(provider);
+  }
+
+  public async loginWithFacebook() {
+    const provider = new firebase.auth.FacebookAuthProvider();
+    return await this.login(provider);
+  }
+
+  private async login(provider: firebase.auth.AuthProvider) {
     const loading = await this.loadingController.create({
       message: 'Logging in...',
       translucent: true
     });
     loading.present()
-      .then(() => this.afAuth.auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()));
+      .then(() => this.afAuth.auth.signInWithRedirect(provider));
   }
 
   public async logout() {

@@ -16,12 +16,22 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     const returnUrl = localStorage.getItem('returnUrl') || '/';
-    console.log('Login: found returnUrl', returnUrl);
     this.router.navigateByUrl(returnUrl);
   }
 
   public async proceedWithGoogle() {
-    console.log('Proceed with Google Login');
-    await this.authService.login();
+    await this.authService.loginWithGoogle();
+  }
+
+  public async proceedWithGithub() {
+    await this.authService.loginWithGithub();
+  }
+
+  public async proceedWithTwitter() {
+    await this.authService.loginWithTwitter();
+  }
+
+  public async proceedWithFacebook() {
+    await this.authService.loginWithFacebook();
   }
 }
