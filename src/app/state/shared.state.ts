@@ -10,4 +10,5 @@ export class SharedState {
     public editGroupId$: BehaviorSubject<string> = new BehaviorSubject(null);
     public joinGroupId$: BehaviorSubject<string> = new BehaviorSubject(null);
     public player$: BehaviorSubject<Player> = new BehaviorSubject(null);
+    public canCreateGroup$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 }

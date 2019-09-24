@@ -37,7 +37,7 @@
           <ion-list-header>
             <ion-label>Groups</ion-label>
             <ion-item lines="none">
-              <ion-button (click)="createGroup(player)" slot="end">
+              <ion-button (click)="createGroup(player)" slot="end" [disabled]="!(state.canCreateGroup$ | async)">
                 <ion-icon name="add"></ion-icon>
               </ion-button>
             </ion-item>
