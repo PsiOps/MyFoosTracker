@@ -13,8 +13,21 @@
 
 <ion-content>
   <ion-grid fixed>
-    <ion-button expand="block" (click)="proceedWithGoogle()">
-      Login with Google
+    <ion-button expand="block" (click)="proceedWithGoogle()" class="authProvider">
+      <ion-icon name="logo-google" slot="start"></ion-icon>
+      <div class="authButtonText">Login with Google</div>
+    </ion-button>
+    <ion-button expand="block" (click)="proceedWithGithub()" class="authProvider">
+        <ion-icon name="logo-github" slot="start"></ion-icon>
+        <div class="authButtonText">Login with Github</div>
+    </ion-button>
+    <ion-button expand="block" (click)="proceedWithTwitter()" class="authProvider">
+        <ion-icon name="logo-twitter" slot="start"></ion-icon>
+        <div class="authButtonText">Login with Twitter</div>
+    </ion-button>
+    <ion-button expand="block" (click)="proceedWithFacebook()" class="authProvider">
+        <ion-icon name="logo-facebook" slot="start"></ion-icon>
+        <div class="authButtonText">Login with Facebook</div>
     </ion-button>
   </ion-grid>
 </ion-content>
