@@ -27,9 +27,7 @@ export class HomePage {
     private matchService: MatchService,
     private modalController: ModalController,
     private alertController: AlertController,
-    private notificationService: NotificationService) {
-    this.matchesOnWatchedTables$ = this.matchService.getMatchesOnWatchedTables();
-  }
+    private notificationService: NotificationService) { }
 
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);

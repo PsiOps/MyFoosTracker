@@ -1,10 +1,10 @@
 <app-header title="Home"></app-header>
 
 <ion-content>
+  <ion-refresher (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-grid fixed>
-    <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
-      <ion-refresher-content></ion-refresher-content>
-    </ion-refresher>
     <div *ngIf="state.player$ | async as player">
       <div *ngIf="groupService.currentGroup$ | async as group; else noGroup">
         <div *ngIf="matchService.currentMatch$ | async as currentMatch">
@@ -71,12 +71,12 @@
           <ion-button class="button-create" margin (click)="createMatch(player)">Create a Match!</ion-button>
         </div>
         <div class="currentMatches"
-          *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (matchesOnWatchedTables$ | async) as matchesOnWatchedTables; else selectTables">
+          *ngIf="(matchService.currentMatch$ | async)?.status < 1 && (state.matchesInProgress$ | async) as matchesInProgress">
           <div text-center>Current Matches</div>
-          <div text-center class="noCurrentMatches" *ngIf="matchesOnWatchedTables.length===0">no matches in progress
+          <div text-center class="noCurrentMatches" *ngIf="matchesInProgress.length===0">no matches in progress
           </div>
           <ion-list lines="none">
-            <div class="match" *ngFor="let match of matchesOnWatchedTables">
+            <div class="match" *ngFor="let match of matchesInProgress">
               <app-match [match]="match" [showTable]="true"></app-match>
             </div>
           </ion-list>
