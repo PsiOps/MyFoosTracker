@@ -1,4 +1,7 @@
 <app-header title="Player Statistics"></app-header>
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <app-stats [player]="state.player$ | async"></app-stats>
 </ion-content>

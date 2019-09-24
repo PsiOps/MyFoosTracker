@@ -1,6 +1,9 @@
 <app-header title="Match History"></app-header>
 
 <ion-content>
+  <ion-refresher (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-grid fixed>
     <div *ngIf="state.player$ | async as player">
       <div *ngIf="groupService.currentGroup$ | async as group; else noGroup">

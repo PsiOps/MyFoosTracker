@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SharedState } from '../../state/shared.state';
 import { GroupService } from '../../services/group.service';
 
@@ -7,11 +7,11 @@ import { GroupService } from '../../services/group.service';
   templateUrl: './players.page.html',
   styleUrls: ['./players.page.scss'],
 })
-export class PlayersPage implements OnInit {
+export class PlayersPage {
 
   constructor(public state: SharedState, public groupService: GroupService) { }
 
-  ngOnInit() {
+  public refresh($event: any) {
+    setTimeout(() => $event.target.complete(), 500);
   }
-
 }

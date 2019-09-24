@@ -7,9 +7,6 @@
 </ion-header>
 <ion-content>
   <ion-grid fixed>
-    <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
-      <ion-refresher-content></ion-refresher-content>
-    </ion-refresher>
     <div *ngIf="!isLoading; else loader">
       <div *ngIf="player">
         <ion-card>

@@ -31,10 +31,6 @@ export class StatsComponent implements OnInit, OnChanges {
     this.getStats();
   }
 
-  public refresh($event: any) {
-    setTimeout(() => $event.target.complete(), 500);
-  }
-
   public dismiss() {
     this.modalController.dismiss();
   }
