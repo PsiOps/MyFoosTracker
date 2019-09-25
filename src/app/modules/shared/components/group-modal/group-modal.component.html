@@ -23,7 +23,7 @@
           </ion-item>
           <div *ngIf="dynamicLinkService.editGroupJoinLink$ | async as link; else loading">
             <ion-button color="secondary" expand="block" (click)="shareJoinGroupLink(group.name, link)">
-              Invite players to your group!
+              Invite players to this group!
             </ion-button>
           </div>
           <ng-template #loading>
