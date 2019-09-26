@@ -14,7 +14,6 @@ import { ClipboardService } from 'src/app/services/clipboard.service';
 export class GroupModalComponent implements OnInit {
 
   @Input() isCreate: boolean;
-  @Input() group: Group;
 
   private subject = 'You have been invited to join a FoosTracker group';
 
