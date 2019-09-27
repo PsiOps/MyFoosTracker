@@ -50,6 +50,12 @@ export class DynamicLinkService {
         link: `https://myfoostracker.firebaseapp.com/group-join?groupId=${groupId}`,
         androidInfo: {
           androidPackageName: 'com.psiops.foostracker'
+        },
+        socialMetaTagInfo: {
+          socialTitle: 'You have been invited to a Foostracker group!',
+          socialDescription: 'Join this group to start tracking foosball matches and generate interesting statistics!',
+          // tslint:disable-next-line: max-line-length
+          socialImageLink: 'https://firebasestorage.googleapis.com/v0/b/myfoostracker.appspot.com/o/share-link-image.png?alt=media&token=c5bf7ec3-09a3-4840-9301-3e49ade0e4ac'
         }
       }
     };
