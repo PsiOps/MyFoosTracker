@@ -17,13 +17,13 @@
         <ion-card-content>
           <ion-item>
             <ion-label>{{ group.name }}</ion-label>
-            <ion-button (click)="editGroupName(group)" slot="end">
+            <ion-button *ngIf="isCreate" (click)="editGroupName(group)" slot="end">
               <ion-icon name="create"></ion-icon>
             </ion-button>
           </ion-item>
           <div *ngIf="dynamicLinkService.editGroupJoinLink$ | async as link; else loading">
             <ion-button color="secondary" expand="block" (click)="shareJoinGroupLink(group.name, link)">
-              Invite players to your group!
+              Invite players to this group!
             </ion-button>
           </div>
           <ng-template #loading>
@@ -31,18 +31,6 @@
               <ion-spinner></ion-spinner>
             </ion-button>
           </ng-template>
-          <!-- <ion-item>
-            <span>{{ group.name }}</span>
-            <ion-button (click)="editGroupName(group)" slot="end">
-              <ion-icon name="create"></ion-icon>
-            </ion-button>
-          </ion-item>
-          <ion-item *ngIf="dynamicLinkService.editGroupJoinLink$ | async as link">
-            <span>{{ link }}</span>
-            <ion-button (click)="shareJoinGroupLink(group.name, link)" slot="end">
-              <ion-icon name="share"></ion-icon>
-            </ion-button>
-          </ion-item> -->
         </ion-card-content>
       </ion-card>
       <ion-card *ngIf="!isCreate && groupService.editGroupMembers$ | async as members">

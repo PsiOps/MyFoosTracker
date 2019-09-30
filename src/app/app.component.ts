@@ -6,6 +6,7 @@ import { filter } from 'rxjs/operators';
 import { AuthenticationService } from './auth/authentication.service';
 import { SharedState } from './state/shared.state';
 import { DynamicLinkService } from './services/dynamic-link.service';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit {
     private state: SharedState,
     private messagingService: MessagingService,
     private dynamicLinkService: DynamicLinkService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private splash: SplashScreen
   ) {
     this.initializeApp();
 
@@ -35,6 +37,7 @@ export class AppComponent implements OnInit {
 
     this.platform.ready().then(() => {
       if (this.platform.is('cordova')) {
+        this.splash.hide();
         this.dynamicLinkService.subscribe();
       }
       this.authService.user$

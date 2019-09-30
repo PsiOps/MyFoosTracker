@@ -15,19 +15,23 @@
   <ion-grid fixed>
     <div *ngIf="groupService.joinGroup$ | async as group">
       <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Pending invitation</ion-card-subtitle>
+          <ion-card-title>Do you want to join group <b>{{ group.name }}</b>?</ion-card-title>
+        </ion-card-header>
         <ion-card-content>
-          <ion-item text-center>
-            <ion-label>Do you want to join group {{ group.name }}?</ion-label>
-          </ion-item>
-          <div text-center>
-            <ion-button strong color="primary" (click)="joinPlayerToGroup(player.id, group.id)">
-              Join Group
-            </ion-button>
-            <ion-button color="light" (click)="dismiss()">
-              No thanks
-            </ion-button>
-          </div>
+          By joining a Foostracker group, you will be able to track the matches you play with the people in this group.
+          You can also see statistics about yourself and others.
         </ion-card-content>
+        <div text-center class="buttons">
+          <ion-button strong color="primary" (click)="joinPlayerToGroup(player.id, group.id)">
+            Join Group
+          </ion-button>
+          <ion-button color="light" (click)="dismiss()">
+            No thanks
+          </ion-button>
+        </div>
+
       </ion-card>
     </div>
   </ion-grid>

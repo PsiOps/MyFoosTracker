@@ -14,7 +14,7 @@
       <div scrollY="true" id="scrollList">
         <ion-list *ngIf="tableService.groupTables$ | async as playerTables" >
           <ion-item *ngFor="let table of playerTables | tableSearch : terms">
-            <ion-label>{{table.name}} @ {{table.location}}</ion-label>
+            <ion-label>{{table.name}}</ion-label>
             <ion-icon class="default" slot="end" [name]="table.isDefault ? 'refresh-circle' :'refresh'"
               (click)="defaultTableChanged(table)">
             </ion-icon>

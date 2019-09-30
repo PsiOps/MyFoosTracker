@@ -32,7 +32,7 @@ export class TableSelectComponent implements OnInit, OnChanges {
     popover.onWillDismiss().then(event => {
       const tableId = event.data;
       if (!tableId) { return; }
-      this.matchService.setTable(tableId);
+      this.matchService.setTable(this.match.groupId, tableId);
     });
     return await popover.present();
   }

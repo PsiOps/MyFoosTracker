@@ -7,25 +7,37 @@
   <ion-grid fixed>
     <div *ngIf="state.player$ | async as player">
       <div *ngIf="groupService.currentGroup$ | async as group; else noGroup">
-        <ion-list lines="none">
-          <ion-card *ngFor="let matchDay of matchesPerDay">
-            <ion-card-header>
-              <ion-card-title text-center>{{matchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <div class="match" *ngFor="let match of matchDay.matches">
-                <app-match [match]="match"></app-match>
-              </div>
-            </ion-card-content>
-          </ion-card>
-        </ion-list>
-        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
-          <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
-          </ion-infinite-scroll-content>
-        </ion-infinite-scroll>
+        <div *ngIf="matchesPerDay.length > 0; else noMatches">
+          <ion-list lines="none">
+            <ion-card *ngFor="let matchDay of matchesPerDay">
+              <ion-card-header>
+                <ion-card-title text-center>{{matchDay.day | date:'dd-MMM-yyyy'}}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="match" *ngFor="let match of matchDay.matches">
+                  <app-match [match]="match"></app-match>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-list>
+          <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+            <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+            </ion-infinite-scroll-content>
+          </ion-infinite-scroll>
+        </div>
       </div>
       <ng-template #noGroup>
         <app-no-group [groupId]="state.currentGroupId$ | async" [player]="player"></app-no-group>
+      </ng-template>
+      <ng-template #noMatches>
+        <ion-card>
+          <ion-card-content>
+            <ion-card-header>
+              <ion-card-title>No Matches played yet</ion-card-title>
+            </ion-card-header>
+            Play a match and see the result here!
+          </ion-card-content>
+        </ion-card>
       </ng-template>
     </div>
   </ion-grid>

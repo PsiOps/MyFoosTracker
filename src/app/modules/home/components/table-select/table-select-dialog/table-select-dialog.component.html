@@ -10,7 +10,7 @@
     <div scrollY="true" id="scrollList">
       <ion-list>
         <ion-item *ngFor="let table of playerTables" (click)="onTableSelected(table)">
-          <ion-label>{{table.name}} @ {{table.location}}</ion-label>
+          <ion-label>{{table.name}}</ion-label>
           <ion-icon *ngIf="table.isDefault" slot="end" name="refresh-circle" class="isDefault">
           </ion-icon>
         </ion-item>
