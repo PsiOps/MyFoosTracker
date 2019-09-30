@@ -1,6 +1,6 @@
 <ion-button expand="block" (click)="pickTable()">
   <div *ngIf="currentTable$ | async as currentTable; else selectTable" class="dropdownButtonContent">
-    {{currentTable.name}} @ {{currentTable.location}}
+    {{currentTable.name}}
   </div>
   <ion-icon name="arrow-dropdown" slot="end"></ion-icon>
 </ion-button>
