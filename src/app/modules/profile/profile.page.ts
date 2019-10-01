@@ -69,6 +69,11 @@ export class ProfilePage {
     return await modal.present();
   }
 
+  public changeCurrentGroup(player: Player, group: Group, event: Event) {
+    event.stopPropagation();
+    this.groupService.setCurrentGroupId(player.id, group.id);
+  }
+
   public async editGroup(group: Group) {
     await this.groupService.setEditGroupId(group.id);
     const modal = await this.modalController.create({

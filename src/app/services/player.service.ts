@@ -43,7 +43,7 @@ export class PlayerService {
             if (groupId) {
               player.currentGroupId = groupId;
             } else if (player.defaultGroupId) {
-              this.groupService.setCurrentGroupId(player.defaultGroupId);
+              this.groupService.setCurrentGroupId(player.id, player.defaultGroupId);
             }
             if (player.defaultTableIdByGroup && player.currentGroupId) {
               player.currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
