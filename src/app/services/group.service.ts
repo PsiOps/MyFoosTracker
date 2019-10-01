@@ -146,14 +146,18 @@ export class GroupService {
     };
 
     await this.afs.doc(`players/${playerId}`).update(payload);
-    this.setCurrentGroupId(groupId);
+    this.state.currentGroupId$.next(groupId);
   }
 
   public setEditGroupId(groupId: string) {
     this.state.editGroupId$.next(groupId);
   }
 
-  public setCurrentGroupId(groupId: string) {
+  public async setCurrentGroupId(playerId: string, groupId: string) {
+    const payload: firebase.firestore.UpdateData = {
+      defaultGroupId: groupId
+    };
+    await this.afs.doc(`players/${playerId}`).update(payload);
     this.state.currentGroupId$.next(groupId);
   }
 

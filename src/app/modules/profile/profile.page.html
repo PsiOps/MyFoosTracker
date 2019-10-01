@@ -43,6 +43,11 @@
             </ion-item>
           </ion-list-header>
           <ion-item *ngFor="let group of groups" (click)="editGroup(group)">
+            <ion-icon *ngIf="group.id == (state.currentGroupId$ | async)" slot="start" name="checkmark-circle"
+              class="activeGroup">
+            </ion-icon>
+            <ion-icon (click)="changeCurrentGroup(player, group, $event)" *ngIf="group.id !== (state.currentGroupId$ | async)"
+              slot="start" name="checkmark-circle-outline" class="selectableGroup"></ion-icon>
             <ion-label>
               <h1>{{group.name}}</h1>
             </ion-label>

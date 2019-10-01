@@ -4,6 +4,7 @@ import { Match, MatchStatus, Player } from '../../domain';
 import { map, switchMap, filter } from 'rxjs/operators';
 import { SharedState } from 'src/app/state/shared.state';
 import { GroupService } from 'src/app/services/group.service';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-match-history',
@@ -23,6 +24,7 @@ export class MatchHistoryPage {
     public state: SharedState,
     public groupService: GroupService
   ) {
+    this.state.currentGroupId$.subscribe(() => this.matchesPerDay = []);
     this.setInitialDates();
     this.loadMoreData();
   }
@@ -38,9 +40,9 @@ export class MatchHistoryPage {
   }
 
   private loadMoreData(event?: any) {
-    this.state.player$
-      .pipe(filter(player => !!player && !!player.currentGroupId))
-      .pipe(switchMap(player => this.afs.collection<Match>('matches', ref => this.filterMatches(ref, player))
+    combineLatest([this.state.player$, this.state.currentGroupId$])
+      .pipe(filter(([player]) => !!player && !!player.currentGroupId))
+      .pipe(switchMap(([player, groupId]) => this.afs.collection<Match>('matches', ref => this.filterMatches(ref, player, groupId))
         .valueChanges()))
       .pipe(
         map(matches => this.groupMatchesByDay(matches))
@@ -56,9 +58,9 @@ export class MatchHistoryPage {
       });
   }
 
-  private filterMatches = (ref: CollectionReference, player: Player): Query => ref
+  private filterMatches = (ref: CollectionReference, player: Player, groupId: string): Query => ref
     .where('status', '==', MatchStatus.over)
-    .where('groupId', '==', player.currentGroupId)
+    .where('groupId', '==', groupId)
     .orderBy('dateTimeStart', 'desc')
     .startAfter(this.matchesAfterKey)
     .endAt(this.matchesUntillKey)
@@ -84,6 +86,6 @@ export class MatchHistoryPage {
     this.matchesAfterKey = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
     this.matchesUntillKey = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
     this.matchesAfterKey.setDate(this.matchesAfterKey.getDate() + 1); // Makes start after tomorrow
-    this.matchesUntillKey.setDate(this.matchesAfterKey.getDate() - this.daysPerBatch);
+    this.matchesUntillKey.setDate(this.matchesAfterKey.getDate() - 10);
   }
 }

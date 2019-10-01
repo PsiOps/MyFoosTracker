@@ -1,7 +1,14 @@
-
 .profilePic {
-    height: 40px;
-    width: 40px;
-    border-radius: 5px;
-  }
-  
+  height: 40px;
+  width: 40px;
+  border-radius: 5px;
+}
+
+
+.activeGroup {
+  color: blue !important;
+}
+
+.selectableGroup:hover {
+  color: blue !important;
+}
