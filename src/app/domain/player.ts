@@ -4,7 +4,6 @@ export class Player {
     photoUrl: string;
     lastLogin: Date;
     defaultGroupId: string;
-    currentGroupId: string;
     currentGroupDefaultTableId: string;
     groupIds: string[] = [];
     playerSince: Date;

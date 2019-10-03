@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { GroupService } from 'src/app/services/group.service';
-import { GroupModalComponent } from '../group-modal/group-modal.component';
 import { Player } from 'src/app/domain';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-no-group',
@@ -14,25 +12,17 @@ export class NoGroupComponent {
   public isLoading = true;
   @Input() player: Player;
   @Input() set groupId(groupId: string) {
-    if (groupId === null) {
+    if (!groupId) {
       // Only show the no group message (instead of a loader) if the incoming currentGroupId is null
       this.isLoading = false;
     }
   }
 
   constructor(
-    private modalController: ModalController,
-    private groupService: GroupService
+    private router: Router
   ) { }
 
-  public async createGroup() {
-    await this.groupService.addGroupToPlayer(this.player.id);
-    const modal = await this.modalController.create({
-      component: GroupModalComponent,
-      componentProps: {
-        isCreate: true,
-      }
-    });
-    return await modal.present();
+  public async navigateToProfile() {
+    await this.router.navigateByUrl('/profile');
   }
 }

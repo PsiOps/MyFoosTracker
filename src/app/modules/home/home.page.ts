@@ -27,7 +27,9 @@ export class HomePage {
     private matchService: MatchService,
     private modalController: ModalController,
     private alertController: AlertController,
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService) {
+    this.state.currentGroupId$.subscribe(groupId => console.log('Home: Received new currentGroupId', groupId));
+  }
 
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);

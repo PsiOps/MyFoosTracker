@@ -10,11 +10,10 @@
       Profile
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()" title="Log out of FoosTracker">
-        <ion-icon name=log-out></ion-icon>Logout
+      <ion-button (click)="dismissProfile()">
+        <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-header>
 
@@ -42,21 +41,25 @@
               </ion-button>
             </ion-item>
           </ion-list-header>
-          <ion-item *ngFor="let group of groups" (click)="editGroup(group)">
-            <ion-icon *ngIf="group.id == (state.currentGroupId$ | async)" slot="start" name="checkmark-circle"
+          <ion-item *ngFor="let group of groups" (click)="!group.isArchived && editGroup(group)">
+            <ion-icon *ngIf="group.isArchived" slot="start" name="trash"></ion-icon>
+            <ion-icon *ngIf="!group.isArchived && group.id == (state.currentGroupId$ | async)" slot="start" name="checkmark-circle"
               class="activeGroup">
             </ion-icon>
-            <ion-icon (click)="changeCurrentGroup(player, group, $event)" *ngIf="group.id !== (state.currentGroupId$ | async)"
-              slot="start" name="checkmark-circle-outline" class="selectableGroup"></ion-icon>
-            <ion-label>
+            <ion-icon (click)="changeCurrentGroup(player, group, $event)"
+              *ngIf="!group.isArchived && group.id !== (state.currentGroupId$ | async)" slot="start" name="checkmark-circle-outline"
+              class="selectableGroup"></ion-icon>
+            <ion-label [class.archived]="group.isArchived">
               <h1>{{group.name}}</h1>
             </ion-label>
           </ion-item>
         </ion-list>
       </ion-card>
     </div>
-    <ion-button expand="block" (click)="dismissProfile()">
-      Done
-    </ion-button>
+    <div text-center>
+      <ion-button color="warning" (click)="logout()">
+        <ion-icon name="log-out"></ion-icon> Log out
+      </ion-button>
+    </div>
   </ion-grid>
 </ion-content>

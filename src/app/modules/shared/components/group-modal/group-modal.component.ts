@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, AlertController, Platform, ToastController } from '@ionic/angular';
-import { Group } from 'src/app/domain';
+import { Group, Player } from 'src/app/domain';
 import { GroupService } from 'src/app/services/group.service';
 import { DynamicLinkService } from 'src/app/services/dynamic-link.service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { ClipboardService } from 'src/app/services/clipboard.service';
+import { SharedState } from 'src/app/state/shared.state';
 
 @Component({
   selector: 'app-group-modal',
@@ -25,7 +26,8 @@ export class GroupModalComponent implements OnInit {
     public dynamicLinkService: DynamicLinkService,
     private socialSharing: SocialSharing,
     private clipboardService: ClipboardService,
-    private toastController: ToastController) { }
+    private toastController: ToastController,
+    public state: SharedState) { }
 
   ngOnInit() { }
 
@@ -95,7 +97,7 @@ ${link}`);
     await alert.present();
   }
 
-  public async archiveGroup() {
+  public async archiveGroup(player: Player) {
     const alert = await this.alertController.create({
       header: 'Confirm Archive Group',
       message: 'Are you sure you want to archive this group?',
@@ -108,7 +110,8 @@ ${link}`);
         }, {
           text: 'YES, ARCHIVE THIS GROUP',
           handler: async () => {
-            await this.groupService.archiveEditGroup();
+            await this.groupService.archiveEditGroup(player);
+            await this.dismiss();
           }
         }
       ]

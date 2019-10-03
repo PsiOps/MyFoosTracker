@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { Group, Player, Table } from '../domain';
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { map, filter, switchMap } from 'rxjs/operators';
+import { map, filter, switchMap, catchError, tap } from 'rxjs/operators';
 import { SharedState } from '../state/shared.state';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -32,13 +32,20 @@ export class GroupService {
     private afs: AngularFirestore,
     private state: SharedState
   ) {
+    const currentGroupIdObs$ = this.state.player$
+      .pipe(filter(player => !!player))
+      .pipe(map(player => player.defaultGroupId));
+
+    currentGroupIdObs$.subscribe(groupId => this.state.currentGroupId$.next(groupId));
+
     const currentGroupObs$ = this.state.currentGroupId$
       .pipe(map(groupId => this.currentGroupDoc = this.afs.doc<Group>(`groups/${groupId}`)))
       .pipe(switchMap(doc => doc
         .valueChanges()
-        .pipe(filter(group => !!group))
         .pipe(map(group => {
-          group.id = doc.ref.id;
+          if (group) {
+            group.id = doc.ref.id;
+          }
           return group;
         }))
       ));
@@ -120,7 +127,9 @@ export class GroupService {
     const canCreateGroupObs$ = this.state.player$
       .pipe(filter(player => !!player))
       .pipe(switchMap(player => {
-        const adminGroups = this.afs.collection<Group>('groups', ref => ref.where('admins', 'array-contains', player.id));
+        const adminGroups = this.afs.collection<Group>('groups', ref => ref
+          .where('admins', 'array-contains', player.id)
+          .where('isArchived', '==', false));
         return adminGroups.valueChanges()
           .pipe(map(groups => groups.length < 1));
       }));
@@ -146,7 +155,6 @@ export class GroupService {
     };
 
     await this.afs.doc(`players/${playerId}`).update(payload);
-    this.state.currentGroupId$.next(groupId);
   }
 
   public setEditGroupId(groupId: string) {
@@ -158,7 +166,6 @@ export class GroupService {
       defaultGroupId: groupId
     };
     await this.afs.doc(`players/${playerId}`).update(payload);
-    this.state.currentGroupId$.next(groupId);
   }
 
   public setJoinGroupId(groupId: string) {
@@ -172,8 +179,12 @@ export class GroupService {
   public setGroupName(name: string) {
     this.editGroupDoc.update({ name: name });
   }
-  // To be called from three dots menu in the group-modal component
-  public async archiveEditGroup() {
+
+  public async archiveEditGroup(player: Player) {
     this.editGroupDoc.update({ isArchived: true });
+    const payload: firebase.firestore.UpdateData = {
+      defaultGroupId: null
+    };
+    await this.afs.doc(`players/${player.id}`).update(payload);
   }
 }

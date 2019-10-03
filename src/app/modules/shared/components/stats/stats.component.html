@@ -3,6 +3,11 @@
     <ion-title>
       Player Statistics
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -72,9 +77,6 @@
           </ion-card-content>
         </ion-card>
       </ng-template>
-      <div id="buttons" *ngIf="isModal">
-        <ion-button expand="block" (click)="dismiss()">Done</ion-button>
-      </div>
     </div>
     <ng-template #loader>
       <app-loading></app-loading>
