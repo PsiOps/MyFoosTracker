@@ -27,7 +27,8 @@ export class HomePage {
     private matchService: MatchService,
     private modalController: ModalController,
     private alertController: AlertController,
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService) {
+  }
 
   public async createMatch(player: Player) {
     this.matchService.createMatch(player);

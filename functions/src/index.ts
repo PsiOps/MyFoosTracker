@@ -3,6 +3,7 @@ const firebaseAdmin = admin.initializeApp();
 const firestore = firebaseAdmin.firestore();
 import * as functions from 'firebase-functions';
 import { MatchProcessingService } from './services/match-processing.service';
+import { GroupArchivalProcessingService } from './services/group.archival-processing.service';
 import { StatsRecalcService } from './services/stats-recalc.service';
 import { Player } from './domain/player';
 import { NotificationService } from './services/notification.service';
@@ -20,6 +21,7 @@ export const sendMatchInvitations = functions.https.onCall(async (data, context)
 
 const matchService = new MatchService(firestore);
 const teamService = new TeamService(firestore);
+const groupArchivalProcessingService = new GroupArchivalProcessingService(firestore);
 const statsIncrementService = new StatsIncrementService(teamService);
 const statsUpdateService = new StatsUpdateService(firestore, teamService, statsIncrementService);
 
@@ -28,6 +30,10 @@ const matchProcessingService =
 
 export const processMatch = functions.https.onCall(async (data, context) => {
     return await matchProcessingService.processMatch(data.matchPath);
+});
+
+export const processGroupArchival = functions.https.onCall(async (data, context) => {
+    return await groupArchivalProcessingService.processGroupArchival(data.groupId);
 });
 
 export const recalculatePlayerStats = functions.https.onRequest(async (req, res) => {

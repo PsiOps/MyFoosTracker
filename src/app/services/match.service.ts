@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Match, MatchStatus, Team } from '../domain/match';
 import { AngularFirestoreDocument, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
-import { StatsService } from './stats.service';
+import { CloudFunctionsService } from './cloud-functions.service';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { map, switchMap, filter, tap } from 'rxjs/operators';
@@ -21,16 +21,16 @@ export class MatchService {
 
   constructor(private state: SharedState,
     private playerService: PlayerService,
-    private statsService: StatsService,
+    private cloudFunctionsService: CloudFunctionsService,
     private afs: AngularFirestore) {
 
     const currentMatchObs$ = this.state.player$
       .pipe(filter(player => !!player))
-      .pipe(filter(player => !!player.currentGroupId))
+      .pipe(filter(player => !!player.defaultGroupId))
       .pipe(switchMap(player => this.afs.collection<Match>('matches',
         ref => ref.where('status', '<', MatchStatus.over)
           .where('participants', 'array-contains', player.id)
-          .where('groupId', '==', player.currentGroupId)
+          .where('groupId', '==', player.defaultGroupId)
           .limit(1)
       ).snapshotChanges()
         .pipe(filter(matchDocChanges => matchDocChanges.length > 0))
@@ -43,19 +43,19 @@ export class MatchService {
 
     const matchesInProgressObs$ = this.state.player$
       .pipe(filter(player => !!player))
-      .pipe(filter(player => !!player.currentGroupId))
+      .pipe(filter(player => !!player.defaultGroupId))
       .pipe(switchMap(player => this.afs.collection<Match>('matches',
         ref => ref.where('status', '==', MatchStatus.started)
-          .where('groupId', '==', player.currentGroupId)
+          .where('groupId', '==', player.defaultGroupId)
       ).valueChanges()));
     matchesInProgressObs$.subscribe(matchesInProgress => this.state.matchesInProgress$.next(matchesInProgress));
   }
 
   public async createMatch(player: Player) {
     const match = new Match();
-    match.groupId = player.currentGroupId;
+    match.groupId = player.defaultGroupId;
     if (player.currentGroupDefaultTableId) {
-      match.tableRef = this.afs.doc(`/groups/${player.currentGroupId}/tables/${player.currentGroupDefaultTableId}`).ref;
+      match.tableRef = this.afs.doc(`/groups/${player.defaultGroupId}/tables/${player.currentGroupDefaultTableId}`).ref;
     }
     match.organizer = player.id;
     match.participants.push(player.id);
@@ -79,7 +79,7 @@ export class MatchService {
       goalsTeamA: $event.goalsTeamA,
       goalsTeamB: $event.goalsTeamB
     });
-    this.statsService.updateStats(this.currentMatchDoc.ref.path);
+    this.cloudFunctionsService.updateStats(this.currentMatchDoc.ref.path);
     this.clearMatch();
   }
   public async reopenMatch() {

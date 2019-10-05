@@ -8,6 +8,8 @@ import { GroupService } from 'src/app/services/group.service';
 import { GroupModalComponent } from '../shared/components/group-modal/group-modal.component';
 import { SharedState } from 'src/app/state/shared.state';
 import { PlayerService } from 'src/app/services/player.service';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile',
@@ -15,6 +17,9 @@ import { PlayerService } from 'src/app/services/player.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage {
+
+  public playerGroups$: Observable<Group[]> = this.playerService.playerGroups$
+    .pipe(map(groups => groups.filter(group => !group.isArchived)));
 
   constructor(
     private authService: AuthenticationService,

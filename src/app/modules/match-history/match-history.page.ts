@@ -41,7 +41,7 @@ export class MatchHistoryPage {
 
   private loadMoreData(event?: any) {
     combineLatest([this.state.player$, this.state.currentGroupId$])
-      .pipe(filter(([player]) => !!player && !!player.currentGroupId))
+      .pipe(filter(([player]) => !!player && !!player.defaultGroupId))
       .pipe(switchMap(([player, groupId]) => this.afs.collection<Match>('matches', ref => this.filterMatches(ref, player, groupId))
         .valueChanges()))
       .pipe(

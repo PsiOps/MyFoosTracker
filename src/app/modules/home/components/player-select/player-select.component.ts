@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Player, Team, Match } from '../../../../domain';
+import { Team, Match } from '../../../../domain';
 import { Observable, combineLatest, BehaviorSubject, of } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 import { PlayerSelectModel } from 'src/app/modules/home/models/player-select.model';

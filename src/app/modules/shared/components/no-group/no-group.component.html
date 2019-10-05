@@ -1,12 +1,12 @@
 <ion-card *ngIf="!isLoading; else loader">
-    <ion-card-title text-center>You are not part of any groups!</ion-card-title>
+    <ion-card-title text-center>No active Group!</ion-card-title>
     <ion-card-content text-center>
         <ion-label>
-            You are not currently part of any group. Start a new group and invite your friends, or follow a
-            invite link to join an existing group to start tracking your foosball matches!
+            You don't have an active group at this moment. Either create a new group, or select a group you are already a part of. 
+            Both can be done from your Profile!
         </ion-label>
         <div text-center>
-            <ion-button (click)="createGroup()">Start a Group</ion-button>
+            <ion-button (click)="navigateToProfile()">Go to Profile</ion-button>
         </div>
     </ion-card-content>
 </ion-card>

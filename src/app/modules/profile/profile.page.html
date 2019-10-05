@@ -10,11 +10,10 @@
       Profile
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()" title="Log out of FoosTracker">
-        <ion-icon name=log-out></ion-icon>Logout
+      <ion-button (click)="dismissProfile()">
+        <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-header>
 
@@ -32,8 +31,8 @@
           </ion-item>
         </ion-card-content>
       </ion-card>
-      <ion-card *ngIf="playerService.playerGroups$ | async as groups">
-        <ion-list>
+      <ion-card *ngIf="playerGroups$ | async as groups">
+        <ion-list *ngIf="groups.length > 0; else noGroups">
           <ion-list-header>
             <ion-label>Groups</ion-label>
             <ion-item lines="none">
@@ -42,21 +41,36 @@
               </ion-button>
             </ion-item>
           </ion-list-header>
-          <ion-item *ngFor="let group of groups" (click)="editGroup(group)">
-            <ion-icon *ngIf="group.id == (state.currentGroupId$ | async)" slot="start" name="checkmark-circle"
-              class="activeGroup">
+          <ion-item *ngFor="let group of groups" (click)="!group.isArchived && editGroup(group)">
+            <ion-icon *ngIf="group.isArchived" slot="start" name="trash"></ion-icon>
+            <ion-icon *ngIf="!group.isArchived && group.id == (state.currentGroupId$ | async)" slot="start"
+              name="checkmark-circle" color="primary">
             </ion-icon>
-            <ion-icon (click)="changeCurrentGroup(player, group, $event)" *ngIf="group.id !== (state.currentGroupId$ | async)"
-              slot="start" name="checkmark-circle-outline" class="selectableGroup"></ion-icon>
-            <ion-label>
+            <ion-icon (click)="changeCurrentGroup(player, group, $event)"
+              *ngIf="!group.isArchived && group.id !== (state.currentGroupId$ | async)" slot="start"
+              name="radio-button-off"></ion-icon>
+            <ion-label [class.archived]="group.isArchived">
               <h1>{{group.name}}</h1>
             </ion-label>
           </ion-item>
         </ion-list>
+        <ng-template #noGroups text-center>
+          <ion-card-content text-center>
+            <ion-label>You are not part of any groups. Create a group or follow an invite link to join an existing
+              group!</ion-label>
+            <div text-center>
+              <ion-button (click)="createGroup(player)" slot="end" [disabled]="!(state.canCreateGroup$ | async)">
+                <ion-icon slot="start" name="add"></ion-icon> Create your group!
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ng-template>
       </ion-card>
     </div>
-    <ion-button expand="block" (click)="dismissProfile()">
-      Done
-    </ion-button>
+    <div text-center>
+      <ion-button color="warning" (click)="logout()">
+        <ion-icon slot="start" name="log-out"></ion-icon> Log out
+      </ion-button>
+    </div>
   </ion-grid>
 </ion-content>

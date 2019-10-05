@@ -9,7 +9,6 @@ import { Player, Group } from '../domain';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { TableManageModel } from '../modules/shared/models/table-manage.model';
-import { GroupService } from './group.service';
 import { SharedState } from '../state/shared.state';
 
 @Injectable({
@@ -26,8 +25,7 @@ export class PlayerService {
     private router: Router,
     private afs: AngularFirestore,
     private state: SharedState,
-    private authService: AuthenticationService,
-    private groupService: GroupService
+    private authService: AuthenticationService
   ) {
 
     this.authService.user$
@@ -36,17 +34,12 @@ export class PlayerService {
         this.playerDoc = this.afs.doc<Player>(`players/${user.uid}`);
         this.playerDocRef = this.playerDoc.ref;
 
-        const playerObs$ = combineLatest([this.playerDoc.valueChanges(), this.state.currentGroupId$])
-          .pipe(filter(([player]) => !!player))
-          .pipe(map(([player, groupId]) => {
+        const playerObs$ = this.playerDoc.valueChanges()
+          .pipe(filter(player => !!player))
+          .pipe(map(player => {
             player.id = user.uid;
-            if (groupId) {
-              player.currentGroupId = groupId;
-            } else if (player.defaultGroupId) {
-              this.groupService.setCurrentGroupId(player.id, player.defaultGroupId);
-            }
-            if (player.defaultTableIdByGroup && player.currentGroupId) {
-              player.currentGroupDefaultTableId = player.defaultTableIdByGroup[player.currentGroupId];
+            if (player.defaultTableIdByGroup && player.defaultGroupId) {
+              player.currentGroupDefaultTableId = player.defaultTableIdByGroup[player.defaultGroupId];
             }
             return player;
           }));
