@@ -16,6 +16,5 @@ export class NotificationService {
     const matchPath = this.matchService.currentMatchDocRef.path;
     const updateStatsPayload = { matchPath: matchPath, config: {} };
     const response = await this.fns.httpsCallable('sendMatchInvitations')(updateStatsPayload).toPromise();
-    console.log(response);
   }
 }

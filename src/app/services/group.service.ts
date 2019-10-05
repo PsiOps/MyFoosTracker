@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Group, Player, Table } from '../domain';
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { map, filter, switchMap, catchError, tap } from 'rxjs/operators';
+import { map, filter, switchMap } from 'rxjs/operators';
 import { SharedState } from '../state/shared.state';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
+import { CloudFunctionsService } from './cloud-functions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,8 @@ export class GroupService {
 
   constructor(
     private afs: AngularFirestore,
-    private state: SharedState
+    private state: SharedState,
+    private cloudFunctionsService: CloudFunctionsService
   ) {
     const currentGroupIdObs$ = this.state.player$
       .pipe(filter(player => !!player))
@@ -180,11 +182,13 @@ export class GroupService {
     this.editGroupDoc.update({ name: name });
   }
 
-  public async archiveEditGroup(player: Player) {
+  public async archiveEditGroup(player: Player, group: Group) {
     this.editGroupDoc.update({ isArchived: true });
     const payload: firebase.firestore.UpdateData = {
       defaultGroupId: null
     };
     await this.afs.doc(`players/${player.id}`).update(payload);
+
+    this.cloudFunctionsService.processGroupArchival(group.id);
   }
 }

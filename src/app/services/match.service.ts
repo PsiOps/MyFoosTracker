@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Match, MatchStatus, Team } from '../domain/match';
 import { AngularFirestoreDocument, AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { Player } from '../domain/player';
-import { StatsService } from './stats.service';
+import { CloudFunctionsService } from './cloud-functions.service';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { map, switchMap, filter, tap } from 'rxjs/operators';
@@ -21,7 +21,7 @@ export class MatchService {
 
   constructor(private state: SharedState,
     private playerService: PlayerService,
-    private statsService: StatsService,
+    private cloudFunctionsService: CloudFunctionsService,
     private afs: AngularFirestore) {
 
     const currentMatchObs$ = this.state.player$
@@ -79,7 +79,7 @@ export class MatchService {
       goalsTeamA: $event.goalsTeamA,
       goalsTeamB: $event.goalsTeamB
     });
-    this.statsService.updateStats(this.currentMatchDoc.ref.path);
+    this.cloudFunctionsService.updateStats(this.currentMatchDoc.ref.path);
     this.clearMatch();
   }
   public async reopenMatch() {

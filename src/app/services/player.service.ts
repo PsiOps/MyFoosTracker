@@ -9,7 +9,6 @@ import { Player, Group } from '../domain';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { TableManageModel } from '../modules/shared/models/table-manage.model';
-import { GroupService } from './group.service';
 import { SharedState } from '../state/shared.state';
 
 @Injectable({

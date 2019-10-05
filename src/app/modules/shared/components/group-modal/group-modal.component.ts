@@ -97,7 +97,10 @@ ${link}`);
     await alert.present();
   }
 
-  public async archiveGroup(player: Player) {
+  public async setAsCurrent(player: Player, group: Group) {
+    this.groupService.setCurrentGroupId(player.id, group.id);
+  }
+  public async archiveGroup(player: Player, group: Group) {
     const alert = await this.alertController.create({
       header: 'Confirm Archive Group',
       message: 'Are you sure you want to archive this group?',
@@ -110,7 +113,7 @@ ${link}`);
         }, {
           text: 'YES, ARCHIVE THIS GROUP',
           handler: async () => {
-            await this.groupService.archiveEditGroup(player);
+            await this.groupService.archiveEditGroup(player, group);
             await this.dismiss();
           }
         }
