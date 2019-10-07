@@ -3,6 +3,8 @@ import { PopoverController } from '@ionic/angular';
 import { TableSelectDialogComponent } from './table-select-dialog/table-select-dialog.component';
 import { Match, Table } from 'src/app/domain';
 import { MatchService } from 'src/app/services/match.service';
+import { TableService } from 'src/app/services/table.service';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-table-select',
@@ -14,8 +16,16 @@ export class TableSelectComponent implements OnInit, OnChanges {
   public currentTable$: Promise<Table>;
   constructor(
     private popoverController: PopoverController,
-    private matchService: MatchService
-    ) { }
+    private matchService: MatchService,
+    private tableService: TableService
+  ) {
+    combineLatest([this.tableService.groupTables$, this.matchService.currentMatch$])
+    .subscribe(([tables, match]) => {
+      if (match && tables.length === 1) {
+        this.matchService.setTable(match.groupId, tables[0].id);
+      }
+    });
+  }
 
   ngOnInit() { }
   ngOnChanges() {

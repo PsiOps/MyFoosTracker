@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { TableSelectModel } from '../../../../shared/models/table-select.model';
 import { PopoverController } from '@ionic/angular';
 import { TableService } from 'src/app/services/table.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-table-select-dialog',
@@ -11,13 +10,11 @@ import { Observable } from 'rxjs';
 })
 export class TableSelectDialogComponent {
 
-  public playerTables$: Observable<TableSelectModel[]>;
   constructor(
     private popoverController: PopoverController,
-    public tableService: TableService) { }
+    public tableService: TableService) {  }
 
   public onTableSelected(table: TableSelectModel): void {
     this.popoverController.dismiss(table.id);
   }
-
 }

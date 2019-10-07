@@ -1,11 +1,11 @@
-<ion-button expand="block" (click)="pickTable()">
+<ion-button expand="block" (click)="pickTable()" *ngIf="(tableService.groupTables$ | async).length > 1">
   <div *ngIf="currentTable$ | async as currentTable; else selectTable" class="dropdownButtonContent">
     {{currentTable.name}}
   </div>
   <ion-icon name="arrow-dropdown" slot="end"></ion-icon>
+  <ng-template #selectTable>
+    <div>
+      Select a table
+    </div>
+  </ng-template>
 </ion-button>
-<ng-template #selectTable>
-  <div>
-    Select a table
-  </div>
-</ng-template>
