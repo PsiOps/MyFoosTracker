@@ -47,7 +47,8 @@ export class PlayerManageComponent implements OnInit {
       );
   }
 
-  public playerFavouriteChanged(player: PlayerSelectModel) {
+  public playerFavouriteChanged(player: PlayerSelectModel, $event: Event) {
+    $event.stopPropagation();
     player.isFavourite = !player.isFavourite;
 
     if (player.isFavourite) {
