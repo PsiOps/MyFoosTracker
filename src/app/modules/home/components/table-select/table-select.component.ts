@@ -17,7 +17,7 @@ export class TableSelectComponent implements OnInit, OnChanges {
   constructor(
     private popoverController: PopoverController,
     private matchService: MatchService,
-    private tableService: TableService
+    public tableService: TableService
   ) {
     combineLatest([this.tableService.groupTables$, this.matchService.currentMatch$])
     .subscribe(([tables, match]) => {
