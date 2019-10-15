@@ -4,9 +4,9 @@
   "author": "PsiOps Software",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ionic serve",
     "emulate": "ionic cordova emulate android",
-    "build": "ng build",
+    "build": "ionic build",
     "test": "ng test",
     "scan": "sonar-scanner.bat -D\"sonar.projectKey=PsiOps_MyFoosTracker\" -D\"sonar.organization=psiops-github\" -D\"sonar.sources=.\" -D\"sonar.host.url=https://sonarcloud.io\" -D\"sonar.login=e36d5e15267d445899f1cea3f8c2ab967fd9aa3d\"",
     "lint": "ng lint",
