@@ -1,3 +1,3 @@
 # MyFoosTracker
 
-This should probably be more helpful than just this line. But it's not at the moment.
+This project has been archived and moved to Azure DevOps to make use of build pipelines that can create artifacts for an iOS app. It is also now private. Sorry.
